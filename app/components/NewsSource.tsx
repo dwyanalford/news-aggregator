@@ -53,24 +53,29 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
   const [articles, setArticles] = useState<Record<number, { imageUrl: string | null, firstParagraph: string }>>({});
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({}); // State to track loading images
 
+  // Instead of fetching each article one at a time, use Promise.all to fetch all articles in parallel, 
+  // which will reduce the total loading time.
   useEffect(() => {
     const fetchArticles = async () => {
-      for (let i = 0; i < items.length; i++) {
-        const { link } = items[i];
-        const articleData = await fetchArticleData(link);
-        setArticles((prevArticles) => ({
-          ...prevArticles,
-          [i]: articleData,
-        }));
-        setLoadingImages((prevLoadingImages) => ({
-          ...prevLoadingImages,
-          [i]: false, // Mark image as not loading once the data is fetched
-        }));
-      }
+      const fetchPromises = items.map(({ link }, index) => 
+        fetchArticleData(link).then(articleData => {
+          setArticles(prevArticles => ({
+            ...prevArticles,
+            [index]: articleData,
+          }));
+          setLoadingImages(prevLoadingImages => ({
+            ...prevLoadingImages,
+            [index]: false, // Mark image as not loading once the data is fetched
+          }));
+        })
+      );
+  
+      await Promise.all(fetchPromises);
     };
-
+  
     fetchArticles();
   }, [items]);
+  
 
   const handleItemHover = (index: number) => {
     setExpandedIndex(index);
@@ -121,12 +126,15 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
             onMouseEnter={() => handleItemHover(index)}
             onMouseLeave={() => handleItemLeave()}
           >
-            <img
-              src={articles[index]?.imageUrl || '/images/loading-animation.gif'} // Use placeholder if image is not loaded
-              alt={title}
-              className="w-full h-48 object-cover rounded-t-md"
-              onLoad={() => setLoadingImages(prev => ({ ...prev, [index]: true }))} // Mark image as loaded
-            />
+            {articles[index]?.imageUrl && (
+              <img
+                src={articles[index].imageUrl}
+                alt={title}
+                className="w-full h-48 object-cover rounded-t-md"
+                onLoad={() => setLoadingImages(prev => ({ ...prev, [index]: true }))}
+              />
+            )}
+
             <h3 className="text-xl font-bold leading-tight pl-4 pr-4 pt-3">{title}</h3>
             <p className="text-gray-500 pl-4"> {formatPubDate(pubDate)} </p>
             
