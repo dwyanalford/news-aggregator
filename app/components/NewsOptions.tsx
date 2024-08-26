@@ -30,28 +30,29 @@ const NewsOptions = ({ link }: { link: string }) => {
   };
 
   return (
-    <div className="flex space-x-4 mt-4 pl-4">
-      <a href={link} target="_blank" rel="noopener noreferrer" title="View Article" className="text-blue-600 hover:text-blue-800">
-        <FontAwesomeIcon icon={faExternalLinkAlt} className="h-5 w-5" />
+    <div className="flex space-x-10 mx-auto p-2">
+      <a href={link} target="_blank" rel="noopener noreferrer" title="View Article">
+        <FontAwesomeIcon icon={faExternalLinkAlt} className="news-icon" />
       </a>
       <a href="#" title="Save" className="text-yellow-500 hover:text-yellow-700">
-        <FontAwesomeIcon icon={faBookmark} className="h-5 w-5" />
+        <FontAwesomeIcon icon={faBookmark} className="news-icon" />
       </a>
-      <a href="#" title="Share on Twitter" onClick={shareOnTwitter} className="text-blue-400 hover:text-blue-600">
-        <FontAwesomeIcon icon={faTwitter} className="h-5 w-5" />
+      <a href="#" title="Share on Twitter" onClick={shareOnTwitter}>
+        <FontAwesomeIcon icon={faTwitter} className="news-icon" />
       </a>
-      <a href="#" title="Share on Facebook" onClick={shareOnFacebook} className="text-blue-800 hover:text-blue-900">
-        <FontAwesomeIcon icon={faFacebook} className="h-5 w-5" />
+      <a href="#" title="Share on Facebook" onClick={shareOnFacebook}>
+        <FontAwesomeIcon icon={faFacebook} className="news-icon" />
       </a>
-      <a href="#" title="Share on LinkedIn" onClick={shareOnLinkedIn} className="text-blue-700 hover:text-blue-800">
-        <FontAwesomeIcon icon={faLinkedin} className="h-5 w-5" />
+      <a href="#" title="Share on LinkedIn" onClick={shareOnLinkedIn}>
+        <FontAwesomeIcon icon={faLinkedin} className="news-icon" />
       </a>
-      <a href="#" title="Copy Link" onClick={copyLink} className="text-green-500 hover:text-green-700">
-        <FontAwesomeIcon icon={faShare} className="h-5 w-5" />
+      <a href="#" title="Copy Link" onClick={copyLink}>
+        <FontAwesomeIcon icon={faShare} className="news-icon" />
       </a>
       <ToastContainer />
     </div>
   );
+  
 };
 
 export default NewsOptions;

@@ -11,6 +11,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const NewsContent = ({ sources }: { sources: any[] }) => {
   const [selectedSource, setSelectedSource] = useState(sources[0]);
   const [filteredSources, setFilteredSources] = useState(sources);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to manage sidebar open/close
 
   const { data: newsItems } = useSWR(
     `/api/news-items?source=${encodeURIComponent(selectedSource.url)}`,
@@ -33,16 +34,16 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
   return (
     <div className="flex">
       {/* Sidebar (NewsMenu) */}
-      <div className="w-64 bg-gray-800 space-y-4 fixed h-full">
-        <NewsMenu
-          sources={sources}
-          onSelect={handleSourceSelection}
-          onCategorySelect={handleCategorySelection}
-        />
-      </div>
+      <NewsMenu
+        sources={sources}
+        onSelect={handleSourceSelection}
+        onCategorySelect={handleCategorySelection}
+        isSidebarOpen={isSidebarOpen} // Pass sidebar state
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} // Pass toggle function
+      />
 
       {/* Main Content Area */}
-      <div className="ml-72 flex-1 p-4 overflow-x-hidden">
+      <div className="flex-1 p-8 transition-all duration-300 ease-in-out lg:ml-72">
         {newsItems ? (
           <NewsSource
             key={selectedSource.name}

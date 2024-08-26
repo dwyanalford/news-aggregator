@@ -7,7 +7,7 @@ interface NewsContainerProps {
 }
 
 const NewsContainer: React.FC<NewsContainerProps> = ({ children }) => {
-  return <div className='bg-gray-800'>{children}</div>;
+  return <div>{children}</div>;
 };
 
 export default NewsContainer;

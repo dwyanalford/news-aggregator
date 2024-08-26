@@ -1,10 +1,8 @@
 // app/components/NewsSource.tsx
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import NewsOptions from './NewsOptions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import blackAmericanData from '../data/blackAmericanData';
 
 interface NewsItem {
@@ -49,7 +47,6 @@ function truncateSummary(summary: string, maxLength: number = 252): string {
 }
 
 export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [articles, setArticles] = useState<Record<number, { imageUrl: string | null, firstParagraph: string }>>({});
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({}); // State to track loading images
 
@@ -77,82 +74,65 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
   }, [items]);
   
 
-  const handleItemHover = (index: number) => {
-    setExpandedIndex(index);
-  };
-
-  const handleItemLeave = () => {
-    setExpandedIndex(null);
-  };
-
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  const scrollLeft = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -carouselRef.current.clientWidth, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: carouselRef.current.clientWidth, behavior: 'smooth' });
-    }
-  };
-
   // Find the corresponding source in blackAmericanData to get the logo
-  const currentSource = items.length > 0 ? items[0].name : '';
   const currentSourceData = blackAmericanData.find(source => source.name === name);
   const logo = currentSourceData?.logo;
 
   return (
-    <div className="relative pl-6 pt-6">
-      <h2 className="text-2xl font-bold pb-6 flex items-center text-slate-300">
-        {logo && (
-          <img src={logo} alt={`${name} logo`} className="w-10 h-10 mr-3 rounded-lg border-2 border-slate-400" /> // Adjusted size for title logos
-        )}
-        {name}
-        <span className="text-lg font-semibold capitalize ml-2 text-slate-400">| {purpose}</span>
-      </h2>
-      
-      <button className="absolute -left-2 top-1/2 transform -translate-y-1/2 p-2  bg-gray-800 bg-opacity-50 rounded-full" onClick={scrollLeft}>
-        <FontAwesomeIcon icon={faChevronLeft} size="3x" className="text-white transform scale-x-75" />
-      </button>
-  
-      <div ref={carouselRef} className="flex overflow-x-hidden space-x-6 h-full">
-        {items.map(({ title, pubDate, link, description, author }, index) => (
-          <div
-            key={index}
-            className="min-w-[300px] shadow-lg rounded-lg hover:shadow-lg transition-shadow bg-slate-200 border-2 mt-2"
-            onMouseEnter={() => handleItemHover(index)}
-            onMouseLeave={() => handleItemLeave()}
-          >
-            {articles[index]?.imageUrl && (
-              <img
-                src={articles[index].imageUrl}
-                alt={title}
-                className="w-full h-48 object-cover rounded-t-md"
-                onLoad={() => setLoadingImages(prev => ({ ...prev, [index]: true }))}
-              />
-            )}
-
-            <h3 className="text-xl font-bold leading-tight pl-4 pr-4 pt-3">{title}</h3>
-            <p className="text-gray-500 pl-4"> {formatPubDate(pubDate)} </p>
-            
-            <p className="mt-2 text-base leading-snug p-4">
-              <strong>Excerpt:</strong> {truncateSummary(articles[index]?.firstParagraph || 'No summary available')}
-            </p>
-            
-            <NewsOptions link={link} />
-            {author && <p className="text-sm text-gray-500 pl-4 mt-6">Author: {author}</p>}
-            <code className="block mt-2 text-sm text-gray-500 pl-4">Source: {name}</code>
+      <div id="news-source">
+        {/* Main Publication Title */}
+        <div className="flex space-x-4 mt-4 mb-4 ml-4 xl:mt-8 xl:mb-8 xl:ml-8">
+          {logo && <img src={logo} alt={`${name} logo`} className="w-16 h-16 rounded-lg" />}
+          <div>
+            <h2 className="text-2xl font-bold">{name}</h2>
+            <p className="text-gray-600">{purpose}</p>
           </div>
+        </div>
+        {/* --------------------------------------------------------------------- */}
+
+        <div id="news-container" className='flex flex-wrap justify-center'>
+          {items.map(({ title, pubDate, link, description, author }, index) => (
+          <div
+          key={index}
+          id="news-articles"
+          className="transition-transform transform hover:scale-105 md:w-1/2 lg:w-1/2 2xl:w-1/3 p-4 2xl:mb-6"
+          >
+            <div id="news-content" className="h-full flex flex-col shadow-lg rounded-t-lg p-1 border border-gray-200">
+              {/* Articles Image */}
+              <div id="articles-image" className="w-full h-60 max-w-md"> 
+                {articles[index]?.imageUrl && (
+                  <img
+                    src={articles[index].imageUrl}
+                    alt={title}
+                    className="w-full h-full object-cover rounded-t-lg"
+                    loading='lazy'
+                  />
+                )}
+              </div>
+
+              {/* Articles Text */}
+              <div id="articles-text" className="text-left p-2 2xl:p-4 max-w-md">
+                <p className="text-sm text-gray-500 pt-3 2xl:pt-0 2xl:pb-2">{formatPubDate(pubDate)}</p>
+                <h2 className="text-xl font-bold pt-3 2xl:pt-0">{title}</h2>
+                <div className="hidden sm:block pt-3 2xl:pt-4">
+                  <p className="text-gray-700">
+                    <strong>Excerpt:</strong> {truncateSummary(articles[index]?.firstParagraph || 'No summary available')}
+                  </p>
+                </div>
+                </div>
+                <div id="news-options" className="flex flex-col mt-auto">
+                  {/* <p className="text-sm text-gray-500 hidden xl:block pb-4 text-center">Source: {name}</p> */}
+                  <NewsOptions link={link} />
+                </div>
+                
+               
+              {/* end of Articles text here */}
+            </div>
+          </div> 
+              
         ))}
+         </div>  
       </div>
-  
-      <button className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 bg-gray-800 bg-opacity-50 rounded-full" onClick={scrollRight}>
-        <FontAwesomeIcon icon={faChevronRight} size="3x" className="text-white transform scale-x-75" />
-      </button>
-    </div>
   );
 }
 

@@ -1,8 +1,11 @@
-import { Inter } from "next/font/google";
+import { Rubik } from "next/font/google";
 import "./globals.css";
 import NewsContainer from "./components/NewsContainer";
 
-const inter = Inter({ subsets: ["latin"] });
+const rubik = Rubik({
+  subsets: ['latin'],
+  weight: ['300','400', '500', '600', "700"], // Adjust weights as necessary
+});
 
 export default function RootLayout({
   children,
@@ -17,7 +20,7 @@ export default function RootLayout({
         <meta name="author" content="Dwyan Alford" />
         <link rel="icon" href="./favicon.png" />
       </head>
-      <body className={`${inter.className} bg-gray-800`}>
+      <body className={rubik.className}>
         <NewsContainer>{children}</NewsContainer>
       </body>
     </html>

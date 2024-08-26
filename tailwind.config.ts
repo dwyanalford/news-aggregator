@@ -8,10 +8,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      fontSize: {
+        'base': '1rem', // Base font size for body text
+        'lg': '1.125rem', // Slightly larger for emphasis in paragraphs
+        'xl': '1.25rem', // Subtitle or smaller headlines
+        '2xl': '1.5rem', // Secondary headlines or important excerpts
+        '3xl': '2rem', // Main headlines
+        '4xl': '2.25rem', // Very large headlines, if needed
+        '5xl': '3rem', // Hero or special headlines
       },
     },
   },

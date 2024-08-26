@@ -2,32 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* global.css */
+
+/* Headlines */
+h1 {
+  @apply text-3xl font-bold leading-tight;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+h2 {
+  @apply text-2xl font-semibold leading-snug;
 }
 
-body {
-  /* color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb)); */
+h3 {
+  @apply text-xl font-medium;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Excerpts */
+.excerpt {
+  @apply text-xl text-gray-700 leading-relaxed;
 }
+
+/* Meta Information (Author, Date, Source) */
+.meta-info {
+  @apply text-lg text-gray-500;
+}
+
+/* Links (e.g., Source) */
+a.source-link {
+  @apply text-sm text-blue-600 hover:text-blue-800;
+}
+
+.news-icon {
+  @apply h-5 w-5 text-gray-400 hover:text-gray-800;
+}
+
