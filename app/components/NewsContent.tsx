@@ -14,22 +14,27 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to manage sidebar open/close
 
   const { data: newsItems } = useSWR(
-    `/api/news-items?source=${encodeURIComponent(selectedSource.url)}`,
+    selectedSource ? `/api/news-items?source=${encodeURIComponent(selectedSource.url)}` : null,
     fetcher
   );
+  
 
   const handleSourceSelection = (sourceName: string) => {
     const source = filteredSources.find((s) => s.name === sourceName);
-    if (source) setSelectedSource(source);
+    if (source) {
+      setSelectedSource(source);
+    }
   };
+  
 
   const handleCategorySelection = (category: string) => {
-    const sourcesByCategory = sources.filter((s) => s.category === category);
+    const sourcesByCategory = sources.filter((s) => s.categories.includes(category));
     setFilteredSources(sourcesByCategory);
     if (sourcesByCategory.length > 0) {
       setSelectedSource(sourcesByCategory[0]); // Automatically select the first source in the category
     }
   };
+  
 
   return (
     <div className="flex">
