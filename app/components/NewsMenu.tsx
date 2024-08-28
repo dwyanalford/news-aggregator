@@ -146,15 +146,27 @@ export default function NewsMenu({ sources, onSelect, onCategorySelect, isSideba
                 <button
                   key={category}
                   onClick={() => handleCategoryClick(category)}
-                  className={`text-left py-2 px-4 rounded-lg flex items-center space-x-2 ${selectedCategory === category ? 'button-active' : ''}`}
+                  className={`py-2 px-4 rounded-lg flex items-center ${selectedCategory === category ? 'button-active' : ''}`}
                 >
-                  <FontAwesomeIcon
-                    icon={getCategoryIcon(category)}
-                    className={`${selectedCategory === category ? 'text-white' : 'text-gray-400'} ${selectedCategory === category ? 'scale-110' : ''}`}
-                  />
-                  <span>{category}</span>
+                  {/* Used a table to how more control in lining up categories and icons */}
+                  <div className="table w-full">
+                    <div className="table-row">
+                      <div className="table-cell align-middle w-8"> {/* Fixed width for icons */}
+                        <FontAwesomeIcon
+                          icon={getCategoryIcon(category)}
+                          className={`${selectedCategory === category ? 'text-white' : 'text-gray-400'} ${selectedCategory === category ? 'scale-110' : ''}`}
+                        />
+                      </div>
+                      <div className="table-cell align-middle">
+                        <span className="text-left pl-1">{category}</span>
+                      </div>
+                    </div>
+                  </div>
                 </button>
               ))}
+
+
+
 
               {/* Show publications associated with the selected category */}
               <div className='mt-4 pt-2'>
