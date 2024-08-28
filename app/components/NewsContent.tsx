@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import NewsSource from './NewsSource';
 import NewsMenu from './NewsMenu';
 import useSWR from 'swr';
+import Loading from './Loading';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -12,7 +13,7 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
   const [selectedSource, setSelectedSource] = useState(sources[0]);
   const [filteredSources, setFilteredSources] = useState(sources);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to manage sidebar open/close
-  const [debouncedSource, setDebouncedSource] = useState(selectedSource);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     console.log("Currently selected source:", selectedSource);
@@ -90,7 +91,8 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
             items={newsItems}
           />
         ) : (
-          <div>Loading...</div>
+          <Loading isLoading={isLoading} />
+
         )}
       </div>
     </div>
