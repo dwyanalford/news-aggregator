@@ -76,18 +76,18 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
 
   // Find the corresponding source in blackAmericanData to get the logo
   const currentSourceData = blackAmericanData.find(source => source.name === name);
-  const logo = currentSourceData?.logo;
+  const logo = currentSourceData?.logo2;
 
   return (
       <div id="news-source">
         {/* Main Publication Title */}
-        <div className="flex space-x-4 mt-4 mb-4 ml-4 xl:mt-8 xl:mb-8 xl:ml-8">
-          {logo && <img src={logo} alt={`${name} logo`} className="w-16 h-16 rounded-lg" />}
-          <div>
-            <h2 className="text-2xl font-bold">{name}</h2>
-            <p className="text-gray-600">{purpose}</p>
+        <div className="flex flex-col md:flex-row items-center w-full space-x-4 mt-4 mb-4 ml-4 xl:mt-8 xl:mb-8 xl:ml-8">
+          {logo && <img src={logo} alt={`${name} logo`} className="rounded-t-lg shadow-xl" />} {/* Use the original size of the logo */}
+          <div className="flex items-center pt-4"> {/* Center-align text vertically */}
+            <p className="text-gray-700 text-xl font-light">{purpose}</p>
           </div>
         </div>
+
         {/* --------------------------------------------------------------------- */}
 
         <div id="news-container" className='flex flex-wrap justify-center'>
@@ -115,7 +115,7 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
                 <p className="text-sm text-gray-500 pt-3 2xl:pt-0 2xl:pb-2">{formatPubDate(pubDate)}</p>
                 <h2 className="text-xl font-bold pt-3 2xl:pt-0">{title}</h2>
                 <div className="hidden sm:block pt-3 2xl:pt-4">
-                  <p className="text-gray-700">
+                  <p className="text-gray-800 font-light text-lg">
                     <strong>Excerpt:</strong> {truncateSummary(articles[index]?.firstParagraph || 'No summary available')}
                   </p>
                 </div>
