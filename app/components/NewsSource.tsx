@@ -138,6 +138,14 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
 
 export function formatPubDate(pubDate: string): string {
   const date = new Date(pubDate);
-  const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'long', // Corrected type
+    month: 'long',   // Corrected type
+    day: 'numeric',  // Corrected type
+    year: 'numeric', // Corrected type
+  };
+  
+  // Assuming `date` is a valid Date object
   return date.toLocaleDateString('en-US', options);
+  
 }
