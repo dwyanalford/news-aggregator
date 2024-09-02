@@ -17,6 +17,7 @@ h3 {
   @apply text-xl font-medium;
 }
 
+
 /* Inactive Button */
 .button-inactive {
   @apply font-medium text-gray-400 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 hover:border-gray-400;

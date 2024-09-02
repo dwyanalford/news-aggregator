@@ -91,7 +91,7 @@ export async function fetchNewsItems(sources: Source[]): Promise<FetchedNewsItem
 
         // If less than 3 items today, take the most recent 10 instead
         if (itemsToday.length <= 6) {
-          items = items.slice(0, 10);
+          items = items.slice(0, 12);
         } else {
           items = itemsToday;
         }

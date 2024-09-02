@@ -54,7 +54,7 @@ const blackAmericanData: NewsSource[] = [
     name: 'MadameNoire',
     url: 'https://madamenoire.com/feed/',
     purpose: 'Focused primarily on Black womens lifestyle, health, and current events',
-    categories: ['Culture', 'Black Women'],
+    categories: ['Culture', 'Women'],
     logo: '/images/logos/madame-noire.png',
     logo2: '/images/logos/madame-noire-2.png'
   },
@@ -118,7 +118,7 @@ const blackAmericanData: NewsSource[] = [
     name: 'Chicago Defender',
     url: 'https://chicagodefender.com/feed/',
     purpose: ' Cover the interests of the urban African American community.',
-    categories: ['Politics'],
+    categories: ['Politics', 'Local'],
     logo: '/images/logos/chicago-defender.png',
     logo2: '/images/logos/chicago-defender-2.png'
   },
@@ -134,7 +134,7 @@ const blackAmericanData: NewsSource[] = [
     name: 'Essence',
     url: 'https://www.essence.com/feed/',
     purpose: 'Primarily focused on African American women.',
-    categories: ['Entertainment', 'Black Women', 'Culture'],
+    categories: ['Entertainment', 'Women', 'Culture'],
     logo: '/images/logos/essence.png',
     logo2: '/images/logos/essence-2.png'
   },
@@ -179,7 +179,7 @@ const blackAmericanData: NewsSource[] = [
     logo2: '/images/logos/black-press-media-2.png'
   },
   {
-    name: 'The Network Journal',
+    name: 'Network Journal',
     url: 'https://tnj.com/feed/',
     purpose: 'Black Professionals and Small Business Magazine.',
     categories: ['Business'],
@@ -190,7 +190,7 @@ const blackAmericanData: NewsSource[] = [
     name: 'BlackGirlNerds',
     url: 'https://blackgirlnerds.com/feed/',
     purpose: 'Diverse women who embrace all cultures and refuse to conform to the status quo.',
-    categories: ['Culture', 'Black Women'],
+    categories: ['Culture', 'Women'],
     logo: '/images/logos/black-girls.png',
     logo2: '/images/logos/black-girls-2.png'
   },
@@ -249,6 +249,134 @@ const blackAmericanData: NewsSource[] = [
     categories: ['Education'],
     logo: '/images/logos/diverse.png',
     logo2: '/images/logos/diverse-2.png'
+  },
+  {
+    name: 'Black Doctor',
+    url: 'https://blackdoctor.org/feed/',
+    purpose: 'Where Wellness & Culture Connect.',
+    categories: ['Health'],
+    logo: '/images/logos/black-doctor.png',
+    logo2: '/images/logos/black-doctor-2.png'
+  },
+  {
+    name: 'Andscape',
+    url: 'https://andscape.com/feed/',
+    purpose: 'Black-led media platform dedicated to creating, highlighting, and uplifting the diverse stories of Black identity.',
+    categories: ['Sports', 'Culture'],
+    logo: '/images/logos/andscape.png',
+    logo2: '/images/logos/andscape-2.png'
+  },
+  {
+    name: 'Urban Faith',
+    url: 'https://urbanfaith.com/feed/',
+    purpose: 'Your destination for relevant and stimulating conversations about faith and life.',
+    categories: ['Religion', 'Culture'],
+    logo: '/images/logos/urban-faith.png',
+    logo2: '/images/logos/urban-faith-2.png'
+  },
+  {
+    name: 'Philly Tribune',
+    url: 'https://www.phillytrib.com/search/?f=rss&t=article&c=news/*',
+    purpose: 'The oldest (1884) continuously published newspaper reflecting the African-American experience.',
+    categories: ['Politics', 'Culture', 'Local'],
+    logo: '/images/logos/philly-tribune.png',
+    logo2: '/images/logos/philly-tribune-2.png'
+  },
+  {
+    name: 'Face2Face Africa',
+    url: 'https://face2faceafrica.com/feed',
+    purpose: 'The leading afro-diaspora news platform.',
+    categories: ['Business', 'Culture', 'History'],
+    logo: '/images/logos/face2face.png',
+    logo2: '/images/logos/face2face-2.png'
+  },
+  {
+    name: 'Afram News',
+    url: 'https://aframnews.com/feed/',
+    purpose: 'The African American News and Issues Newspaper is to address current and historical issues that are impacting the African American community.',
+    categories: ['Business', 'Culture', 'Lifestyle'],
+    logo: '/images/logos/afram.png',
+    logo2: '/images/logos/afram-2.png'
+  },
+  // {
+  //   name: 'LA Sentinel',
+  //   url: 'https://lasentinel.net/feed',
+  //   purpose: '',
+  //   categories: ['Business', 'Culture', 'Sports', 'Lifestyle'],
+  //   logo: '',
+  //   logo2: ''
+  // },
+  {
+    name: 'Our Time Press',
+    url: 'https://ourtimepress.com/feed/',
+    purpose: 'The African American News and Issues Newspaper is to address current and historical issues that are impacting the African American community.',
+    categories: ['Culture'],
+    logo: '/images/logos/our-time.png',
+    logo2: '/images/logos/our-time-2.png'
+  },
+  {
+    name: 'Birmingham Times',
+    url: 'http://www.birminghamtimes.com/feed/',
+    purpose: 'Focuses on News from the Birmingham, Alabama Community.',
+    categories: ['Local', 'Culture'],
+    logo: '/images/logos/birmingham-times.png',
+    logo2: '/images/logos/birmingham-times-2.png'
+  },
+  {
+    name: 'Washington Informer',
+    url: 'https://www.washingtoninformer.com/feed/',
+    purpose: 'A Black, woman-owned multimedia news organization serving the African-Americans in the DMV.',
+    categories: ['Local', 'Politics'],
+    logo: '/images/logos/wash-inform.png',
+    logo2: '/images/logos/wash-inform-2.png'
+  },
+  {
+    name: 'SoulVision Magazine',
+    url: 'https://soulvisionmagazine.com/feed/',
+    purpose: 'Positive coverage of the urban community.',
+    categories: ['Culture'],
+    logo: '/images/logos/soul-vision.png',
+    logo2: '/images/logos/soul-vision-2.png'
+  },
+  {
+    name: 'TSDMemphis.com',
+    url: 'http://tri-statedefender.com/feed/',
+    purpose: 'Information. Inspiration. Elevation.',
+    categories: ['Local', 'Politics'],
+    logo: '/images/logos/tri-state.png',
+    logo2: '/images/logos/tri-state-2.png'
+  },
+  {
+    name: 'St. Louis American',
+    url: 'https://www.stlamerican.com/feed/',
+    purpose: 'The leading, most-trusted voice of the African-American community and largest weekly newspaper in the entire state of Missouri.',
+    categories: ['Local', 'Politics'],
+    logo: '/images/logos/st-louis.png',
+    logo2: '/images/logos/st-louis-2.png'
+  },
+  {
+    name: 'Nubian Message',
+    url: 'https://www.thenubianmessage.com/feed/',
+    purpose: 'Nubian Message is currently a biweekly publication and one of five student-run outlets within NC State Student Media.',
+    categories: ['Local', 'Culture'],
+    logo: '/images/logos/nubian-message.png',
+    logo2: '/images/logos/nubian-message-2.png'
+  },
+  {
+    name: 'Nation of Islam',
+    url: 'https://noi.org/feed/',
+    purpose: 'The Nation of Islam (The Nation of Peace) represents hope to millions of our people in America and around the globe who have been deprived of the high standards of a righteous way of life.',
+    categories: ['Religion', 'Culture'],
+    logo: '/images/logos/noi.png',
+    logo2: '/images/logos/noi-2.png'
+  },
+  {
+    name: 'Tennessee Tribune',
+    url: 'https://tntribune.com/feed/',
+    purpose: 'Unlike other weeklies that have lost touch with important issues facing today’s Black families, The Tribune offers a fresh and encouraging view on people and events that have a positive impact.',
+    categories: ['Local', 'Culture'],
+    logo: '/images/logos/ten-tribune.png',
+    logo2: '/images/logos/ten-tribune-2.png'
   },
 ];
 
