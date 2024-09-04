@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faNewspaper, faTag } from '@fortawesome/free-solid-svg-icons';
-import { faLaptopCode, faBriefcase, faHeartbeat, faFilm, faFootballBall, faFlask, faGraduationCap, faPlane, faDollarSign, faUtensils, faVenus, faBalanceScale, faTheaterMasks } from '@fortawesome/free-solid-svg-icons';
+import { faLaptopCode, faBriefcase, faHeartbeat, faFilm, faFootballBall, faFlask, faGraduationCap, faPlane, faDollarSign, faUtensils, faVenus, faBalanceScale, faTheaterMasks, faFilter } from '@fortawesome/free-solid-svg-icons';
 
 interface NewsMenuProps {
   sources: any[];
@@ -108,32 +108,43 @@ export default function NewsMenu({ sources, onSelect, onCategorySelect, isSideba
       }
     };
 
+    // Function to play sound effect
+    const playSound = () => {
+      const audio = new Audio('/sounds/finger-snap.wav'); // Ensure this path matches your sound file's location
+      audio.play();
+    };
+
+    const handleSidebarToggle = () => {
+      playSound(); // Play sound when sidebar is toggled
+      toggleSidebar(); // Toggle sidebar state
+    };
+
     return (
       <div>
         {/* Sidebar Toggle Button */}
         {!isSidebarOpen && (
-          <button onClick={toggleSidebar} className="lg:hidden mb-4 p-2 fixed top-4 left-4 z-50">
-            <FontAwesomeIcon icon={faBars} size="lg" /> {/* Open icon */}
+          <button onClick={handleSidebarToggle} className="lg:hidden mb-4 p-2 fixed top-4 right-4 z-40">
+            <FontAwesomeIcon icon={faFilter} size="xl" className='lg:hidden mb-4 p-2 fixed top-4 right-4 z-50' /> {/* Open icon */}
           </button>
         )}
     
         {/* Sidebar */}
-        <div className={`fixed top-0 left-0 w-72 bg-gray-200 h-screen p-4 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-50 overflow-y-auto overflow-x-hidden`}>
+        <div className={`fixed top-0 right-0 lg:left-0 w-72 bg-gray-200 h-screen p-4 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 z-40 overflow-y-auto overflow-x-hidden mt-[70px]`}>
           <div className="flex justify-between items-center mb-4">
-            <button onClick={toggleSidebar} className="lg:hidden ml-auto">
-              <FontAwesomeIcon icon={faTimes} size="lg" /> {/* Close icon */}
+            <button onClick={handleSidebarToggle} className="lg:hidden ml-auto">
+              <FontAwesomeIcon icon={faTimes} size="xl" /> {/* Close icon */}
             </button>
           </div>
 
           <div className="flex space-x-4 mb-8">
             <button
-              className={`px-2 py-2 ${activeTab === 'categories' ? 'button-active' : 'button-inactive'} `}
+              className={`button-2 ${activeTab === 'categories' ? 'button-active' : 'button-inactive'} `}
               onClick={() => setActiveTab('categories')}
             >
               Categories
             </button>
             <button
-              className={`px-2 py-2 ${activeTab === 'publications' ? 'button-active' : 'button-inactive'} `}
+              className={`button-2 ${activeTab === 'publications' ? 'button-active' : 'button-inactive'} `}
               onClick={() => handleTabClick('publications')}
             >
               Publications
@@ -146,7 +157,7 @@ export default function NewsMenu({ sources, onSelect, onCategorySelect, isSideba
                 <button
                   key={category}
                   onClick={() => handleCategoryClick(category)}
-                  className={`py-2 px-4 rounded-lg flex items-center ${selectedCategory === category ? 'button-active' : ''}`}
+                  className={`flex items-center button-4 ${selectedCategory === category ? 'button-active' : ''}`}
                 >
                   {/* Used a table to how more control in lining up categories and icons */}
                   <div className="table w-full">

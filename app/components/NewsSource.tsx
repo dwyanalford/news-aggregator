@@ -79,9 +79,9 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
   const logo = currentSourceData?.logo2;
 
   return (
-      <div id="news-source">
+      <div id="news-source" className='mt-16'>
         {/* Main Publication Title */}
-        <div className="flex flex-col md:flex-row items-center w-full space-x-4 mt-4 mb-4 ml-4 xl:mt-8 xl:mb-8 xl:ml-8">
+        <div className="flex flex-col md:flex-row items-center w-full space-x-4">
           {logo && <img src={logo} alt={`${name} logo`} className="rounded-t-lg shadow-xl" />} {/* Use the original size of the logo */}
           <div className="flex items-center pt-4"> {/* Center-align text vertically */}
             <p className="text-gray-700 text-xl font-light">{purpose}</p>
