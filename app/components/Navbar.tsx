@@ -6,10 +6,12 @@ import ActiveLink from './ActiveLink';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { useSession } from 'next-auth/react';
+import UserMenu from './UserMenu';  // Import UserMenu
 
 const Navbar = () => {
-  // State for managing menu visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { status } = useSession(); // Check session status for authenticated state
 
   // Function to toggle menu state
   const toggleMenu = () => {
@@ -25,7 +27,7 @@ const Navbar = () => {
 
       {/* Navbar */}
       <nav className="bg-gray-200 p-9 lg:p-4 shadow-lg fixed top-0 left-0 w-full z-40">
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="container mx-auto flex justify-between items-center pr-32">
           {/* Logo or Site Name */}
           <div className="text-gray-800 text-2xl font-bold fixed top-4 left-1/2 transform -translate-x-1/2 lg:left-16 lg:transform-none z-50">
             <Link href="/">Dwyan</Link>
@@ -50,14 +52,28 @@ const Navbar = () => {
             <ActiveLink href="/about">About</ActiveLink>
 
             {/* Contact Link */}
-            <ActiveLink href="/contact">Contact</ActiveLink>          
+            <ActiveLink href="/contact">Contact</ActiveLink>  
 
-            {/* Login Link */}
-            <ActiveLink href="/login">Login</ActiveLink>
+            {/* Dashboard Link - Visible only when logged in */}
+            {status === "authenticated" && (
+              <>
+                <ActiveLink href="/dashboard">Dashboard</ActiveLink>
+              </>
+            )}
 
-            {/* Register Link */}
-            <ActiveLink href="/register">Register</ActiveLink>
+            {/* Conditionally show Login/Register or UserMenu based on authentication */}
+            {status !== "authenticated" && (
+              <>
+                <ActiveLink href="/login">Login</ActiveLink>
+                <ActiveLink href="/register">Register</ActiveLink>
+              </>
+            )}
           </div>
+
+          {/* User Menu - Separate from the Main Menu */}
+          {status === "authenticated" && (
+            <UserMenu />
+          )}
         </div>
       </nav>
     </>

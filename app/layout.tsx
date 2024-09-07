@@ -1,7 +1,11 @@
+// app/layout.tsx
+"use client";
+
 import { Rubik } from "next/font/google";
 import "./globals.css";
 import NewsContainer from "./components/NewsContainer";
 import Navbar from "./components/Navbar";
+import { SessionProvider } from "next-auth/react";
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -22,8 +26,10 @@ export default function RootLayout({
         <link rel="icon" href="./favicon.png" />
       </head>
       <body className={rubik.className}>
-        <Navbar />
-        <NewsContainer>{children}</NewsContainer>
+        <SessionProvider>
+          <Navbar />
+          <NewsContainer>{children}</NewsContainer>
+        </SessionProvider>
       </body>
     </html>
   );
