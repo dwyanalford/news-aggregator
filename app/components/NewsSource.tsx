@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import NewsOptions from './NewsOptions';
+import SaveButton from './SaveButton';
 import blackAmericanData from '../data/blackAmericanData';
 
 interface NewsItem {
@@ -123,6 +124,15 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
                 <div id="news-options" className="flex flex-col mt-auto">
                   {/* <p className="text-sm text-gray-500 hidden xl:block pb-4 text-center">Source: {name}</p> */}
                   <NewsOptions link={link} />
+                  <SaveButton 
+          article={{ 
+            title, 
+            date: pubDate, 
+            link, 
+            summary: description ?? '', 
+            imageURL: articles[index]?.imageUrl ?? undefined  // Convert null to undefined
+          }} 
+        />
                 </div>
                 
                

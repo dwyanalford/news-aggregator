@@ -1,8 +1,12 @@
+// app/dashboard/page.tsx
+
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import SavedArticles from "@/app/components/SavedArticles";  // Import the SavedArticles component
+import Loading from "@/app/components/Loading";
 
 const DashboardPage = () => {
   const { data: session, status } = useSession();
@@ -15,7 +19,7 @@ const DashboardPage = () => {
   }, [status, router]); // Redirect on status change
 
   if (status === "loading") {
-    return <p>Loading...</p>; // Show a loading state while checking the session
+    return <Loading isLoading={true}  />;  // Use your custom Loading component here
   }
 
   return (
@@ -25,13 +29,11 @@ const DashboardPage = () => {
         Welcome, {session?.user?.name}! This is your user dashboard.
       </p>
 
-      {/* Additional dashboard content goes here */}
+      {/* Display Saved Articles */}
       <div className="p-6 border rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold mb-4">Your Saved Articles</h2>
-        <p className="text-gray-600">
-          Here you can view and manage your saved articles and tags.
-        </p>
-        {/* Placeholder for saved articles and tags */}
+        {/* Use the SavedArticles component here */}
+        <SavedArticles />
       </div>
 
       {/* Logout Button */}

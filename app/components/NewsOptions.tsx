@@ -34,9 +34,6 @@ const NewsOptions = ({ link }: { link: string }) => {
       <a href={link} target="_blank" rel="noopener noreferrer" title="View Article">
         <FontAwesomeIcon icon={faExternalLinkAlt} className="news-icon" />
       </a>
-      <a href="#" title="Save" className="text-yellow-500 hover:text-yellow-700">
-        <FontAwesomeIcon icon={faBookmark} className="news-icon" />
-      </a>
       <a href="#" title="Share on Twitter" onClick={shareOnTwitter}>
         <FontAwesomeIcon icon={faTwitter} className="news-icon" />
       </a>

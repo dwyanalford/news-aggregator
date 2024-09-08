@@ -24,6 +24,7 @@ model User {
   image          String?
   accounts       Account[]
   sessions       Session[]
+  savedArticles  SavedArticle[]
 }
 
 model Account {
@@ -50,3 +51,17 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
 }
+
+model SavedArticle {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  date      DateTime
+  link      String   @unique // Ensure unique link to avoid duplicate saves
+  summary   String
+  imageURL  String?
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId]) // Index to quickly query saved articles by user
+}
+
