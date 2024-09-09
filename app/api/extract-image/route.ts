@@ -1,8 +1,8 @@
 // app/api/extract-image/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import { JSDOM } from 'jsdom';
 import axios from 'axios';
+import * as cheerio from 'cheerio';
 
 const cache = new Map(); // Simple in-memory cache
 
@@ -20,27 +20,33 @@ export async function GET(req: NextRequest) {
 
   try {
     const { data: html } = await axios.get(url);
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+    const $ = cheerio.load(html);  // Load HTML using cheerio
 
-    const imageUrl = document.querySelector('meta[property="og:image"]')?.content
-      || document.querySelector('meta[name="twitter:image"]')?.content
-      || document.querySelector('article img')?.src
-      || '';
+    // Extract the image URL
+    const imageUrl =
+      $('meta[property="og:image"]').attr('content') ||
+      $('meta[name="twitter:image"]').attr('content') ||
+      $('article img').attr('src') ||
+      '';
 
-    // Find the first <p> with at least 100 characters and no "subscribe" text
-    const firstRelevantParagraph = Array.from(document.querySelectorAll('p'))
-      .map(p => p.textContent?.trim())
-      .find(text => text && text.length > 300);
+    // Find the first <p> with at least 300 characters and no "subscribe" text
+    const firstRelevantParagraph = $('p')
+      .map((_, el) => $(el).text().trim())
+      .toArray()
+      .find(text => text.length > 300) || 'No summary available';
 
-    const firstParagraph = firstRelevantParagraph || 'No summary available';
-
-    const result = { imageUrl, firstParagraph };
+    const result = { imageUrl, firstParagraph: firstRelevantParagraph };
     cache.set(url, result);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error(`Failed to fetch or parse article at ${url}: ${error.message}`);
-    return NextResponse.json({ error: 'Failed to extract image or content' }, { status: 500 });
+    // Narrow the type of error to access the message property safely
+    if (error instanceof Error) {
+      console.error(`Failed to fetch or parse article at ${url}: ${error.message}`);
+      return NextResponse.json({ error: 'Failed to extract image or content' }, { status: 500 });
+    } else {
+      console.error(`Unknown error occurred: ${String(error)}`);
+      return NextResponse.json({ error: 'An unknown error occurred' }, { status: 500 });
+     }
   }
 }

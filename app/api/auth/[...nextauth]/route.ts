@@ -1,7 +1,7 @@
 // app/api/auth/[...nextauth]/route.ts
 
 import NextAuth, { NextAuthOptions, User, Session } from 'next-auth';
-import { JWT, AdapterUser } from 'next-auth/jwt';  // Import JWT type for token
+import { JWT } from 'next-auth/jwt';  // Import JWT type for token
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/lib/prisma';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User | AdapterUser | undefined }): Promise<JWT> {
+    async jwt({ token, user }: { token: JWT; user?: User | undefined }): Promise<JWT> {
       if (user && user.id) {  // Safely check if user and user.id are defined
         token.id = user.id;
       }
