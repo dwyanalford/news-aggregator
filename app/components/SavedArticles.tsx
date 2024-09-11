@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import ArticleRemoveButton from './ArticleRemoveButton';
 
 interface Article {
   id: string;
@@ -39,6 +40,10 @@ const SavedArticles = () => {
     }
   }, [session]);
 
+  const handleRemove = (link: string) => {
+    setArticles((prevArticles) => prevArticles.filter(article => article.link !== link));
+  };
+
   if (!session) return <p>Please log in to view your saved articles.</p>;
   if (loading) return <p>Loading saved articles...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -56,14 +61,18 @@ const SavedArticles = () => {
               <h2 className="text-xl font-bold">{article.title}</h2>
               <p className="text-gray-600">{new Date(article.date).toLocaleDateString()}</p>
               <p className="mt-2">{article.summary}</p>
-              <a
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline mt-2 inline-block"
-              >
-                Read More
-              </a>
+              <div className="flex items-center space-x-6 mt-4"> 
+                <a
+                  href={article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="button-inactive"
+                >
+                  Read More
+                </a>
+                {/* Add RemoveButton for each article */}
+                <ArticleRemoveButton link={article.link} onRemove={() => handleRemove(article.link)} />
+              </div>
             </div>
           ))}
         </div>

@@ -16,15 +16,15 @@ datasource db {
 // Model definitions
 
 model User {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
-  email          String  @unique
+  email          String        @unique
   password       String
   emailVerified  DateTime?
   image          String?
   accounts       Account[]
   sessions       Session[]
-  savedArticles  SavedArticle[]
+  savedArticles  UserSavedArticle[] // Use the join table to manage relationship
 }
 
 model Account {
@@ -56,12 +56,21 @@ model SavedArticle {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   date      DateTime
-  link      String   @unique // Ensure unique link to avoid duplicate saves
+  link      String   @unique
   summary   String
   imageURL  String?
-  userId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId]) // Index to quickly query saved articles by user
+  users     UserSavedArticle[]
 }
 
+// create an explicit relation model to represent the many-to-many relationship between User and SavedArticle
+
+model UserSavedArticle {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String       @db.ObjectId
+  articleId    String       @db.ObjectId
+  user         User         @relation(fields: [userId], references: [id])
+  savedArticle SavedArticle @relation(fields: [articleId], references: [id])
+
+  @@index([userId])
+  @@index([articleId])
+}
