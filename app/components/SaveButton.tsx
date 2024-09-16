@@ -25,6 +25,7 @@ const SaveButton: React.FC<SaveButtonProps> = ({ article }) => {
     if (!session) return; // Only allow saving if the user is authenticated
 
     try {
+      // Pass both cleaned summary and raw description to the save API
       const response = await axios.post("/api/articles/save", article);
       if (response.status === 200) {
         setIsSaved(true);

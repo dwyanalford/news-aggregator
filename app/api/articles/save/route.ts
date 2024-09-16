@@ -1,3 +1,5 @@
+// app/api/articles/save/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
@@ -13,7 +15,9 @@ export async function POST(req: NextRequest) {
   }
 
   const userId = session.user.id; // Get the user's ID from the session
-  const { title, date, link, summary, imageURL } = await req.json(); // Extract article data from the request
+  const { title, date, link, summary, imageURL } = await req.json(); // Extract article data from the request, defaulting description to an empty string if undefined
+
+  console.log('Received data:', { title, date, link, summary, imageURL }); // Log received data
 
   if (!title || !date || !link || !summary) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 }); // Validate required fields
@@ -32,7 +36,7 @@ export async function POST(req: NextRequest) {
           title: title as string, // Ensure title is a string
           date: new Date(date), // Ensure date is a Date object
           link: link as string, // Ensure link is a string
-          summary: summary as string, // Ensure summary is a string
+          summary: summary,
           imageURL: imageURL ? (imageURL as string) : null, // Ensure optional fields are correctly handled
         },
       });

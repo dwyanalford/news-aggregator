@@ -92,55 +92,55 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
         {/* --------------------------------------------------------------------- */}
 
         <div id="news-container" className='flex flex-wrap justify-center'>
-          {items.map(({ title, pubDate, link, description, author }, index) => (
-          <div
-          key={index}
-          id="news-articles"
-          className="transition-transform transform hover:scale-105 md:w-1/2 lg:w-1/2 2xl:w-1/3 p-4 2xl:mb-6"
-          >
-            <div id="news-content" className="h-full flex flex-col shadow-lg rounded-t-lg p-1 border border-gray-200">
-              {/* Articles Image */}
-              <div id="articles-image" className="w-full h-60 max-w-md"> 
-                {articles[index]?.imageUrl && (
-                  <img
-                    src={articles[index].imageUrl}
-                    alt={title}
-                    className="w-full h-full object-cover rounded-t-lg"
-                    loading='lazy'
-                  />
-                )}
-              </div>
+          {items.map(({ title, pubDate, link, description, author }, index) => {
+            const rawDescription = description ?? ''; // Directly use the description field without parsing
+            
+            return (
+              <div
+                key={index}
+                id="news-articles"
+                className="transition-transform transform hover:scale-105 md:w-1/2 lg:w-1/2 2xl:w-1/3 p-4 2xl:mb-6"
+              >
+                <div id="news-content" className="h-full flex flex-col shadow-lg rounded-t-lg p-1 border border-gray-200">
+                  {/* Articles Image */}
+                  <div id="articles-image" className="w-full h-60 max-w-md"> 
+                    {articles[index]?.imageUrl && (
+                      <img
+                        src={articles[index].imageUrl}
+                        alt={title}
+                        className="w-full h-full object-cover rounded-t-lg"
+                        loading='lazy'
+                      />
+                    )}
+                  </div>
 
-              {/* Articles Text */}
-              <div id="articles-text" className="text-left p-2 2xl:p-4 max-w-md">
-                <p className="text-sm text-gray-500 pt-3 2xl:pt-0 2xl:pb-2">{formatPubDate(pubDate)}</p>
-                <h2 className="text-xl font-bold pt-3 2xl:pt-0">{title}</h2>
-                <div className="hidden sm:block pt-3 2xl:pt-4">
-                  <p className="text-gray-800 font-light text-lg">
-                    <strong>Excerpt:</strong> {truncateSummary(articles[index]?.firstParagraph || 'No summary available')}
-                  </p>
+                  {/* Articles Text */}
+                  <div id="articles-text" className="text-left p-2 2xl:p-4 max-w-md">
+                    <p className="text-sm text-gray-500 pt-3 2xl:pt-0 2xl:pb-2">{formatPubDate(pubDate)}</p>
+                    <h2 className="text-xl font-bold pt-3 2xl:pt-0">{title}</h2>
+                    <div className="hidden sm:block pt-3 2xl:pt-4">
+                      <p className="text-gray-800 font-light text-lg">
+                        <strong>Excerpt:</strong> {truncateSummary(articles[index]?.firstParagraph || 'No summary available')}
+                      </p>
+                    </div>
+                  </div>
+                  <div id="news-options" className="flex flex-col mt-auto">
+                    {/* <p className="text-sm text-gray-500 hidden xl:block pb-4 text-center">Source: {name}</p> */}
+                    <NewsOptions link={link} />
+                    <SaveButton 
+                        article={{ 
+                          title, 
+                          date: pubDate, 
+                          link, 
+                          summary: rawDescription,  // Use the raw description from RSS feed
+                          imageURL: articles[index]?.imageUrl ?? undefined  // imageURL remains as is
+                        }} 
+                    />
+                  </div>
                 </div>
-                </div>
-                <div id="news-options" className="flex flex-col mt-auto">
-                  {/* <p className="text-sm text-gray-500 hidden xl:block pb-4 text-center">Source: {name}</p> */}
-                  <NewsOptions link={link} />
-                  <SaveButton 
-          article={{ 
-            title, 
-            date: pubDate, 
-            link, 
-            summary: description ?? '', 
-            imageURL: articles[index]?.imageUrl ?? undefined  // Convert null to undefined
-          }} 
-        />
-                </div>
-                
-               
-              {/* end of Articles text here */}
-            </div>
-          </div> 
-              
-        ))}
+              </div> 
+            );
+          })}
          </div>  
       </div>
   );
