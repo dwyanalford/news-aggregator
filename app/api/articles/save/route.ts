@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
           title: title as string, // Ensure title is a string
           date: new Date(date), // Ensure date is a Date object
           link: link as string, // Ensure link is a string
-          summary: summary,
+          summary: summary as string,
           imageURL: imageURL ? (imageURL as string) : null, // Ensure optional fields are correctly handled
         },
       });

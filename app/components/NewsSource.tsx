@@ -93,7 +93,6 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
 
         <div id="news-container" className='flex flex-wrap justify-center'>
           {items.map(({ title, pubDate, link, description, author }, index) => {
-            const rawDescription = description ?? ''; // Directly use the description field without parsing
             
             return (
               <div
@@ -128,13 +127,13 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
                     {/* <p className="text-sm text-gray-500 hidden xl:block pb-4 text-center">Source: {name}</p> */}
                     <NewsOptions link={link} />
                     <SaveButton 
-                        article={{ 
-                          title, 
-                          date: pubDate, 
-                          link, 
-                          summary: rawDescription,  // Use the raw description from RSS feed
-                          imageURL: articles[index]?.imageUrl ?? undefined  // imageURL remains as is
-                        }} 
+                      article={{ 
+                        title, 
+                        date: pubDate, 
+                        link, 
+                        summary: truncateSummary(articles[index]?.firstParagraph || 'No summary available'),  // Truncated summary passed to SaveButton
+                        imageURL: articles[index]?.imageUrl ?? undefined  
+                      }} 
                     />
                   </div>
                 </div>
