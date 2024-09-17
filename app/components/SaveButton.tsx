@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface SaveButtonProps {
   article: {
@@ -15,40 +15,44 @@ interface SaveButtonProps {
     summary: string;
     imageURL?: string;
   };
+  isSaved: boolean;  // New prop to indicate if the article is saved
+  onArticleSaved: (link: string) => void;  // Callback function to notify parent component
 }
 
-const SaveButton: React.FC<SaveButtonProps> = ({ article }) => {
+const SaveButton: React.FC<SaveButtonProps> = ({ article, isSaved, onArticleSaved }) => {
   const { data: session } = useSession();
-  const [isSaved, setIsSaved] = useState(false);
 
   const handleSaveArticle = async () => {
     if (!session) return; // Only allow saving if the user is authenticated
 
     try {
-      // Pass both cleaned summary and raw description to the save API
       const response = await axios.post("/api/articles/save", article);
       if (response.status === 200) {
-        setIsSaved(true);
+        onArticleSaved(article.link);  // Use parent callback to notify saved state
       }
     } catch (error) {
       console.error("Failed to save article:", error);
     }
   };
 
-  // Render nothing if the user is not authenticated
   if (!session) return null;
 
   return (
     <button
-      title="Save"
-      className="text-yellow-500 hover:text-yellow-700"
+      title={isSaved ? "Saved" : "Save"}
+      className={`${
+        isSaved 
+          ? 'border-2 border-green-500 text-green-500 hover:text-green-700' 
+          : 'button-inactive'
+      } px-4 py-2 rounded-md flex items-center`}
       onClick={handleSaveArticle}
       disabled={isSaved}  // Disable button if the article is already saved
     >
-      <FontAwesomeIcon icon={faBookmark} className="news-icon" />Save
-      {isSaved && <span className="text-xs ml-2">Saved</span>}
+      <FontAwesomeIcon icon={isSaved ? faCheck : faBookmark} className="news-icon mr-2" />
+      {isSaved ? 'Saved' : 'Save'}
     </button>
   );
 };
+
 
 export default SaveButton;

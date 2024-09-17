@@ -5,6 +5,7 @@ import axios from 'axios';
 import NewsOptions from './NewsOptions';
 import SaveButton from './SaveButton';
 import blackAmericanData from '../data/blackAmericanData';
+import { useSavedArticlesStore } from '@/app/store/useSavedArticlesStore'
 
 interface NewsItem {
   name: any;
@@ -50,6 +51,22 @@ function truncateSummary(summary: string, maxLength: number = 252): string {
 export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
   const [articles, setArticles] = useState<Record<number, { imageUrl: string | null, firstParagraph: string }>>({});
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({}); // State to track loading images
+  
+  // Use Zustand store
+  const savedArticles = useSavedArticlesStore((state) => state.savedArticles); // Use Zustand state
+  const fetchSavedArticles = useSavedArticlesStore((state) => state.fetchSavedArticles); // Use Zustand action
+  const addSavedArticle = useSavedArticlesStore((state) => state.addSavedArticle); // Use Zustand action
+
+  // Fetch saved articles when the component mounts and synchronize state
+  useEffect(() => {
+    fetchSavedArticles(); // Fetch saved articles from Zustand when the component mounts
+  }, []);
+
+  const handleArticleSaved = (link: string) => {
+    if (!savedArticles.includes(link)) {
+      addSavedArticle(link); // Use Zustand action to add saved article
+    }
+  };
 
   // Instead of fetching each article one at a time, use Promise.all to fetch all articles in parallel, 
   // which will reduce the total loading time.
@@ -134,6 +151,8 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
                         summary: truncateSummary(articles[index]?.firstParagraph || 'No summary available'),  // Truncated summary passed to SaveButton
                         imageURL: articles[index]?.imageUrl ?? undefined  
                       }} 
+                      isSaved={savedArticles.includes(link)}  // Pass down a prop to indicate if the article is saved
+                      onArticleSaved={handleArticleSaved}  // Pass down the callback to handle saved state
                     />
                   </div>
                 </div>
