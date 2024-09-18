@@ -23,15 +23,15 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 bg-gray-200">
       <h1 className="text-4xl font-bold mb-6">User Dashboard</h1>
-      <p className="text-lg text-gray-700 mb-8">
+      <p className="text-xl font-light text-gray-700 mb-8">
         Welcome, {session?.user?.name}! This is your user dashboard.
       </p>
 
       {/* Display Saved Articles */}
-      <div className="p-6 border rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">Your Saved Articles</h2>
+      <div className="p-6 border rounded-lg shadow-lg bg-gray-200">
+        <h2 className="text-2xl font-light mb-4">Your Saved Articles</h2>
         {/* Use the SavedArticles component here */}
         <SavedArticles />
       </div>

@@ -13,18 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Model definitions
-
 model User {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  name           String?
-  email          String        @unique
-  password       String
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  savedArticles  UserSavedArticle[] // Use the join table to manage relationship
+  id                    String                @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String?
+  email                 String                @unique
+  password              String
+  emailVerified         DateTime?
+  image                 String?
+  accounts              Account[]             @relation("UserToAccount")  // Relation to Account
+  sessions              Session[]             @relation("UserToSession")  // Relation to Session
+  savedArticles         UserSavedArticle[]    @relation("UserToUserSavedArticle")  // Relation to UserSavedArticle
+  userSavedArticleTags  UserSavedArticleTag[] @relation("UserToUserSavedArticleTags")
 }
 
 model Account {
@@ -33,7 +32,8 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  user              User    @relation(fields: [userId], references: [id])
+  user              User    @relation(fields: [userId], references: [id], name: "UserToAccount") // Relation to User
+
   @@unique([provider, providerAccountId])
 }
 
@@ -42,35 +42,41 @@ model Session {
   sessionToken String   @unique
   userId       String   @db.ObjectId
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id])
-}
-
-model VerificationToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  user         User     @relation(fields: [userId], references: [id], name: "UserToSession") // Relation to User
 }
 
 model SavedArticle {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String                @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   date      DateTime
-  link      String   @unique
+  link      String                @unique
   summary   String
   imageURL  String?
-  users     UserSavedArticle[]
+  users     UserSavedArticle[]    @relation("SavedArticleToUserSavedArticle")  // Relation to UserSavedArticle
 }
-
-// create an explicit relation model to represent the many-to-many relationship between User and SavedArticle
 
 model UserSavedArticle {
-  id           String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String       @db.ObjectId
-  articleId    String       @db.ObjectId
-  user         User         @relation(fields: [userId], references: [id])
-  savedArticle SavedArticle @relation(fields: [articleId], references: [id])
-
-  @@index([userId])
-  @@index([articleId])
+  id                   String                @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String                @db.ObjectId
+  articleId            String                @db.ObjectId
+  user                 User                  @relation(fields: [userId], references: [id], name: "UserToUserSavedArticle")
+  savedArticle         SavedArticle          @relation(fields: [articleId], references: [id], name: "SavedArticleToUserSavedArticle")
+  userSavedArticleTags UserSavedArticleTag[] @relation("UserSavedArticleToUserSavedArticleTags") 
 }
+
+model Tag {
+  id                  String                 @id @default(auto()) @map("_id") @db.ObjectId
+  name                String                 
+  userSavedArticleTags UserSavedArticleTag[]  @relation("TagToUserSavedArticleTags")  // Relation to UserSavedArticleTag
+}
+
+model UserSavedArticleTag {
+  id                  String            @id @default(auto()) @map("_id") @db.ObjectId
+  userSavedArticleId  String            @db.ObjectId
+  tagId               String            @db.ObjectId
+  userId              String            @db.ObjectId  // New field to link the tag to a specific user
+  userSavedArticle    UserSavedArticle  @relation(fields: [userSavedArticleId], references: [id], name: "UserSavedArticleToUserSavedArticleTags")
+  tag                 Tag               @relation(fields: [tagId], references: [id], name: "TagToUserSavedArticleTags")
+  user                User              @relation(fields: [userId], references: [id], name: "UserToUserSavedArticleTags")  // New relation to User
+}
+

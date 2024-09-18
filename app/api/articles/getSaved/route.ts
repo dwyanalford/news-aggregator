@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     const savedArticles = await prisma.userSavedArticle.findMany({
       where: { userId },
       select: {
+        id: true,  // Include userSavedArticleId
         savedArticle: {  // Join and select from the related SavedArticle model
           select: {
             id: true,
@@ -35,8 +36,11 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Extract savedArticle objects from the userSavedArticle array to return
-    const articles = savedArticles.map((userSavedArticle) => userSavedArticle.savedArticle);
+    // Map the response to include both userSavedArticleId and article data
+    const articles = savedArticles.map((userSavedArticle) => ({
+      userSavedArticleId: userSavedArticle.id,  // Include userSavedArticleId in the response
+      ...userSavedArticle.savedArticle,  // Spread savedArticle fields
+    }));
 
     return NextResponse.json(articles, { status: 200 });
   } catch (error) {
