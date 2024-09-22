@@ -3,43 +3,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust the import if needed
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions); // Fetch the user session
+  const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }); // Return error if not authenticated
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Extract articleId from the request URL
   const articleId = req.nextUrl.searchParams.get('articleId');
 
-  if (!articleId) {
-    return NextResponse.json({ error: 'articleId is required' }, { status: 400 });
-  }
-
   try {
-    /// Fetch all tags created by the authenticated user for the specific article
+    // If no articleId is provided, fetch all tags created by the user
+    if (!articleId) {
+      const tags = await prisma.tag.findMany({
+        where: {
+          userSavedArticleTags: {
+            some: {
+              userId: session.user.id,  // Fetch only the user's tags
+            },
+          },
+        },
+      });
+
+      return NextResponse.json(tags, { status: 200 });
+    }
+
+    // If articleId is provided, fetch tags related to that article
     const tags = await prisma.tag.findMany({
       where: {
         userSavedArticleTags: {
           some: {
             userSavedArticle: {
-              articleId: articleId,  // Filter by the article ID
+              articleId: articleId,
             },
-            userId: session.user.id,  // Filter by the logged-in user's ID
+            userId: session.user.id,
           },
         },
       },
     });
 
-    return NextResponse.json(tags, { status: 200 }); // Return the tags
-
+    return NextResponse.json(tags, { status: 200 });
   } catch (error) {
     console.error("Error fetching tags:", error);
-    return NextResponse.json({ error: 'Failed to fetch tags' }, { status: 500 }); // Return error response
+    return NextResponse.json({ error: 'Failed to fetch tags' }, { status: 500 });
   }
 }

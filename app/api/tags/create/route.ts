@@ -7,6 +7,14 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust the 
 
 const prisma = new PrismaClient();
 
+const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions); // Fetch the user session
@@ -54,9 +62,10 @@ export async function POST(req: NextRequest) {
 
     // Step 2: Create a new tag if it does not exist
     console.log('No existing tag found, creating new tag with name:', name); // Log before creating new tag
+    const newTag = toTitleCase(name);  // Convert to title case
     const tag = await prisma.tag.create({
       data: {
-        name,
+        name: newTag,
       },
     });
 

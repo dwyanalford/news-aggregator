@@ -4,13 +4,77 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import SavedArticles from "@/app/components/SavedArticles";  // Import the SavedArticles component
+import { useEffect, useState } from "react";
+import SavedArticles from "@/app/components/SavedArticles";
+import TagFilterMenu from "@/app/components/TagFilterMenu";
 import Loading from "@/app/components/Loading";
+
+// Define the Article type
+interface Article {
+  id: string;
+  title: string;
+  date: string;
+  link: string;
+  summary: string;
+  imageURL: string;
+  tags: string[];  // Assuming each article has a `tags` array containing tag names
+}
 
 const DashboardPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [selectedTag, setSelectedTag] = useState<string>('ALL');  // State to manage the selected tag
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);  // Sidebar open/close state
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);  // Function to toggle sidebar
+  const [articles, setArticles] = useState<Article[]>([]);  // State for all saved articles
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);  // State for filtered articles
+
+  const handleFilter = (tagName: string) => {
+    console.log('Selected Tag:', tagName);  // Debugging: Log selected tag
+    setSelectedTag(tagName);  // Update the selected tag
+  
+    if (tagName === 'ALL') {
+      console.log('Showing all articles');
+      setFilteredArticles(articles);  // Show all articles if "ALL" is selected
+    } else {
+      // Filter articles by the selected tag
+      const filtered = articles.filter(article => {
+        console.log('Checking article:', article.title, 'Tags:', article.tags);  // Debugging: Log each article's tags
+        return Array.isArray(article.tags) && article.tags.includes(tagName);  // Check if tags is an array and includes the selected tag
+      });
+      console.log('Filtered Articles:', filtered);  // Debugging: Log filtered articles
+      setFilteredArticles(filtered);  // Update state with filtered articles
+    }
+  };
+  
+  
+  
+  useEffect(() => {
+    if (session) {
+      // Fetch saved articles from the backend
+      fetch('/api/articles/getSaved')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch saved articles');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Ensure each article has a `tags` array
+          const articlesWithTags = data.map((article: any) => ({
+            ...article,
+            tags: article.tags || [],  // Ensure tags is an array, even if empty
+          }));
+  
+          setArticles(articlesWithTags);  // Set all saved articles
+          setFilteredArticles(articlesWithTags);  // Set filtered articles to show all initially
+        })
+        .catch((error) => {
+          console.error('Failed to fetch articles:', error);
+        });
+    }
+  }, [session]);
+   
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -23,27 +87,41 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-8 bg-gray-200">
-      <h1 className="text-4xl font-bold mb-6">User Dashboard</h1>
-      <p className="text-xl font-light text-gray-700 mb-8">
-        Welcome, {session?.user?.name}! This is your user dashboard.
-      </p>
-
-      {/* Display Saved Articles */}
-      <div className="p-6 border rounded-lg shadow-lg bg-gray-200">
-        <h2 className="text-2xl font-light mb-4">Your Saved Articles</h2>
-        {/* Use the SavedArticles component here */}
-        <SavedArticles />
+    <>
+      <div className="flex">
+        {/* Sidebar for Tag Filtering */}
+        <div className={`fixed top-0 right-0 lg:left-0 w-72 bg-gray-200 h-screen p-4 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 z-40 overflow-y-auto overflow-x-hidden mt-[70px]`}>
+          <TagFilterMenu
+            tags={[]}  // This will be fetched and populated using fetchUserTags
+            onFilter={handleFilter}  // Function to handle filtering based on selected tag
+            isSidebarOpen={isSidebarOpen}  // Sidebar open/close state
+            toggleSidebar={toggleSidebar}  // Function to toggle sidebar
+          />
+        </div>
       </div>
 
-      {/* Logout Button */}
-      <button
-        className="mt-8 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-        onClick={() => signOut()}
-      >
-        Logout
-      </button>
-    </div>
+      <div className="container mx-auto p-8 bg-gray-200 ml-80">
+        <h1 className="text-4xl font-bold mb-6">User Dashboard</h1>
+        <p className="text-xl font-light text-gray-700 mb-8">
+          Welcome, {session?.user?.name}! This is your user dashboard.
+        </p>
+
+        {/* Display Saved Articles */}
+        <div className="p-6 border rounded-lg shadow-lg bg-gray-200">
+          <h2 className="text-2xl font-light mb-4">Your Saved Articles</h2>
+          {/* Use the SavedArticles component here */}
+          <SavedArticles filteredArticles={filteredArticles} />
+        </div>
+
+        {/* Logout Button */}
+        <button
+          className="mt-8 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          onClick={() => signOut()}
+        >
+          Logout
+        </button>
+      </div>
+    </>
   );
 };
 

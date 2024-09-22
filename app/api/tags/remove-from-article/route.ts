@@ -26,7 +26,7 @@ export async function DELETE(req: NextRequest) {
 
     // Step 1: Find the UserSavedArticle by articleId
     const userSavedArticle = await prisma.userSavedArticle.findFirst({
-      where: { articleId },
+      where: { articleId, userId: session.user.id },  // Make sure this is for the specific user
     });
 
     if (!userSavedArticle) {
@@ -39,18 +39,24 @@ export async function DELETE(req: NextRequest) {
     const associationCount = await prisma.userSavedArticleTag.count({
       where: { tagId },
     });
+    
+    console.log('Number of Associations:', associationCount)
 
     if (associationCount > 1) {
-      // Step 3: More than one association exists, delete only the UserSavedArticleTag association
+      console.log('More than one association exists, deleting only the UserSavedArticleTag.');
+      // Step 3: If more than one association exists, delete only the UserSavedArticleTag association
       await prisma.userSavedArticleTag.deleteMany({
         where: {
           userSavedArticleId: userSavedArticleId,
           tagId: tagId,
         },
       });
+
       console.log('Removed association between UserSavedArticle and Tag.');
+      
     } else if (associationCount === 1) {
       // Step 3: Only one association exists, delete the UserSavedArticleTag association and the Tag itself
+      console.log('Only one association exists, deleting the association and tag.');
       await prisma.userSavedArticleTag.deleteMany({
         where: {
           userSavedArticleId: userSavedArticleId,
