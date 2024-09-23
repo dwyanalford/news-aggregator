@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SavedArticles from "@/app/components/SavedArticles";
 import TagFilterMenu from "@/app/components/TagFilterMenu";
+import { fetchUserTags } from '@/app/utils/fetchUserTagsUtils';
 import Loading from "@/app/components/Loading";
 
 // Define the Article type
@@ -28,6 +29,7 @@ const DashboardPage = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);  // Function to toggle sidebar
   const [articles, setArticles] = useState<Article[]>([]);  // State for all saved articles
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);  // State for filtered articles
+  const [userTags, setUserTags] = useState<string[]>([]);  // State to store all tags
 
   const handleFilter = (tagName: string) => {
     console.log('Selected Tag:', tagName);  // Debugging: Log selected tag
@@ -46,6 +48,15 @@ const DashboardPage = () => {
       setFilteredArticles(filtered);  // Update state with filtered articles
     }
   };
+
+   // Fetch all user tags when the component loads
+   useEffect(() => {
+    fetchUserTags().then((tags) => {
+      setUserTags(tags);  // Update the state with fetched tags
+    }).catch((error) => {
+      console.error('Error fetching user tags:', error);  // Error handling
+    });
+  }, []);
   
   
   
@@ -92,7 +103,8 @@ const DashboardPage = () => {
         {/* Sidebar for Tag Filtering */}
         <div className={`fixed top-0 right-0 lg:left-0 w-72 bg-gray-200 h-screen p-4 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 z-40 overflow-y-auto overflow-x-hidden mt-[70px]`}>
           <TagFilterMenu
-            tags={[]}  // This will be fetched and populated using fetchUserTags
+            tags={userTags}  // This will be fetched and populated using fetchUserTags
+            setUserTags={setUserTags}  // Pass setUserTags to the sidebar
             onFilter={handleFilter}  // Function to handle filtering based on selected tag
             isSidebarOpen={isSidebarOpen}  // Sidebar open/close state
             toggleSidebar={toggleSidebar}  // Function to toggle sidebar
@@ -110,7 +122,12 @@ const DashboardPage = () => {
         <div className="p-6 border rounded-lg shadow-lg bg-gray-200">
           <h2 className="text-2xl font-light mb-4">Your Saved Articles</h2>
           {/* Use the SavedArticles component here */}
-          <SavedArticles filteredArticles={filteredArticles} />
+          <SavedArticles 
+          userTags={userTags}   // This will be fetched and populated using fetchUserTags
+          setUserTags={setUserTags}  // Pass setUserTags to the sidebar
+          fetchUserTags={fetchUserTags} 
+          filteredArticles={filteredArticles}
+           />
         </div>
 
         {/* Logout Button */}

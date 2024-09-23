@@ -16,6 +16,9 @@ interface Article {
 
 interface SavedArticlesProps {
   filteredArticles: Article[];  // Accept an array of Article objects as a prop
+  userTags: string[];  // Tags from parent component
+  setUserTags: (tags: string[]) => void;  // Function to update tags in real time
+  fetchUserTags: (articleId?: string) => Promise<any>; 
 }
 
 interface Tag {
@@ -23,7 +26,7 @@ interface Tag {
   name: string;
 }
 
-const SavedArticles = ({ filteredArticles }: SavedArticlesProps) => {
+const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags }: SavedArticlesProps) => {
   const { data: session } = useSession();  // Ensure user is authenticated
   const [articles, setArticles] = useState<Article[]>([]);
   const [tags, setTags] = useState<Record<string, Tag[]>>({}); // Store tags by article ID
@@ -32,6 +35,7 @@ const SavedArticles = ({ filteredArticles }: SavedArticlesProps) => {
   const [activeInput, setActiveInput] = useState<string | null>(null); // Track which input is active
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
 
   useEffect(() => {
     if (session) {
@@ -140,32 +144,34 @@ const SavedArticles = ({ filteredArticles }: SavedArticlesProps) => {
     if (!newTag?.trim()) return;
 
     try {
-      const response = await axios.post('/api/tags/create', { name: newTag }, { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('/api/tags/create', { name: newTag });
+        let tag = response.data;
 
-      let tag;
-      if (response.status === 201) {
-        tag = response.data;
-      } else if (response.status === 200) {
-        tag = response.data;
-      } else {
-        return;
-      }
+        // Check if the tag already exists in the sidebar before adding it
+        if (!userTags.includes(tag.name)) {
+            const updatedTags: string[] = [...userTags, tag.name];
+            setUserTags(updatedTags.sort());  // Alphabetically sort tags and update sidebar
+        }
 
-      await axios.post('/api/tags/add-to-article', { articleId, tagId: tag.id });
+        setNewTags((prevTags) => ({
+            ...prevTags,
+            [articleId]: '',  // Clear input for this article only
+        }));
 
-      setTags((prevTags) => ({
-        ...prevTags,
-        [articleId]: [...(prevTags[articleId] || []), tag],
-      }));
+        // Refetch the updated tags from the backend to make sure it's saved correctly
+        await fetchTags(articleId);  // This ensures that tags are refreshed in the sidebar
 
-      setNewTags((prevTags) => ({
-        ...prevTags,
-        [articleId]: '',  // Clear input for this article only
-      }));
     } catch (error) {
-      console.error('Failed to add tag:', error);
+        console.error('Failed to add tag:', error);
     }
-  };
+};
+
+  
+  
+  
+  
+  
+  
 
   const handleRemoveTag = async (articleId: string, tagId: string): Promise<void> => {
     try {

@@ -4,43 +4,38 @@
 
 import { useState, useEffect } from 'react';
 import SidebarMenu from './SidebarMenu';  // Import the reusable SidebarMenu component
-import { fetchUserTags } from '@/app/utils/fetchUserTagsUtils'; 
 
 interface TagFilterMenuProps {
     tags: string[];  // Array of tag names
+    setUserTags: (tags: string[]) => void;  // Function to update the tags in real time
     onFilter: (tagName: string) => void;  // Function to handle filtering by tag
     isSidebarOpen: boolean;  // Sidebar open/close state
     toggleSidebar: () => void;  // Function to toggle sidebar
 }
 
-export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSidebar }: TagFilterMenuProps) {
-    const [userTags, setUserTags] = useState<string[]>([]);  // State to store fetched user tags
+export default function TagFilterMenu({ tags, setUserTags, onFilter, isSidebarOpen, toggleSidebar }: TagFilterMenuProps) {
     const [selectedTag, setSelectedTag] = useState<string>('ALL');  // State to manage selected tag
+    const [userTags, setLocalUserTags] = useState<string[]>(tags);  // Local state to store fetched user tags
+
+  useEffect(() => {
+    setLocalUserTags(tags);  // Update local state when props change
+  }, [tags]);  // Update the sidebar when the tags prop changes
   
-    // Fetch user tags when the component loads
-    useEffect(() => {
-      fetchUserTags().then((tags) => {
-        setUserTags(tags);  // Always fetch all user tags here
-        console.log('Fetched user tags:', tags);  // Debugging: Log fetched tags
-      }).catch((error) => {
-        console.error('Error fetching user tags:', error);  // Error handling
-      });
-    }, []);  // Run only once on component mount
   
-    // Handle tag click to filter articles
-    const handleTagClick = (tag: string) => {
-      console.log('Selected Tag:', tag);  // Debugging: Log selected tag to check if the function is called correctly
-      setSelectedTag(tag);  // Set selected tag
-      onFilter(tag);  // Trigger the filter callback with the selected tag
-    };
-  
-    // Sidebar items including "ALL" tab and user tags
-    const sidebarItems = ['ALL', ...userTags].map(tag => ({ name: tag }));  // "ALL" tab at the top
-    console.log('Sidebar Items:', sidebarItems);  // Debugging: Log sidebar items
+  // Handle tag click to filter articles
+  const handleTagClick = (tag: string) => {
+    const updatedTags = [...new Set([...userTags, tag])].sort();  // Ensure tags are unique and sorted
+    setLocalUserTags(updatedTags);  // Update local state
+    setUserTags(updatedTags);  // Update the parent state to reflect changes globally
+    onFilter(tag);  // Call the filtering function for selected tag
+  };
+
+  // Sidebar items including "ALL" tab and user tags
+  const sidebarItems = ['ALL', ...userTags].map(tag => ({ name: tag }));
     
     return (
       <SidebarMenu
-        items={sidebarItems}  // Pass "ALL" tab and user tags as sidebar items
+        items={sidebarItems}  // Pass tags as sidebar items
         onItemClick={handleTagClick}  // Handle tag click to filter articles
         activeItem={selectedTag}  // Highlight the selected tag
         isSidebarOpen={isSidebarOpen}
