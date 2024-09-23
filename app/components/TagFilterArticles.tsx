@@ -30,7 +30,7 @@ export default function TagFilterArticles() {
   // Fetch saved articles and tags on mount
   useEffect(() => {
     fetchSavedArticles();  // Fetch articles
-    fetchUserTags();  // Fetch user-created tags
+    //fetchUserTags();  // Fetch user-created tags
   }, []);
 
   const fetchSavedArticles = async () => {
@@ -45,16 +45,16 @@ export default function TagFilterArticles() {
     }
   };
 
-  const fetchUserTags = async () => {
-    try {
-      const response = await axios.get('/api/tags/userTags');  // Example API endpoint to fetch tags
-      if (response.status === 200) {
-        setTags(response.data);  // Store user-created tags
-      }
-    } catch (error) {
-      console.error('Failed to fetch user tags:', error);
-    }
-  };
+  // const fetchUserTags = async () => {
+  //   try {
+  //     const response = await axios.get('/api/tags/userTags');  // Example API endpoint to fetch tags
+  //     if (response.status === 200) {
+  //       setTags(response.data);  // Store user-created tags
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to fetch user tags:', error);
+  //   }
+  // };
 
   // Filter articles by selected tag
   const handleFilter = (tagName: string) => {
@@ -76,7 +76,6 @@ export default function TagFilterArticles() {
       {/* TagFilterMenu for selecting tags */}
       <TagFilterMenu
         tags={tags.map(tag => tag.name)}  // Pass tag names to TagFilterMenu
-        articles={articles}  // All articles for filtering reference
         onFilter={handleFilter}  // Pass filter function to handle tag selection
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}

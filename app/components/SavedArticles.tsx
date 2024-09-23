@@ -154,7 +154,7 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
 
     // Check if the tag already exists for this article
     if (tags[articleId]?.some(tag => tag.name.toLowerCase() === newTag.toLowerCase())) {
-      displayMessage('error', 'Articles cannot have duplicate tags.'); 
+      displayMessage('error', 'tag already exists for this article.'); 
       return;
     }
 
