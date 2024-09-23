@@ -1,3 +1,5 @@
+// app/components/SavedArticles.tsx
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -144,13 +146,22 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
     if (!newTag?.trim()) return;
 
     try {
-        const response = await axios.post('/api/tags/create', { name: newTag });
+        const response = await axios.post('/api/tags/create', { name: newTag, articleId });
         let tag = response.data;
+
+        // Add the new tag to the article's tag list in the UI immediately
+        setTags((prevTags) => ({
+          ...prevTags,
+          [articleId]: [...(prevTags[articleId] || []), tag], // Append the new tag
+        }));
 
         // Check if the tag already exists in the sidebar before adding it
         if (!userTags.includes(tag.name)) {
-            const updatedTags: string[] = [...userTags, tag.name];
-            setUserTags(updatedTags.sort());  // Alphabetically sort tags and update sidebar
+          const updatedTags: string[] = [...userTags, tag.name];
+          setUserTags(updatedTags.sort());  // Alphabetically sort tags and update sidebar
+
+          // Only fetch the updated user tags if a new tag was added to the sidebar
+          await fetchUserTags();  // Fetch and update all user tags in the sidebar
         }
 
         setNewTags((prevTags) => ({
@@ -158,20 +169,10 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
             [articleId]: '',  // Clear input for this article only
         }));
 
-        // Refetch the updated tags from the backend to make sure it's saved correctly
-        await fetchTags(articleId);  // This ensures that tags are refreshed in the sidebar
-
     } catch (error) {
         console.error('Failed to add tag:', error);
     }
 };
-
-  
-  
-  
-  
-  
-  
 
   const handleRemoveTag = async (articleId: string, tagId: string): Promise<void> => {
     try {
@@ -184,6 +185,10 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
           ...prevTags,
           [articleId]: prevTags[articleId].filter(tag => tag.id !== tagId),
         }));
+        
+        // Fetch and update all user tags in the sidebar
+      const updatedTags = await fetchUserTags();  // Fetch updated user tags
+      setUserTags(updatedTags);  // Update the sidebar with the new tag list
       }
     } catch (error) {
       console.error('Failed to remove tag:', error);
