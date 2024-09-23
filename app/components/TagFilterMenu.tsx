@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import SidebarMenu from './SidebarMenu';  // Import the reusable SidebarMenu component
+import axios from 'axios';
 
 interface TagFilterMenuProps {
     tags: string[];  // Array of tag names
@@ -23,15 +24,27 @@ export default function TagFilterMenu({ tags, setUserTags, onFilter, isSidebarOp
   
   
   // Handle tag click to filter articles
-  const handleTagClick = (tag: string) => {
-    const updatedTags = [...new Set([...userTags, tag])].sort();  // Ensure tags are unique and sorted
-    setLocalUserTags(updatedTags);  // Update local state
-    setUserTags(updatedTags);  // Update the parent state to reflect changes globally
-    onFilter(tag);  // Call the filtering function for selected tag
+  const handleTagClick = async (tag: string) => {
+    setSelectedTag(tag);  // Highlight the selected tag
+  
+    try {
+      // Make an API request to fetch articles for the clicked tag
+      const response = await axios.get(`/api/articles/filter-by-tag?tagName=${tag}`);
+      if (response.status === 200) {
+        const filteredArticles = response.data;  // Get filtered articles
+        onFilter(filteredArticles);  // Pass filtered articles to parent component
+      } else {
+        console.error('Failed to fetch articles:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching filtered articles:', error);
+    }
   };
+  
 
   // Sidebar items including "ALL" tab and user tags
-  const sidebarItems = ['ALL', ...userTags].map(tag => ({ name: tag }));
+  const sidebarItems = [{ id: 'ALL', name: 'ALL' }, ...userTags.map(tag => ({ id: tag, name: tag }))];
+
     
     return (
       <SidebarMenu

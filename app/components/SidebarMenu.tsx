@@ -5,8 +5,8 @@
 import { useState } from 'react';
 
 interface SidebarMenuProps {
-  items: { name: string; icon?: any; logo?: string }[];  // Ensure the name property is present
-  onItemClick: (itemName: string) => void;
+  items: { id: string; name: string }[]; 
+  onItemClick: (id: string) => void;
   activeItem: string;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;

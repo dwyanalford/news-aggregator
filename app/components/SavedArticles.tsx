@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import ArticleRemoveButton from './ArticleRemoveButton';
 import axios from 'axios';
+import Message from './Message';
 
 interface Article {
   id: string;
@@ -37,6 +38,9 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
   const [activeInput, setActiveInput] = useState<string | null>(null); // Track which input is active
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState(''); // State to hold the message text
+  const [messageType, setMessageType] = useState<'success' | 'error'>('success'); // Type of message
+  const [showMessage, setShowMessage] = useState(false);  // State to control visibility of the message
 
 
   useEffect(() => {
@@ -143,7 +147,16 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
 
   const handleAddTag = async (articleId: string) => {
     const newTag = newTags[articleId]; // Get the tag input for the specific article
-    if (!newTag?.trim()) return;
+    if (!newTag?.trim()) {
+      displayMessage('error', 'Tag name cannot be empty.');  
+      return;
+    }
+
+    // Check if the tag already exists for this article
+    if (tags[articleId]?.some(tag => tag.name.toLowerCase() === newTag.toLowerCase())) {
+      displayMessage('error', 'Articles cannot have duplicate tags.'); 
+      return;
+    }
 
     try {
         const response = await axios.post('/api/tags/create', { name: newTag, articleId });
@@ -169,8 +182,12 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
             [articleId]: '',  // Clear input for this article only
         }));
 
+        // Display success message
+        displayMessage('success', 'Tag successfully added.');
+
     } catch (error) {
         console.error('Failed to add tag:', error);
+        displayMessage('error', 'Failed to add tag. Try again.');
     }
 };
 
@@ -185,6 +202,8 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
           ...prevTags,
           [articleId]: prevTags[articleId].filter(tag => tag.id !== tagId),
         }));
+
+        displayMessage('success', 'Tag successfully deleted.');
         
         // Fetch and update all user tags in the sidebar
       const updatedTags = await fetchUserTags();  // Fetch updated user tags
@@ -192,6 +211,7 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
       }
     } catch (error) {
       console.error('Failed to remove tag:', error);
+      displayMessage('error', 'Failed to remove tag');
     }
   };
 
@@ -203,6 +223,16 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
   if (loading) return <p>Loading saved articles...</p>;
   if (error) return <p>Error: {error}</p>;
   if (filteredArticles.length === 0) return <p>You have no saved articles.</p>;
+
+  // Function to display a message
+  const displayMessage = (type: 'success' | 'error', msg: string) => {
+    setMessageType(type);  // Set the message type (success or error)
+    setMessage(msg);       // Set the message text
+    setShowMessage(true);  // Show the message
+  };
+
+// Function to close the message
+const handleCloseMessage = () => setShowMessage(false);
 
   return (
     <div className="container mx-auto p-8">
@@ -265,6 +295,12 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags 
           </div>
         ))}
       </div>
+      <Message 
+        type={messageType} 
+        message={message} 
+        show={showMessage} 
+        onClose={handleCloseMessage} 
+      />
     </div>
   );
 };
