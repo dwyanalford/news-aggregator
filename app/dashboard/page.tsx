@@ -9,6 +9,7 @@ import SavedArticles from "@/app/components/SavedArticles";
 import TagFilterMenu from "@/app/components/TagFilterMenu";
 import { fetchUserTags } from '@/app/utils/fetchUserTagsUtils';
 import Loading from "@/app/components/Loading";
+import axios from "axios";
 
 // Define the Article type
 interface Article {
@@ -31,23 +32,28 @@ const DashboardPage = () => {
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);  // State for filtered articles
   const [userTags, setUserTags] = useState<string[]>([]);  // State to store all tags
 
-  const handleFilter = (tagName: string) => {
-    console.log('Selected Tag:', tagName);  // Debugging: Log selected tag
-    setSelectedTag(tagName);  // Update the selected tag
-  
+  const handleTagClick = async (tagName: string) => {
+    setSelectedTag(tagName);  // Highlight the selected tag
+
     if (tagName === 'ALL') {
-      console.log('Showing all articles');
-      setFilteredArticles(articles);  // Show all articles if "ALL" is selected
-    } else {
-      // Filter articles by the selected tag
-      const filtered = articles.filter(article => {
-        console.log('Checking article:', article.title, 'Tags:', article.tags);  // Debugging: Log each article's tags
-        return Array.isArray(article.tags) && article.tags.includes(tagName);  // Check if tags is an array and includes the selected tag
-      });
-      console.log('Filtered Articles:', filtered);  // Debugging: Log filtered articles
-      setFilteredArticles(filtered);  // Update state with filtered articles
+      // If 'ALL' is clicked, reset the filteredArticles to show all saved articles
+      setFilteredArticles(articles);
+      return;
     }
-  };
+
+    try {
+      // Make an API request to fetch articles for the clicked tag using axios
+      const response = await axios.get(`/api/articles/filter-by-tag?tagName=${tagName}`);
+      if (response.status === 200) {
+        const filteredArticles = response.data;  // Get filtered articles
+        setFilteredArticles(filteredArticles);  // Update state with filtered articles
+      } else {
+        console.error('Failed to fetch articles:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching filtered articles:', error);
+    }
+};
 
    // Fetch all user tags when the component loads
    useEffect(() => {
@@ -105,7 +111,7 @@ const DashboardPage = () => {
           <TagFilterMenu
             tags={userTags}  // This will be fetched and populated using fetchUserTags
             setUserTags={setUserTags}  // Pass setUserTags to the sidebar
-            onFilter={handleFilter}  // Function to handle filtering based on selected tag
+            onFilter={handleTagClick}  // Function to handle filtering based on selected tag
             isSidebarOpen={isSidebarOpen}  // Sidebar open/close state
             toggleSidebar={toggleSidebar}  // Function to toggle sidebar
           />

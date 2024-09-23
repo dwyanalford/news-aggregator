@@ -36,9 +36,10 @@ export default function SidebarMenu({
           onClick={() => handleItemClick(item.name)}
           className={`button-2 ${activeItem === item.name ? 'button-active' : 'button-inactive'}`}
         >
-          {item.name}  {/* Ensure this renders correctly */}
+          {item.name}
         </button>
       ))}
+
     </div>
   );
 }

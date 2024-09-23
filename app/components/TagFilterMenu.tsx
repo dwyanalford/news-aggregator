@@ -24,23 +24,10 @@ export default function TagFilterMenu({ tags, setUserTags, onFilter, isSidebarOp
   
   
   // Handle tag click to filter articles
-  const handleTagClick = async (tag: string) => {
-    setSelectedTag(tag);  // Highlight the selected tag
-  
-    try {
-      // Make an API request to fetch articles for the clicked tag
-      const response = await axios.get(`/api/articles/filter-by-tag?tagName=${tag}`);
-      if (response.status === 200) {
-        const filteredArticles = response.data;  // Get filtered articles
-        onFilter(filteredArticles);  // Pass filtered articles to parent component
-      } else {
-        console.error('Failed to fetch articles:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching filtered articles:', error);
-    }
+  const handleTagClick = (tag: string) => {
+    setSelectedTag(tag);  // Set the clicked tag as the active tag
+    onFilter(tag === 'ALL' ? 'ALL' : tag);  // Pass the selected tag to the parent for filtering articles
   };
-  
 
   // Sidebar items including "ALL" tab and user tags
   const sidebarItems = [{ id: 'ALL', name: 'ALL' }, ...userTags.map(tag => ({ id: tag, name: tag }))];
