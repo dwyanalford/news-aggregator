@@ -2,44 +2,57 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
-import SidebarMenu from './SidebarMenu';  // Import the reusable SidebarMenu component
-import axios from 'axios';
+import { faTag } from '@fortawesome/free-solid-svg-icons';
+import SidebarLayout from './SidebarLayout';  // Import the new reusable SidebarLayout component
+import useActiveState from '@/app/hooks/useActiveState';  // Import the useActiveState hook
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 
 interface TagFilterMenuProps {
     tags: string[];  // Array of tag names
-    setUserTags: (tags: string[]) => void;  // Function to update the tags in real time
     onFilter: (tagName: string) => void;  // Function to handle filtering by tag
     isSidebarOpen: boolean;  // Sidebar open/close state
     toggleSidebar: () => void;  // Function to toggle sidebar
 }
 
-export default function TagFilterMenu({ tags, setUserTags, onFilter, isSidebarOpen, toggleSidebar }: TagFilterMenuProps) {
-    const [selectedTag, setSelectedTag] = useState<string>('ALL');  // State to manage selected tag
-    const [userTags, setLocalUserTags] = useState<string[]>(tags);  // Local state to store fetched user tags
+export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSidebar }: TagFilterMenuProps) {
+  const [selectedTag, setSelectedTag] = useState<string>('ALL');  // Ensure this state exists
 
-  useEffect(() => {
-    setLocalUserTags(tags);  // Update local state when props change
-  }, [tags]);  // Update the sidebar when the tags prop changes
-  
-  
-  // Handle tag click to filter articles
   const handleTagClick = (tag: string) => {
-    setSelectedTag(tag);  // Set the clicked tag as the active tag
-    onFilter(tag === 'ALL' ? 'ALL' : tag);  // Pass the selected tag to the parent for filtering articles
+      setSelectedTag(tag);  // Update the selected tag
+      onFilter(tag === 'ALL' ? 'ALL' : tag);  // Pass the selected tag to the parent for filtering
   };
 
-  // Sidebar items including "ALL" tab and user tags
-  const sidebarItems = [{ id: 'ALL', name: 'ALL' }, ...userTags.map(tag => ({ id: tag, name: tag }))];
+  return (
+      <SidebarLayout
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+      >
+          <div>
+              {/* "ALL" option */}
+              <button
+                  onClick={() => handleTagClick('ALL')}
+                  className={`text-left py-2 px-4 mt-6 ${selectedTag === 'ALL' ? 'button-active' : 'button-inactive'}`}
+              >
+                  All Saved Articles
+              </button>
 
-    
-    return (
-      <SidebarMenu
-        items={sidebarItems}  // Pass tags as sidebar items
-        onItemClick={handleTagClick}  // Handle tag click to filter articles
-        activeItem={selectedTag}  // Highlight the selected tag
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
-    );
+              <div className="mb-2 mt-7">
+                  <h2 className="text-lg font-bold">Filter by Tag:</h2>
+              </div>
+
+              {/* Render the tags */}
+              {tags.map((tag) => (
+                  <button
+                      key={tag}
+                      onClick={() => handleTagClick(tag)}  // Use handleTagClick to filter
+                      className={`flex items-center px-4 py-2 ${selectedTag === tag ? 'button-active' : ''}`}
+                  >
+                      <FontAwesomeIcon icon={faTag} className={`${selectedTag === tag ? 'text-white' : 'text-gray-400'}`} />
+                      <span className="ml-2">{tag}</span>
+                  </button>
+              ))}
+          </div>
+      </SidebarLayout>
+  );
 }
