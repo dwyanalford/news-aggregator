@@ -13,6 +13,7 @@ interface TagFilterMenuProps {
     onFilter: (tagName: string) => void;  // Function to handle filtering by tag
     isSidebarOpen: boolean;  // Sidebar open/close state
     toggleSidebar: () => void;  // Function to toggle sidebar
+    setUserTags: (tags: string[]) => void;
 }
 
 export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSidebar }: TagFilterMenuProps) {
