@@ -29,7 +29,7 @@ export default function SidebarMenu({
   };
 
   return (
-    <div className="sidebar">
+    <div className="sidebar w-24">
       {items.map(item => (
         <button
           key={item.name}
