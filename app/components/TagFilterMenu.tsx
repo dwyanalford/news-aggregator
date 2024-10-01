@@ -14,9 +14,10 @@ interface TagFilterMenuProps {
     isSidebarOpen: boolean;  // Sidebar open/close state
     toggleSidebar: () => void;  // Function to toggle sidebar
     setUserTags: (tags: string[]) => void;
+    totalArticles: number;  // New prop to accept total count
 }
 
-export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSidebar }: TagFilterMenuProps) {
+export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSidebar, totalArticles }: TagFilterMenuProps) {
   const [selectedTag, setSelectedTag] = useState<string>('ALL');  // Ensure this state exists
 
   const handleTagClick = (tag: string) => {
@@ -35,7 +36,8 @@ export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSid
                   onClick={() => handleTagClick('ALL')}
                   className={`text-left py-2 px-4 mt-6 ${selectedTag === 'ALL' ? 'button-active' : 'button-inactive'}`}
               >
-                  All Saved Articles
+                  <span>All Saved Articles</span>
+                  <span className="bg-red-500 text-white text-md px-2 py-1 rounded-full ml-2">{totalArticles}</span>  {/* Badge with count */}
               </button>
 
               <div className="mb-2 mt-7">

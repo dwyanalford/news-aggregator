@@ -31,6 +31,7 @@ const DashboardPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);  // State for all saved articles
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);  // State for filtered articles
   const [userTags, setUserTags] = useState<string[]>([]);  // State to store all tags
+  const [totalArticles, setTotalArticles] = useState(0);  // State to store the total article count
 
   const handleTagClick = async (tagName: string) => {
     setSelectedTag(tagName);  // Highlight the selected tag
@@ -85,6 +86,7 @@ const DashboardPage = () => {
   
           setArticles(articlesWithTags);  // Set all saved articles
           setFilteredArticles(articlesWithTags);  // Set filtered articles to show all initially
+          setTotalArticles(articlesWithTags.length);  // Set total count of saved articles
         })
         .catch((error) => {
           console.error('Failed to fetch articles:', error);
@@ -114,6 +116,7 @@ const DashboardPage = () => {
             onFilter={handleTagClick}  // Function to handle filtering based on selected tag
             isSidebarOpen={isSidebarOpen}  // Sidebar open/close state
             toggleSidebar={toggleSidebar}  // Function to toggle sidebar
+            totalArticles={totalArticles}  // Pass total article count here
           />
         </div>
       </div>
