@@ -1,24 +1,35 @@
 // app/utils/fetchUserTagsUtils.ts
 
-import axios from 'axios';
+/*
+  This utility function `fetchUserTags` fetches tags and their associated article counts using an API call.
+  It uses `axios` to send a GET request to `/api/tags` and returns a JSON response with tag `id`, `name`, and `count`.
+  In case of failure, it returns a `500` status with an error message.
+*/
 
-/**
- * Fetch user-created tags from the API.
- * @returns {Promise<string[]>} A promise that resolves to an array of tag names.
- */
-export const fetchUserTags = async (articleId?: string) => {  // Accept an optional articleId
+import axios from 'axios';
+import { Tag } from '@/app/types'; 
+
+export async function fetchUserTags(): Promise<Tag[]> {
   try {
-    const endpoint = articleId ? `/api/tags?articleId=${articleId}` : '/api/tags';  // Use different endpoint for "all"
-    const response = await axios.get(endpoint);  // Fetch tags from the appropriate endpoint
-    if (response.status === 200) {
-      const tagsData = response.data.map((tag: any) => tag.name);  // Extract tag names from response data
-      console.log('Fetched user tags:', tagsData);  // Debugging: Log fetched tags
-      return tagsData;  // Return fetched tags
-    } else {
-      console.error('Failed to fetch user tags:', response.status);
+    const response = await axios.get('/api/tags');
+    const data = response.data;
+
+    // Add this to inspect the actual response structure
+    console.log('API Response:', data);
+
+    // Check if the response contains the "tags" field and is an array
+    if (!data || !Array.isArray(data.tags)) {
+      throw new Error('Tags not found in the response');
     }
+
+    // Return the tags array with the expected fields (id, name, count)
+    return data.tags.map((tag: any) => ({
+      id: tag.id,
+      name: tag.name,
+      count: tag.count || 0, // Use the count from the response or default to 0
+    }));
   } catch (error) {
     console.error('Error fetching user tags:', error);
+    throw new Error('Failed to fetch user tags');
   }
-  return [];  // Return an empty array if fetching fails
-};
+}

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import forbiddenWordsAndPhrases from '@/app/utils/profanityList';  // Import the list of profanity words
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,15 @@ const toTitleCase = (str: string) => {
     .join(' ');
 };
 
+// Function to check for profanity in the tag
+const containsProfanity = (tag: string): boolean => {
+  const lowerCasedTag = tag.toLowerCase();
+  return forbiddenWordsAndPhrases.some(profanity => lowerCasedTag.includes(profanity));
+};
+
+// Set the max length for tags
+const MAX_TAG_LENGTH = 16;
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions); // Fetch the user session
@@ -24,41 +34,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }); 
     }
 
-    const body = await req.text(); // Read raw body to catch malformed JSON
-    const { name, articleId } = JSON.parse(body);  // Include articleId in the request
-
-    console.log('Received request to create tag:', { name }); 
-    console.log('User session:', session.user); 
+    const body = await req.text(); 
+    const { name, articleId } = JSON.parse(body); 
 
     if (!name || !articleId) {
-      console.log('Tag name or Article Id is missing in the request.');
       return NextResponse.json({ error: 'Tag name and articleId are required' }, { status: 400 });
     }
 
-    // Check if a tag with the same name already exists
-    console.log('Checking if tag already exists with name:', name); 
+     // Check if tag length exceeds the allowed limit
+     if (name.length > MAX_TAG_LENGTH) {
+      return NextResponse.json({ error: `Tag name must be less than ${MAX_TAG_LENGTH} characters.` }, { status: 400 });
+    }
+
+    // Check if the tag contains profanity
+    if (containsProfanity(name)) {
+      return NextResponse.json({ error: 'Tag name contains inappropriate content' }, { status: 400 });
+    }
+
+    // Your existing logic to create or find the tag
     const existingTag = await prisma.tag.findFirst({
-      where: { name: toTitleCase(name) },  // Convert tag name to Title Case
+      where: { name: toTitleCase(name) },
     });
 
     let tag;
     if (existingTag) {
-      console.log('Existing tag found:', existingTag);
-      tag = existingTag;  // Use the existing tag
+      tag = existingTag;
     } else {
-      // Create a new tag if it doesn't exist
-      console.log('No existing tag found, creating new tag with name:', name);
-      const newTag = toTitleCase(name);  // Convert to title case
+      const newTag = toTitleCase(name);
       tag = await prisma.tag.create({
         data: { name: newTag },
       });
     }
 
-    // Check if the UserSavedArticle exists for the user and article
+    // Your existing logic for associating the tag with the article
     const userSavedArticle = await prisma.userSavedArticle.findFirst({
       where: {
         articleId,
-        userId: session.user.id,  // Ensure the article is associated with the correct user
+        userId: session.user.id, 
       },
     });
 
@@ -66,7 +78,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'UserSavedArticle not found' }, { status: 404 });
     }
 
-    // Step 2: Create or check for the UserSavedArticleTag association
     const existingAssociation = await prisma.userSavedArticleTag.findFirst({
       where: {
         userSavedArticleId: userSavedArticle.id,
@@ -75,21 +86,17 @@ export async function POST(req: NextRequest) {
     });
 
     if (!existingAssociation) {
-      // Create a new association between the tag and the saved article for this user
       await prisma.userSavedArticleTag.create({
         data: {
           userSavedArticleId: userSavedArticle.id,
           tagId: tag.id,
-          userId: session.user.id,  // Associate with the correct user
+          userId: session.user.id,
         },
       });
     }
-    
-    console.log('Tag successfully associated with the article:', tag); 
-    return NextResponse.json(tag, { status: 201 });  // Return the tag that was created or found
 
+    return NextResponse.json(tag, { status: 201 }); 
   } catch (error: any) {
-    console.error("Unexpected Error:", error);
-    return NextResponse.json({ error: 'Failed to create tag', details: error.message }, { status: 500 });  // Return detailed error response
+    return NextResponse.json({ error: 'Failed to create tag', details: error.message }, { status: 500 });
   }
 }

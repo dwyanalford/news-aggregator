@@ -7,6 +7,7 @@ interface SavedArticlesState {
   savedArticles: string[]; // Array of article links that are saved
   fetchSavedArticles: () => Promise<void>; // Function to fetch saved articles from the server
   addSavedArticle: (link: string) => void; // Function to add an article to the saved list
+  removeSavedArticle: (link: string) => void; // Function to remove an article from the saved list
 }
 
 export const useSavedArticlesStore = create<SavedArticlesState>((set) => ({
@@ -30,4 +31,9 @@ export const useSavedArticlesStore = create<SavedArticlesState>((set) => ({
     }
     return state;
   }),
+
+  // Remove a saved article from the state
+  removeSavedArticle: (link: string) => set((state) => ({
+    savedArticles: state.savedArticles.filter((savedLink) => savedLink !== link),
+  })),
 }));

@@ -30,8 +30,8 @@ const DashboardPage = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);  // Function to toggle sidebar
   const [articles, setArticles] = useState<Article[]>([]);  // State for all saved articles
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);  // State for filtered articles
-  const [userTags, setUserTags] = useState<string[]>([]);  // State to store all tags
-  const [totalArticles, setTotalArticles] = useState(0);  // State to store the total article count
+  const [userTags, setUserTags] = useState<{ id: string, name: string, count: number }[]>([]);
+  const [totalArticles, setTotalArticles] = useState<number>(0);
 
   const handleTagClick = async (tagName: string) => {
     setSelectedTag(tagName);  // Highlight the selected tag
@@ -58,13 +58,18 @@ const DashboardPage = () => {
 
    // Fetch all user tags when the component loads
    useEffect(() => {
-    fetchUserTags().then((tags) => {
-      setUserTags(tags);  // Update the state with fetched tags
-    }).catch((error) => {
-      console.error('Error fetching user tags:', error);  // Error handling
-    });
+    fetchUserTags()
+      .then((tags) => {  // No need for response.json(), fetchUserTags already returns Tag[]
+        setUserTags(tags);  // Use the `tags` array directly
+      })
+      .catch((error) => {
+        console.error('Error fetching user tags:', error);  // Error handling
+      });
   }, []);
-  
+
+  useEffect(() => {
+    setFilteredArticles(articles); // Sync filteredArticles with articles when articles are updated
+  }, [articles]);  
   
   
   useEffect(() => {
@@ -101,6 +106,12 @@ const DashboardPage = () => {
     }
   }, [status, router]); // Redirect on status change
 
+  // Function to handle article removal
+  const handleArticleRemove = (link: string) => {
+    setArticles(prevArticles => prevArticles.filter(article => article.link !== link));
+    setFilteredArticles(prevFiltered => prevFiltered.filter(article => article.link !== link));
+  };
+
   if (status === "loading") {
     return <Loading isLoading={true}  />;  // Use your custom Loading component here
   }
@@ -136,6 +147,8 @@ const DashboardPage = () => {
           setUserTags={setUserTags}  // Pass setUserTags to the sidebar
           fetchUserTags={fetchUserTags} 
           filteredArticles={filteredArticles}
+          handleArticleRemove={handleArticleRemove}
+          setTotalArticles={setTotalArticles} 
            />
         </div>
 

@@ -49,7 +49,27 @@ export async function POST(req: NextRequest) {
 
     console.log('Created UserSavedArticleTag association:', userSavedArticleTag);
 
-    return NextResponse.json(userSavedArticleTag, { status: 201 });
+    // Fetch updated tags and their article counts after the association
+    const updatedTags = await prisma.tag.findMany({
+      include: {
+        _count: {
+          select: { userSavedArticleTags: true }, // Count how many articles are associated with each tag
+        },
+      },
+    });
+
+    console.log('Updated Tags with counts:', updatedTags); // Debugging log
+
+    // Return the updated tags with their counts along with the success response
+    return NextResponse.json({
+      success: true,
+      tags: updatedTags.map(tag => ({
+        id: tag.id,
+        name: tag.name,
+        count: tag._count.userSavedArticleTags || 0,
+      })),
+    }, { status: 201 });
+    
   } catch (error) {
     console.error('Error associating tag with saved article:', error);
     return NextResponse.json({ error: 'Failed to associate tag' }, { status: 500 });

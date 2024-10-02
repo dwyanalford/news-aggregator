@@ -8,12 +8,19 @@ import useActiveState from '@/app/hooks/useActiveState';  // Import the useActiv
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
+interface Tag {
+    id: string;    // The unique ID for each tag
+    name: string;  // The name of the tag
+    count: number; // The number of articles associated with the tag
+}
+   
+
 interface TagFilterMenuProps {
-    tags: string[];  // Array of tag names
+    tags: { id: string, name: string, count: number }[]; 
     onFilter: (tagName: string) => void;  // Function to handle filtering by tag
     isSidebarOpen: boolean;  // Sidebar open/close state
     toggleSidebar: () => void;  // Function to toggle sidebar
-    setUserTags: (tags: string[]) => void;
+    setUserTags: (tags: Tag[]) => void; 
     totalArticles: number;  // New prop to accept total count
 }
 
@@ -45,14 +52,25 @@ export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSid
               </div>
 
               {/* Render the tags */}
-              {tags.map((tag) => (
+              {tags
+              .sort((a, b) => a.name.localeCompare(b.name))  // Ensure tags are sorted alphabetically
+              .map((tag, index) => (
                   <button
-                      key={tag}
-                      onClick={() => handleTagClick(tag)}  // Use handleTagClick to filter
-                      className={`flex items-center px-4 py-2 ${selectedTag === tag ? 'button-active' : ''}`}
+                      key={`${tag.name}-${index}`}
+                      onClick={() => handleTagClick(tag.name)}  // Use handleTagClick to filter
+                      className={`flex items-center px-4 py-2 mb-2 ${selectedTag === tag.name ? 'button-active' : ''}`}
                   >
-                      <FontAwesomeIcon icon={faTag} className={`${selectedTag === tag ? 'text-white' : 'text-gray-400'}`} />
-                      <span className="ml-2">{tag}</span>
+                      <FontAwesomeIcon icon={faTag} className={`${selectedTag === tag.name ? 'text-white' : 'text-gray-400'}`} />
+                        <span className="ml-2">{tag.name}</span>
+                        {/* Badge with conditional styles based on active/inactive state */}
+                        <span
+                        className={`${selectedTag === tag.name 
+                            ? 'text-white bg-transparent'   // Active state: white text, no background (button will have blue background)
+                            : 'bg-gray-300 text-gray-700 border'   // Inactive state: light gray background, dark text
+                        } ml-1 text-md px-2 py-1 rounded-full flex items-center justify-center w-6 h-6`} // Ensuring badge is circular
+                        >
+                        {tag.count}
+                        </span>
                   </button>
               ))}
           </div>
