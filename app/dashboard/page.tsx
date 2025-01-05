@@ -47,7 +47,12 @@ const DashboardPage = () => {
       const response = await axios.get(`/api/articles/filter-by-tag?tagName=${tagName}`);
       if (response.status === 200) {
         const filteredArticles = response.data;  // Get filtered articles
-        setFilteredArticles(filteredArticles);  // Update state with filtered articles
+        // Update state with filtered articles
+        setFilteredArticles(  
+          filteredArticles.sort((a: Article, b: Article) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          )
+        );        
       } else {
         console.error('Failed to fetch articles:', response.status);
       }
@@ -111,6 +116,19 @@ const DashboardPage = () => {
     setArticles(prevArticles => prevArticles.filter(article => article.link !== link));
     setFilteredArticles(prevFiltered => prevFiltered.filter(article => article.link !== link));
   };
+
+  // Use useEffect to React to changes, we’ll handle sorting in a useEffect that listens for articles updates.
+
+  useEffect(() => {
+    if (selectedTag === 'ALL') {
+      setFilteredArticles(
+        [...articles].sort((a: Article, b: Article) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        )
+      );
+    }
+  }, [selectedTag, articles]);
+  
 
   if (status === "loading") {
     return <Loading isLoading={true}  />;  // Use your custom Loading component here

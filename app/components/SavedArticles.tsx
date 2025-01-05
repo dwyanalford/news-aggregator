@@ -46,6 +46,7 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags,
   const [message, setMessage] = useState(''); // State to hold the message text
   const [messageType, setMessageType] = useState<'success' | 'error'>('success'); // Type of message
   const [showMessage, setShowMessage] = useState(false);  // State to control visibility of the message
+  const [expandedTags, setExpandedTags] = useState<Record<string, boolean>>({});
 
 
 
@@ -60,7 +61,10 @@ const SavedArticles = ({ filteredArticles, userTags, setUserTags, fetchUserTags,
           return response.json();
         })
         .then((data) => {
-          setArticles(data);
+          setArticles(
+            data.sort((a: Article, b: Article) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          );
+          console.log('Sorted Articles:', data); // Debugging output
           setLoading(false);
 
           // Fetch tags for each saved article correctly
@@ -277,6 +281,14 @@ const handleAddTag = async (articleId: string) => {
 // Function to close the message
 const handleCloseMessage = () => setShowMessage(false);
 
+// Toggle function for Tags Button to expand when clicked
+const toggleTags = (id: string) => {
+  setExpandedTags((prev) => ({
+    ...prev,
+    [id]: !prev[id], // Toggle the state for the specific article ID
+  }));
+};
+
 
   if (!session) return <p>Please log in to view your saved articles.</p>;
   if (loading) return <p>Loading saved articles...</p>;
@@ -285,73 +297,89 @@ const handleCloseMessage = () => setShowMessage(false);
 
   return (
     <div className="container mx-auto p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Changed parent container to space out articles in rows */}
+      <div className="space-y-4"> 
         {filteredArticles.map((article) => (
-          <div key={article.id} className="p-4 border rounded shadow-xl bg-white relative">
-            <img src={article.imageURL} alt={article.title} className="w-full h-48 object-cover mb-4" />
-            <h2 className="text-xl font-bold">{article.title}</h2>
-            <p className="text-gray-600">{new Date(article.date).toLocaleDateString()}</p>
-            <p className="mt-2">{article.summary}</p>
-            <div className="flex items-center space-x-6 mt-4">
-              <a href={article.link} target="_blank" rel="noopener noreferrer" className="button-inactive">
-                Read More
-              </a>
-              <button
-                onClick={() => handleRemove(article.link)}  // Reuse the handleRemove function
-                disabled={loading}
-                className="button-inactive"
-                title="Remove Article"
-              >
-                <FontAwesomeIcon icon={faTrashCan} size="xl" />
-              </button>
-            </div>
-
-             {/* Tag Management Section */}
-            <div className="mt-4">
-              <h3 className="text-lg font-bold mb-2">Tags</h3>
-              <div className="flex flex-wrap mb-2">
-                
-              {Array.isArray(tags[article.id]) && tags[article.id].length > 0 ? (
-                tags[article.id].map((tag) => (
-                  <span key={tag.id} className="mr-2 mb-2 px-3 py-1 bg-gray-200 rounded-full flex items-center">
-                    {tag.name}
-                    <button className="ml-2 text-red-500" onClick={() => handleRemoveTag(article.id, tag.id)}>
-                      &times;
-                    </button>
-                  </span>
-                ))
-              ) : (
-                <p>No tags available for this article</p>
-              )}
-
-              </div>
-              <div className="relative tag-input">
-                <input
-                  type="text"
-                  value={newTags[article.id] || ''}
-                  onChange={(e) => handleInputChange(article.id, e.target.value)}
-                  placeholder="Add new tag"
-                  className="border px-2 py-1 mr-2 rounded w-48 font-light"
-                  onFocus={() => handleInputFocus(article.id)}
-                  list={`suggestions-${article.id}`} 
-                />
-                <button onClick={() => handleAddTag(article.id)} className="button-inactive">
-                  Add Tag
+          <div key={article.id} className="flex flex-col md:flex-row items-start p-4 border rounded shadow-xl bg-white relative">
+            {/* Image Section */}
+            <img src={article.imageURL} alt={article.title} className="w-full md:w-64 h-48 object-cover rounded-md mb-4 md:mb-0" />
+  
+            {/* Details Section */}
+            <div className="flex-1 md:ml-6">
+              <h2 className="text-xl font-bold">{article.title}</h2>
+              <p className="text-gray-600">{new Date(article.date).toLocaleDateString()}</p>
+              <p className="mt-2">{article.summary}</p>
+  
+              {/* Buttons Section */}
+              <div className="flex items-center space-x-6 mt-4">
+                <a href={article.link} target="_blank" rel="noopener noreferrer" className="button-inactive">
+                  Read More
+                </a>
+                <button
+                  onClick={() => handleRemove(article.link)}  // Reuse the handleRemove function
+                  disabled={loading}
+                  className="button-inactive"
+                  title="Remove Article"
+                >
+                  <FontAwesomeIcon icon={faTrashCan} size="xl" />
+                </button>
+                <button
+                  onClick={() => toggleTags(article.id)}
+                  className="button-inactive"
+                  title={expandedTags[article.id] ? "Close Tags" : "Manage Tags"}
+                >
+                  {expandedTags[article.id] ? "Close Tags" : "Tags"}
                 </button>
               </div>
-              {activeInput === article.id && suggestions.length > 0 && (
-                <ul className="absolute bg-gray-200 border border-gray-300 rounded w-48 z-10 tag-dropdown max-h-40 overflow-y-auto">
-                    <li className="px-3 py-2 font-semibold text-gray-600 bg-gray-100 italic text-sm">Your Existing Tags</li> {/* Heading */}
-                      {suggestions.map((suggestion, index) => (
-                        <li
-                          key={index}
-                          onClick={() => handleSuggestionClick(article.id, suggestion)}
-                          className="px-3 py-2 cursor-pointer hover:bg-gray-100 border-b last:border-none"
-                        >
-                          {suggestion}
-                        </li>
-                      ))}
-                </ul>
+  
+              {/* Tag Management Section */}
+              {expandedTags[article.id] && (
+              <div className="mt-4">
+                <div className="flex flex-wrap mb-2">
+                  {Array.isArray(tags[article.id]) && tags[article.id].length > 0 ? (
+                    tags[article.id].map((tag) => (
+                      <span key={tag.id} className="mr-2 mb-2 px-3 py-1 bg-gray-200 rounded-full flex items-center">
+                        {tag.name}
+                        <button className="ml-2 text-red-500" onClick={() => handleRemoveTag(article.id, tag.id)}>
+                          &times;
+                        </button>
+                      </span>
+                    ))
+                  ) : (
+                    <p>No tags available for this article</p>
+                  )}
+                </div>
+  
+                {/* Tag Input */}
+                <div className="relative tag-input">
+                  <input
+                    type="text"
+                    value={newTags[article.id] || ''}
+                    onChange={(e) => handleInputChange(article.id, e.target.value)}
+                    placeholder="Add new tag"
+                    className="border px-2 py-1 mr-2 rounded w-48 font-light"
+                    onFocus={() => handleInputFocus(article.id)}
+                    list={`suggestions-${article.id}`} 
+                  />
+                  <button onClick={() => handleAddTag(article.id)} className="button-inactive">
+                    Add Tag
+                  </button>
+                </div>
+                {activeInput === article.id && suggestions.length > 0 && (
+                  <ul className="absolute bg-gray-200 border border-gray-300 rounded w-48 z-10 tag-dropdown max-h-40 overflow-y-auto">
+                      <li className="px-3 py-2 font-semibold text-gray-600 bg-gray-100 italic text-sm">Your Existing Tags</li> {/* Heading */}
+                        {suggestions.map((suggestion, index) => (
+                          <li
+                            key={index}
+                            onClick={() => handleSuggestionClick(article.id, suggestion)}
+                            className="px-3 py-2 cursor-pointer hover:bg-gray-100 border-b last:border-none"
+                          >
+                            {suggestion}
+                          </li>
+                        ))}
+                  </ul>
+                )}
+              </div>
               )}
             </div>
           </div>
@@ -364,7 +392,7 @@ const handleCloseMessage = () => setShowMessage(false);
         onClose={handleCloseMessage} 
       />
     </div>
-  );
+  );  
 };
 
 export default SavedArticles;
