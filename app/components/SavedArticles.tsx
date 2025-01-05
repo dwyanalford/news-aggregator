@@ -237,7 +237,6 @@ const handleAddTag = async (articleId: string) => {
     }
   };
 
-
   const handleRemove = async (link: string) => {
     try {
       // Send a DELETE request to the API
@@ -267,10 +266,6 @@ const handleAddTag = async (articleId: string) => {
       displayMessage('error', 'An error occurred while removing the article.');
     }
   };
-  
-
-  
-  
 
  // Function to display a message
  const displayMessage = (type: 'success' | 'error', msg: string) => {

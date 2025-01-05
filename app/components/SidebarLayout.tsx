@@ -24,7 +24,7 @@ export default function SidebarLayout({ isSidebarOpen, toggleSidebar, children }
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 lg:left-0 w-72 bg-gray-200 p-4 transition-transform transform ${
+        className={`fixed top-0 right-0 lg:left-0 w-72 bg-gray-200 p-4 h-screen transition-transform transform ${
           isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
         } lg:translate-x-0 z-40 overflow-y-auto`}
       >
