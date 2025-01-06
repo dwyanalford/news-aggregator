@@ -43,7 +43,7 @@ const Navbar = () => {
             <ActiveLink href="/">Home</ActiveLink>
 
             {/* News Link */}
-            <ActiveLink href="/news">News</ActiveLink>
+            <ActiveLink href="/news/black-american">News</ActiveLink>
 
             {/* Events */}
             <ActiveLink href="/events">Events</ActiveLink>

@@ -3,6 +3,7 @@
 import NewsContainer from '@/app/components/NewsContainer';
 import NewsContent from '@/app/components/NewsContent';
 import blackAmericanData from '@/app/data/blackAmericanData';
+import RegionMenu from '@/app/components/RegionMenu';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -15,7 +16,8 @@ export default function BlackAmericanNews() {
   return (
     <>
       <NewsContainer>
-        <NewsContent sources={blackAmericanData} />
+      <RegionMenu />
+      <NewsContent sources={blackAmericanData} />
       </NewsContainer>
     </>
   );
