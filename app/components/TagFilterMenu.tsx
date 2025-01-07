@@ -14,7 +14,6 @@ interface Tag {
     count: number; // The number of articles associated with the tag
 }
    
-
 interface TagFilterMenuProps {
     tags: { id: string, name: string, count: number }[]; 
     onFilter: (tagName: string) => void;  // Function to handle filtering by tag
@@ -37,11 +36,10 @@ export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSid
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
       >
-          <div>
               {/* "ALL" option */}
               <button
                   onClick={() => handleTagClick('ALL')}
-                  className={`text-left py-2 px-4 mt-6 ${selectedTag === 'ALL' ? 'button-active' : 'button-inactive'}`}
+                  className={`text-left py-2 px-4 ${selectedTag === 'ALL' ? 'button-active' : 'button-inactive'}`}
               >
                   <span>All Saved Articles</span>
                   <span className="bg-red-500 text-white text-md px-2 py-1 rounded-full ml-2">{totalArticles}</span>  {/* Badge with count */}
@@ -73,7 +71,7 @@ export default function TagFilterMenu({ tags, onFilter, isSidebarOpen, toggleSid
                         </span>
                   </button>
               ))}
-          </div>
+          
       </SidebarLayout>
   );
 }

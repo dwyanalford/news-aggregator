@@ -61,14 +61,6 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
       setSelectedSource(source);
     }
   };
-
-  const handleCategorySelection = (category: string) => {
-    const sourcesByCategory = sources.filter((s) => s.categories.includes(category));
-    setFilteredSources(sourcesByCategory);
-    if (sourcesByCategory.length > 0) {
-      setSelectedSource(sourcesByCategory[0]); // Automatically select the first source in the category
-    }
-  };
   
   return (
     <div className="flex">
@@ -76,7 +68,6 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
       <NewsMenu
         sources={sources}
         onSelect={handleSourceSelection}
-        onCategorySelect={handleCategorySelection}
         isSidebarOpen={isSidebarOpen} // Pass sidebar state
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} // Pass toggle function
       />

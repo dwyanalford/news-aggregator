@@ -1,4 +1,4 @@
-// app/page.tsx
+// app/news/black-american/page.tsx
 
 import NewsContainer from '@/app/components/NewsContainer';
 import NewsContent from '@/app/components/NewsContent';

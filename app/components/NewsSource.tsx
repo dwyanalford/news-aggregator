@@ -102,7 +102,7 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
         <div className="flex flex-col md:flex-row items-center w-full space-x-4">
           {logo && <img src={logo} alt={`${name} logo`} className="rounded-t-lg shadow-xl" />} {/* Use the original size of the logo */}
           <div className="flex items-center"> {/* Center-align text vertically */}
-            <p className="text-gray-700 text-xl font-light">{purpose}</p>
+            <p className="sub-text">{purpose}</p>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
 
                   {/* Articles Text */}
                   <div id="articles-text" className="text-left p-2 2xl:p-4 max-w-md">
-                    <p className="text-sm text-gray-500 pt-3 2xl:pt-0 2xl:pb-2">{formatPubDate(pubDate)}</p>
+                    <p className="text-md text-gray-500 pt-3 2xl:pt-0 2xl:pb-2">{formatPubDate(pubDate)}</p>
                     <h2 className="text-xl font-bold pt-3 2xl:pt-0">{title}</h2>
                     <div className="hidden sm:block pt-3 2xl:pt-4">
                       <p className="text-gray-800 font-light text-lg">

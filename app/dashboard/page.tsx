@@ -10,6 +10,7 @@ import TagFilterMenu from "@/app/components/TagFilterMenu";
 import { fetchUserTags } from '@/app/utils/fetchUserTagsUtils';
 import Loading from "@/app/components/Loading";
 import axios from "axios";
+import SidebarLayout from "../components/SidebarLayout";
 
 // Define the Article type
 interface Article {
@@ -138,16 +139,16 @@ const DashboardPage = () => {
     <>
       <div className="flex">
         {/* Sidebar for Tag Filtering */}
-        <div className={`fixed top-0 right-0 lg:left-0 w-72 bg-gray-200 h-screen p-4 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 z-40 overflow-y-auto overflow-x-hidden mt-[70px]`}>
+        <SidebarLayout isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
           <TagFilterMenu
-            tags={userTags}  // This will be fetched and populated using fetchUserTags
-            setUserTags={setUserTags}  // Pass setUserTags to the sidebar
-            onFilter={handleTagClick}  // Function to handle filtering based on selected tag
-            isSidebarOpen={isSidebarOpen}  // Sidebar open/close state
-            toggleSidebar={toggleSidebar}  // Function to toggle sidebar
-            totalArticles={totalArticles}  // Pass total article count here
+            tags={userTags}
+            setUserTags={setUserTags}
+            onFilter={handleTagClick}
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+            totalArticles={totalArticles}
           />
-        </div>
+        </SidebarLayout>
       </div>
 
       <div className="container mx-auto p-8 bg-gray-200 ml-80">
