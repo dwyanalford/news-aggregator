@@ -7,9 +7,21 @@ import NewsMenu from './NewsMenu';
 import useSWR from 'swr';
 import Loading from './Loading';
 
+import blackAmericanData from '@/app/data/blackAmericanData';
+import africaData from '@/app/data/africaData';
+import ukData from '@/app/data/ukData';
+
+// Map regions to their corresponding data files
+const regionData: { [key: string]: any } = {
+  blackamerican: blackAmericanData,
+  africa: africaData,
+  uk: ukData,
+};
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-const NewsContent = ({ sources }: { sources: any[] }) => {
+// Render news content based on selected source and region
+const NewsContent = ({ sources, region }: { sources: any[], region: string }) => {
   const [selectedSource, setSelectedSource] = useState(sources[0]);
   const [filteredSources, setFilteredSources] = useState(sources);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to manage sidebar open/close
@@ -66,8 +78,8 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
     <div className="flex">
       {/* Sidebar (NewsMenu) */}
       <NewsMenu
-        sources={sources}
-        onSelect={handleSourceSelection}
+        sources={sources} // Passes the sources for the sidebar
+        onSelect={handleSourceSelection} // Handles source selection
         isSidebarOpen={isSidebarOpen} // Pass sidebar state
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} // Pass toggle function
       />
@@ -80,6 +92,7 @@ const NewsContent = ({ sources }: { sources: any[] }) => {
             name={selectedSource.name}
             purpose={selectedSource.purpose}
             items={newsItems}
+            data={regionData[region]} // Dynamically load region-specific data
           />
         ) : (
           <Loading isLoading={isLoading} />

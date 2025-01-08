@@ -20,6 +20,7 @@ interface NewsSourceProps {
   name: string;
   purpose: string;
   items: NewsItem[];
+  data: any[]; // Dynamic region-specific data passed down
 }
 
 // Function to fetch article data from the server-side API
@@ -48,7 +49,7 @@ function truncateSummary(summary: string, maxLength: number = 252): string {
   return truncated.trimEnd() + ' ...';
 }
 
-export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
+export default function NewsSource({ name, purpose, items, data }: NewsSourceProps) {
   const [articles, setArticles] = useState<Record<number, { imageUrl: string | null, firstParagraph: string }>>({});
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({}); // State to track loading images
   
@@ -92,9 +93,10 @@ export default function NewsSource({ name, purpose, items }: NewsSourceProps) {
   }, [items]);
   
 
-  // Find the corresponding source in blackAmericanData to get the logo
-  const currentSourceData = blackAmericanData.find(source => source.name === name);
-  const logo = currentSourceData?.logo2;
+  // Find the corresponding source in the data file to get the logo
+  const currentSourceData = data.find((source: any) => source.name === name);
+  const logo = currentSourceData?.logo2 || ''; // Access the logo for the source dynamically
+
 
   return (
       <div id="news-source">
