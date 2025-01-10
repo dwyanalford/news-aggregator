@@ -2,7 +2,6 @@
 
 import NewsContainer from '@/app/components/NewsContainer';
 import NewsContent from '@/app/components/NewsContent';
-import RegionMenu from '@/app/components/RegionMenu';
 import { Metadata } from 'next';
 import blackAmericanData from '@/app/data/blackAmericanData';
 import africaData from '@/app/data/africaData';
@@ -43,7 +42,6 @@ export default function RegionPage({ params }: PageProps) {
   return (
     <>
       <NewsContainer>
-        <RegionMenu />
         <NewsContent sources={data} region={region} /> {/* Pass region-specific data */}
       </NewsContainer>
     </>

@@ -9,6 +9,7 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Message from './Message';
 import { containsProfanity } from '@/app/utils/profanityList'; 
+import Image from 'next/image';
 
 interface Article {
   id: string;
@@ -302,8 +303,11 @@ const toggleTags = (id: string) => {
         {filteredArticles.map((article) => (
           <div key={article.id} className="flex flex-col md:flex-row items-start p-4 border rounded shadow-xl bg-white relative">
             {/* Image Section */}
-            <img src={article.imageURL} alt={article.title} className="w-full md:w-64 h-48 object-cover rounded-md mb-4 md:mb-0" />
-  
+            <img 
+            src={article.imageURL} 
+            alt={article.title} 
+            className="w-full md:w-64 h-48 object-cover rounded-md mb-4 md:mb-0" />
+
             {/* Details Section */}
             <div className="flex-1 md:ml-6">
               <h2 className="text-xl font-bold">{article.title}</h2>

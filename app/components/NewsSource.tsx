@@ -5,7 +5,7 @@ import axios from 'axios';
 import NewsOptions from './NewsOptions';
 import SaveButton from './SaveButton';
 import blackAmericanData from '../data/blackAmericanData';
-import { useSavedArticlesStore } from '@/app/store/useSavedArticlesStore'
+import { useSavedArticlesStore } from '@/app/store/useSavedArticlesStore';
 
 interface NewsItem {
   name: any;
@@ -58,10 +58,11 @@ export default function NewsSource({ name, purpose, items, data }: NewsSourcePro
   const fetchSavedArticles = useSavedArticlesStore((state) => state.fetchSavedArticles); // Use Zustand action
   const addSavedArticle = useSavedArticlesStore((state) => state.addSavedArticle); // Use Zustand action
 
-  // Fetch saved articles when the component mounts and synchronize state
+  // Fetch saved articles from Zustand when the component mounts and synchronize state
   useEffect(() => {
-    fetchSavedArticles(); // Fetch saved articles from Zustand when the component mounts
-  }, []);
+    fetchSavedArticles();
+  }, [fetchSavedArticles]); // Add dependency
+  
 
   const handleArticleSaved = (link: string) => {
     if (!savedArticles.includes(link)) {
@@ -94,15 +95,21 @@ export default function NewsSource({ name, purpose, items, data }: NewsSourcePro
   
 
   // Find the corresponding source in the data file to get the logo
-  const currentSourceData = data.find((source: any) => source.name === name);
-  const logo = currentSourceData?.logo2 || ''; // Access the logo for the source dynamically
+  const currentSourceData = Array.isArray(data)
+  ? data.find((source: any) => source.name === name)
+  : null;
+
+  const logo = currentSourceData?.logo2 || ''; // Safely access the logo
 
 
   return (
       <div id="news-source">
         {/* Main Publication Title */}
         <div className="flex flex-col md:flex-row items-center w-full space-x-4">
-          {logo && <img src={logo} alt={`${name} logo`} className="rounded-t-lg shadow-xl" />} {/* Use the original size of the logo */}
+          {logo && <img 
+          src={logo} 
+          alt={`${name} logo`} 
+          className="rounded-t-lg shadow-xl" />} {/* Use the original size of the logo */}
           <div className="flex items-center"> {/* Center-align text vertically */}
             <p className="sub-text">{purpose}</p>
           </div>
@@ -122,7 +129,7 @@ export default function NewsSource({ name, purpose, items, data }: NewsSourcePro
                 <div id="news-content" className="h-full flex flex-col shadow-lg rounded-t-lg p-1 border border-gray-200">
                   {/* Articles Image */}
                   <div id="articles-image" className="w-full h-60 max-w-md"> 
-                    {articles[index]?.imageUrl && (
+                  {articles[index]?.imageUrl && (
                       <img
                         src={articles[index].imageUrl}
                         alt={title}

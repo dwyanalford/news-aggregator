@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import Image from 'next/image';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faTag } from '@fortawesome/free-solid-svg-icons';
 import SidebarLayout from './SidebarLayout';
@@ -32,7 +33,11 @@ export default function NewsMenu({ sources, onSelect, isSidebarOpen, toggleSideb
             onClick={() => handleSourceClick(source.name)}
             className={`w-full text-left py-2 px-4 rounded-lg flex items-center space-x-2 mb-1 ${selectedSource === source.name ? 'button-active' : 'button-inactive'}`}
           >
-            <img src={source.logo} alt={source.name} className="w-6 h-6 rounded-lg" />
+            <img 
+            src={source.logo} 
+            alt={source.name} 
+            className="w-6 h-6 rounded-lg" />
+
             <span>{source.name}</span>
           </button>
         ))}
