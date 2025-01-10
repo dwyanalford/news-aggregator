@@ -1,4 +1,5 @@
 // components/ActiveLink.tsx
+
 "use client"; // Update this component to be a Client Component
 
 import Link from 'next/link';
@@ -12,7 +13,11 @@ interface ActiveLinkProps {
 
 const ActiveLink = ({ href, children }: ActiveLinkProps) => {
   const pathname = usePathname(); // Get the current path using usePathname
-  const isActive = pathname === href; // Determine if the link is active
+  const isActive =
+  href === "#"
+    ? pathname.startsWith("/news")
+    : pathname === href || (href === "/news" && pathname.startsWith("/news"));
+ // Determine if the link is active
 
   return (
     <Link
