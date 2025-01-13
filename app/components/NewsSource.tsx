@@ -49,7 +49,6 @@ function truncateSummary(summary: string, maxLength: number = 252): string {
 }
 
 export default function NewsSource({ name, purpose, items, data }: NewsSourceProps) {
-  console.log("NewsSource Props:", { name, purpose, items, data });
 
   const [articles, setArticles] = useState<Record<number, { imageUrl: string | null, firstParagraph: string }>>({});
   const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({}); // State to track loading images
@@ -121,11 +120,6 @@ export default function NewsSource({ name, purpose, items, data }: NewsSourcePro
         <div id="news-container" className='flex flex-wrap justify-center'>
 
           {items.map(({ title, pubDate, link, description, author }, index) => {
-            
-
-console.log("Rendering News Item:", { title, pubDate, link, description, author, index });
-console.log("NewsSource Items:", items);
-
             
             return (
               <div

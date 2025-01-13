@@ -82,9 +82,19 @@ export async function fetchNewsItems(sources: Source[]): Promise<FetchedNewsItem
 
         return { source: name, purpose, items: finalItems };
       } catch (error) {
-        console.error(`Failed to fetch ${name} news: ${error}`);
-        return { source: name, purpose, items: [] };
-      }
+        console.error(`Failed to fetch ${name} news:`, error);
+      
+        // Ensure error is typed correctly
+        const errorMessage =
+          error instanceof Error ? error.message : 'An unknown error occurred';
+      
+        return {
+          source: name,
+          purpose,
+          items: [],
+          fetchError: `Failed to fetch news from ${name}: ${errorMessage}`, // Use narrowed error message
+        };
+      }      
     })
   );
 
