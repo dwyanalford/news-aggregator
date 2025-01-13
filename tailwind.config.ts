@@ -12,44 +12,44 @@ const config: Config = {
         DEFAULT: {
           css: {
             h1: {
-              fontSize: '2.25rem', // Main headlines
-              fontWeight: '700',
-              lineHeight: '1.3',
+              fontSize: '2.25rem', // Main headline size
+              fontWeight: '700',   // Bold
+              lineHeight: '1.3',   // Slightly tight
             },
             h2: {
-              fontSize: '1.875rem', // Secondary headlines
-              fontWeight: '600',
+              fontSize: '1.875rem', // Subheadline size
+              fontWeight: '600',    // Semi-bold
               lineHeight: '1.4',
             },
             h3: {
-              fontSize: '1.5rem', // Smaller headlines
+              fontSize: '1.5rem',   // Smaller headline size
               fontWeight: '600',
               lineHeight: '1.5',
             },
             p: {
-              fontSize: '1rem', // Base font size for paragraphs
-              fontWeight: '400',
-              lineHeight: '1.75',
+              fontSize: '1.125rem', // Larger paragraph size
+              fontWeight: '400',    // Normal weight
+              lineHeight: '1.8',    // Comfortable reading
             },
             a: {
-              color: '#1d4ed8', // Tailwind's blue-700
-              textDecoration: 'none',
-              fontWeight: '500',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
+              fontSize: '1.125rem', // Matches paragraph size
+              fontWeight: '500',    // Medium weight
+              lineHeight: '1.8',
+              textDecoration: 'none', // Ensure no underline by default
+            },
+            ul: {
+              listStyleType: 'none', // Removes bullets from <ul> by default
+              paddingLeft: '0',     // Removes left padding
             },
             li: {
-              fontSize: '1rem', // List items match paragraph size
-              lineHeight: '1.75',
+              fontSize: '1.125rem', // Matches paragraph size
+              fontWeight: '400',
+              lineHeight: '1.8',
             },
             blockquote: {
-              fontSize: '1.25rem', // Emphasized quotes
-              fontWeight: '500',
-              fontStyle: 'italic',
-              borderLeftWidth: '0.25rem',
-              paddingLeft: '1rem',
-              color: '#6b7280', // Gray-500
+              fontSize: '1.125rem', // Matches paragraph size
+              fontWeight: '400',
+              fontStyle: 'italic', // Retain emphasis
             },
           },
         },

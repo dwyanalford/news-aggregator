@@ -60,3 +60,9 @@ a.source-link {
 .sub-text {
   @apply text-gray-700 text-xl font-light;
 }
+
+.check-icon {
+  @apply text-blue-500 mr-2 mb-1;
+  width: 36px;
+  height: 36px;
+}
