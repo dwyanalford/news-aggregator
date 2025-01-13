@@ -18,7 +18,28 @@ const regionData: { [key: string]: any } = {
   uk: ukData,
 };
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = async (url: string) => {
+  const response = await fetch(url);
+
+  // Check if the response is not okay (e.g., 403, 404)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch news. HTTP status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  // Log the API response to confirm what is being handled
+  console.log("API Response:", data);
+
+  // If the response is empty, return the empty array as is
+  if (Array.isArray(data) && data.length === 0) {
+    return [];
+  }
+
+  return data; // Return the fetched data
+};
+
+
 
 const NewsContent = ({ sources, region }: { sources: any[]; region: string }) => {
   const [selectedSource, setSelectedSource] = useState(sources[0]);
@@ -39,18 +60,23 @@ const NewsContent = ({ sources, region }: { sources: any[]; region: string }) =>
 
   useEffect(() => {
     if (error) {
-      setFetchError("Failed to fetch news. Please check the RSS feed.");
+      // Handle fetch failure
+      setFetchError(error.message || "Failed to fetch news. Please try again later.");
       setNoNews(false); // Reset noNews in case of fetch error
     } else if (newsItems && Array.isArray(newsItems) && newsItems.length === 0) {
-      console.log(`Articles returned for ${selectedSource.name}: ${newsItems.length}`); // Debugging number of articles
-      setNoNews(true); // No articles available
-      setFetchError(null); // Reset fetchError in case of empty data
-    } else {
-      setFetchError(null);
-      setNoNews(false); // Reset both error and noNews for valid data
+      // Handle empty results
+      setNoNews(true); // No news available for the selected source
+      setFetchError(null); // Reset fetchError in case of empty array
+    } else if (newsItems && Array.isArray(newsItems) && newsItems.length > 0) {
+      // Handle valid results
+      setNoNews(false); // Reset noNews for valid articles
+      setFetchError(null); // Reset fetchError for valid fetch
     }
-    setIsLoading(false); // Stop loading regardless of state
+  
+    // Stop loading once a result is processed
+    setIsLoading(false);
   }, [newsItems, error]);
+  
 
   const handleSourceSelection = (sourceName: string) => {
     console.log("Selected source:", sourceName);
