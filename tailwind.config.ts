@@ -8,18 +8,57 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontSize: {
-        base: '1rem',   // Base font size for body text
-        lg: '1.125rem', // Slightly larger for emphasis in paragraphs
-        xl: '1.25rem',  // Subtitle or smaller headlines
-        '2xl': '1.5rem', // Secondary headlines or important excerpts
-        '3xl': '2rem',   // Main headlines
-        '4xl': '2.25rem', // Very large headlines, if needed
-        '5xl': '3rem',   // Hero or special headlines
+      typography: {
+        DEFAULT: {
+          css: {
+            h1: {
+              fontSize: '2.25rem', // Main headlines
+              fontWeight: '700',
+              lineHeight: '1.3',
+            },
+            h2: {
+              fontSize: '1.875rem', // Secondary headlines
+              fontWeight: '600',
+              lineHeight: '1.4',
+            },
+            h3: {
+              fontSize: '1.5rem', // Smaller headlines
+              fontWeight: '600',
+              lineHeight: '1.5',
+            },
+            p: {
+              fontSize: '1rem', // Base font size for paragraphs
+              fontWeight: '400',
+              lineHeight: '1.75',
+            },
+            a: {
+              color: '#1d4ed8', // Tailwind's blue-700
+              textDecoration: 'none',
+              fontWeight: '500',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            },
+            li: {
+              fontSize: '1rem', // List items match paragraph size
+              lineHeight: '1.75',
+            },
+            blockquote: {
+              fontSize: '1.25rem', // Emphasized quotes
+              fontWeight: '500',
+              fontStyle: 'italic',
+              borderLeftWidth: '0.25rem',
+              paddingLeft: '1rem',
+              color: '#6b7280', // Gray-500
+            },
+          },
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'), // Enables the Tailwind Typography plugin
+  ],
 };
 
 export default config;

@@ -2,15 +2,15 @@
 
 const HomePage = () => {
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-4xl font-bold text-center mb-6">Welcome to MyApp</h1>
-      <p className="text-center text-lg text-gray-700 mb-8">
+    <div className="prose mx-auto p-8 mt-44">
+      <h1>News Aggregator App</h1>
+      <p>
         Discover the latest news and articles, save and tag your favorite reads, and more.
       </p>
       {/* Sections for features, about, etc. */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Features</h2>
-        <ul className="list-disc ml-8 text-gray-600">
+      <section>
+        <h2>Features</h2>
+        <ul>
           <li>Save and Tag Articles</li>
           <li>Explore Regional News</li>
           <li>User Dashboard to manage your articles</li>
@@ -23,4 +23,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
