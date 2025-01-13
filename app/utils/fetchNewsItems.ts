@@ -65,15 +65,20 @@ export async function fetchNewsItems(sources: Source[]): Promise<FetchedNewsItem
           return item;
         });
 
-        // Filter items by date
+        // Set today's date to midnight in the local timezone
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Filter items by today's date, considering timezone differences
         const itemsToday = updatedItems.filter(item => {
           const pubDate = new Date(item.pubDate);
-          pubDate.setHours(0, 0, 0, 0);
+          pubDate.setHours(0, 0, 0, 0); // Normalize to midnight
           return pubDate.getTime() === today.getTime();
         });
 
-        // If less than 6 items today, take the most recent 12 instead
-        const finalItems = itemsToday.length <= 6 ? updatedItems.slice(0, 12) : itemsToday;
+        // Use only today's items
+        const finalItems = itemsToday;
+
 
         return { source: name, purpose, items: finalItems };
       } catch (error) {

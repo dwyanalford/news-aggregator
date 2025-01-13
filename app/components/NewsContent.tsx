@@ -85,7 +85,7 @@ const NewsContent = ({ sources, region }: { sources: any[], region: string }) =>
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 p-8 transition-all duration-300 ease-in-out lg:ml-72">
+      <div className="flex-1 p-8 transition-all duration-300 ease-in-out lg:ml-72 mt-[100px]">
         {newsItems ? (
           <NewsSource
             key={selectedSource.name}
