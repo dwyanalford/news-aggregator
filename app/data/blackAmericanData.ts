@@ -156,13 +156,14 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/black-press-media.png',
     logo2: '/images/logos/black-press-media-2.png'
   },
-  {
-    name: 'Network Journal',
-    url: 'https://tnj.com/feed/',
-    purpose: 'Black Professionals and Small Business Magazine.',
-    logo: '/images/logos/network-journal.png',
-    logo2: '/images/logos/network-journal-2.png'
-  },
+  // need to check why this one is failing.
+  // {
+  //   name: 'Network Journal',
+  //   url: 'https://tnj.com/feed/',
+  //   purpose: 'Black Professionals and Small Business Magazine.',
+  //   logo: '/images/logos/network-journal.png',
+  //   logo2: '/images/logos/network-journal-2.png'
+  // },
   {
     name: 'BlackGirlNerds',
     url: 'https://blackgirlnerds.com/feed/',
@@ -317,13 +318,13 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/nubian-message.png',
     logo2: '/images/logos/nubian-message-2.png'
   },
-  {
-    name: 'Nation of Islam',
-    url: 'https://noi.org/feed/',
-    purpose: 'The Nation of Islam (The Nation of Peace) represents hope to millions of our people in America and around the globe who have been deprived of the high standards of a righteous way of life.',
-    logo: '/images/logos/noi.png',
-    logo2: '/images/logos/noi-2.png'
-  },
+  // {
+  //   name: 'Nation of Islam',
+  //   url: 'https://noi.org/feed/',
+  //   purpose: 'The Nation of Islam (The Nation of Peace) represents hope to millions of our people in America and around the globe who have been deprived of the high standards of a righteous way of life.',
+  //   logo: '/images/logos/noi.png',
+  //   logo2: '/images/logos/noi-2.png'
+  // },
   {
     name: 'Tennessee Tribune',
     url: 'https://tntribune.com/feed/',
