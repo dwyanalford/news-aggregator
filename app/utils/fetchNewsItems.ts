@@ -70,14 +70,30 @@ export async function fetchNewsItems(sources: Source[]): Promise<FetchedNewsItem
         today.setHours(0, 0, 0, 0);
 
         // Filter items by today's date, considering timezone differences
-        const itemsToday = updatedItems.filter(item => {
-          const pubDate = new Date(item.pubDate);
-          pubDate.setHours(0, 0, 0, 0); // Normalize to midnight
-          return pubDate.getTime() === today.getTime();
-        });
+        // const itemsToday = updatedItems.filter(item => {
+        //   const pubDate = new Date(item.pubDate);
+        //   pubDate.setHours(0, 0, 0, 0); // Normalize to midnight
+        //   return pubDate.getTime() === today.getTime();
+        // });
 
-        // Use only today's items
-        const finalItems = itemsToday;
+        // // Use only today's items
+        // const finalItems = itemsToday;
+
+        // Filter items by today's and yesterday's date
+const itemsTodayAndYesterday = updatedItems.filter(item => {
+  const pubDate = new Date(item.pubDate);
+  pubDate.setHours(0, 0, 0, 0); // Normalize to midnight
+
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1); // Get yesterday's date
+  yesterday.setHours(0, 0, 0, 0); // Normalize to midnight
+
+  return pubDate.getTime() === today.getTime() || pubDate.getTime() === yesterday.getTime();
+});
+
+// Use today's and yesterday's items
+const finalItems = itemsTodayAndYesterday;
+
 
 
         return { source: name, purpose, items: finalItems };
