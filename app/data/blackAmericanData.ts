@@ -290,13 +290,13 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/wash-inform.png',
     logo2: '/images/logos/wash-inform-2.png'
   },
-  {
-    name: 'SoulVision Magazine',
-    url: 'https://soulvisionmagazine.com/feed/',
-    purpose: 'Positive coverage of the urban community.',
-    logo: '/images/logos/soul-vision.png',
-    logo2: '/images/logos/soul-vision-2.png'
-  },
+  // {
+  //   name: 'SoulVision Magazine',
+  //   url: 'https://soulvisionmagazine.com/feed/',
+  //   purpose: 'Positive coverage of the urban community.',
+  //   logo: '/images/logos/soul-vision.png',
+  //   logo2: '/images/logos/soul-vision-2.png'
+  // },
   {
     name: 'TSDMemphis.com',
     url: 'http://tri-statedefender.com/feed/',
