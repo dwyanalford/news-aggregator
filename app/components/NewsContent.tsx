@@ -11,6 +11,7 @@ import Message from "./Message";
 import blackAmericanData from "@/app/data/blackAmericanData";
 import africaData from "@/app/data/africaData";
 import ukData from "@/app/data/ukData";
+import { DEFAULT_FILTER } from "@/app/config/defaults"
 
 const regionData: { [key: string]: any } = {
   blackamerican: blackAmericanData,
@@ -48,15 +49,20 @@ const NewsContent = ({ sources, region }: { sources: any[]; region: string }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [noNews, setNoNews] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState(DEFAULT_FILTER);
+
 
   useEffect(() => {
     console.log("Currently selected source:", selectedSource);
   }, [selectedSource]);
 
-  const { data: newsItems, error } = useSWR(
-    selectedSource ? `/api/news-items?source=${encodeURIComponent(selectedSource.url)}` : null,
-    fetcher
-  );
+const { data: newsItems, error } = useSWR(
+  selectedSource 
+    ? `/api/news-items?source=${encodeURIComponent(selectedSource.url)}&filter=${selectedFilter}` 
+    : null,
+  fetcher
+);
+
 
   useEffect(() => {
     if (error) {
@@ -94,6 +100,8 @@ const NewsContent = ({ sources, region }: { sources: any[]; region: string }) =>
         onSelect={handleSourceSelection}
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        currentFilter={selectedFilter}
+        onFilterChange={(newFilter) => setSelectedFilter(newFilter)}
       />
 
       {/* Main Content Area */}

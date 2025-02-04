@@ -3,7 +3,7 @@
 import axios from 'axios';
 import xml2json from 'xml-js';
 import * as cheerio from 'cheerio';  // Correct import for named exports
-// import { JSDOM } from 'jsdom';
+import { DEFAULT_FILTER } from "@/app/config/defaults"
 
 interface Source {
   name: string;
@@ -25,7 +25,11 @@ interface FetchedNewsItems {
   items: NewsItem[];
 }
 
-export async function fetchNewsItems(sources: Source[]): Promise<FetchedNewsItems[]> {
+export async function fetchNewsItems(
+  sources: Source[],
+  filterType: 'today' | 'pastWeek' | 'pastTwoWeeks' = DEFAULT_FILTER
+): Promise<FetchedNewsItems[]> {
+
   function removeHTMLTags(html: string): string {
     const $ = cheerio.load(html);  // Load the HTML content using cheerio
     const textContent = $('body').text();  // Extract and return all text from the body
@@ -65,35 +69,45 @@ export async function fetchNewsItems(sources: Source[]): Promise<FetchedNewsItem
           return item;
         });
 
-        // Set today's date to midnight in the local timezone
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Filter items by today's date, considering timezone differences
-        // const itemsToday = updatedItems.filter(item => {
-        //   const pubDate = new Date(item.pubDate);
-        //   pubDate.setHours(0, 0, 0, 0); // Normalize to midnight
-        //   return pubDate.getTime() === today.getTime();
-        // });
-
-        // // Use only today's items
-        // const finalItems = itemsToday;
-
-        // Filter items by today's and yesterday's date
-const itemsTodayAndYesterday = updatedItems.filter(item => {
+        // Filter items for today's news
+const itemsToday = updatedItems.filter(item => {
   const pubDate = new Date(item.pubDate);
-  pubDate.setHours(0, 0, 0, 0); // Normalize to midnight
-
-  const yesterday = new Date();
-  yesterday.setDate(today.getDate() - 1); // Get yesterday's date
-  yesterday.setHours(0, 0, 0, 0); // Normalize to midnight
-
-  return pubDate.getTime() === today.getTime() || pubDate.getTime() === yesterday.getTime();
+  pubDate.setHours(0, 0, 0, 0);
+  return pubDate.getTime() === today.getTime();
 });
 
-// Use today's and yesterday's items
-const finalItems = itemsTodayAndYesterday;
+// Filter items for the past week (last 7 days including today)
+const itemsPastWeek = updatedItems.filter(item => {
+  const pubDate = new Date(item.pubDate);
+  pubDate.setHours(0, 0, 0, 0);
+  const oneWeekAgo = new Date(today);
+  oneWeekAgo.setDate(today.getDate() - 6);
+  return pubDate >= oneWeekAgo && pubDate <= today;
+});
 
+// Filter items for the past two weeks (last 14 days including today)
+const itemsPastTwoWeeks = updatedItems.filter(item => {
+  const pubDate = new Date(item.pubDate);
+  pubDate.setHours(0, 0, 0, 0);
+  const twoWeeksAgo = new Date(today);
+  twoWeeksAgo.setDate(today.getDate() - 13);
+  return pubDate >= twoWeeksAgo && pubDate <= today;
+});
+
+// Select final items based on the filterType parameter
+let finalItems: NewsItem[];
+switch (filterType) {
+  case 'today':
+    finalItems = itemsToday;
+    break;
+  case 'pastWeek':
+    finalItems = itemsPastWeek;
+    break;
+  case 'pastTwoWeeks':
+  default:
+    finalItems = itemsPastTwoWeeks;
+    break;
+}
 
 
         return { source: name, purpose, items: finalItems };
