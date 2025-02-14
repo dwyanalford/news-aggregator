@@ -1,32 +1,16 @@
 // scripts/fetchRssFeeds.ts
 
 import { fetchNewsItems } from '@/app/utils/fetchNewsItems';
+import { logInfo, logError } from '@/app/utils/logger';  // ✅ Import logging functions
 import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
-import path from 'path';
 
 const prisma = new PrismaClient();
-
-// ✅ Create logs directory if it doesn’t exist
-const logsDir = path.join(__dirname, '../logs');
-if (!fs.existsSync(logsDir)) {
-    fs.mkdirSync(logsDir, { recursive: true });
-}
-
-// ✅ Generate log file name (e.g., logs/rss_feed_log_2025-02-14.txt)
-const logFilePath = path.join(logsDir, `rss_feed_log_${new Date().toISOString().split('T')[0]}.txt`);
-
-// ✅ Function to log both to console and file
-function logMessage(message: string) {
-    console.log(message);
-    fs.appendFileSync(logFilePath, message + '\n', 'utf8');
-}
 
 async function saveArticles() {
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
 
-    logMessage('🚀 Fetching RSS feed articles...');
+    logInfo('🚀 Fetching RSS feed articles...');
 
     let parsedCount = 0;
     let skippedCountTotal = 0;
@@ -37,7 +21,7 @@ async function saveArticles() {
         const rssFeeds = await prisma.rSSFeed.findMany();
 
         if (rssFeeds.length === 0) {
-            logMessage('⚠️ No RSS feeds found in the database.');
+            logInfo('⚠️ No RSS feeds found in the database.');
             return;
         }
 
@@ -46,6 +30,17 @@ async function saveArticles() {
         for (const source of fetchedNews) {
             if (source.failed) {
                 failedFeedsCount++;
+
+                // ✅ Mark the RSS feed as inactive in the database
+                await prisma.rSSFeed.updateMany({
+                    where: { url: source.url },
+                    data: { active: false },
+                });
+
+                logError(`❌ RSS Feed Failed: ${source.source}`);
+                logError(`🔗 URL: ${source.url}`);
+                logError(`🛑 Error: ${source.errorMessage || "Unknown issue"}`); // ✅ Ensure correct property name
+
                 continue;
             }
 
@@ -79,7 +74,8 @@ async function saveArticles() {
                             category: "Uncategorized",
                         },
                     });
-                    logMessage(`✅ Saving article: "${article.title}" to database.`);
+
+                    logInfo(`✅ Saving article: "${article.title}" to database.`);
                     savedCountForFeed++;
                     savedCountTotal++;
                 } else {
@@ -89,16 +85,15 @@ async function saveArticles() {
 
             skippedCountTotal += skippedCount;
 
-            logMessage("\n=============================================================");
-            logMessage(`📌 RSS Feed Summary for: ${source.source}`);
-            logMessage("===============================================================");
-            logMessage(`🌍 Region: ${source.region}`);
-            logMessage(`📄 Total Articles in Feed: ${totalArticlesInFeed}`);
-            logMessage(`📅 Filtered for Today: ${filteredForToday}`);
-            logMessage(`⚠️ Skipped (Already in DB): ${skippedCount}`);
-            logMessage(`✅ Saved to Database: ${savedCountForFeed}`);
-            logMessage(`❌ RSS Feeds Failed to Fetch: ${failedFeedsCount}`);
-            logMessage("================================================================\n");
+            logInfo("\n=============================================================");
+            logInfo(`📌 RSS Feed Summary for: ${source.source}`);
+            logInfo("===============================================================");
+            logInfo(`🌍 Region: ${source.region}`);
+            logInfo(`📄 Total Articles in Feed: ${totalArticlesInFeed}`);
+            logInfo(`📅 Filtered for Today: ${filteredForToday}`);
+            logInfo(`⚠️ Skipped (Already in DB): ${skippedCount}`);
+            logInfo(`✅ Saved to Database: ${savedCountForFeed}`);
+            logInfo("================================================================\n");
         }
 
         const totalArticlesInDatabase = await prisma.savedArticle.count();
@@ -111,18 +106,18 @@ async function saveArticles() {
             }
         });
 
-        logMessage("\n=============================================================");
-        logMessage("            📊 FINAL DATABASE SUMMARY");
-        logMessage("=============================================================");
-        logMessage(`📅 Total articles in database for today: ${totalArticlesToday}`);
-        logMessage(`🆕 New articles saved to database this run: ${savedCountTotal}`);
-        logMessage(`📦 Total articles in database: ${totalArticlesInDatabase}`);
-        logMessage(`❌ RSS Feeds Failed to Fetch: ${failedFeedsCount}`);
-        logMessage("=============================================================\n");
+        logInfo("\n=============================================================");
+        logInfo("            📊 FINAL DATABASE SUMMARY");
+        logInfo("=============================================================");
+        logInfo(`📅 Total articles in database for today: ${totalArticlesToday}`);
+        logInfo(`🆕 New articles saved to database this run: ${savedCountTotal}`);
+        logInfo(`📦 Total articles in database: ${totalArticlesInDatabase}`);
+        logInfo(`❌ RSS Feeds Failed to Fetch: ${failedFeedsCount}`);
+        logInfo("=============================================================\n");
 
-        logMessage('🎉 RSS feed fetch & save complete!');
+        logInfo('🎉 RSS feed fetch & save complete!');
     } catch (error) {
-        logMessage(`❌ Error fetching or saving articles: ${error}`);
+        logError(`❌ Error fetching or saving articles: ${error}`);
     } finally {
         await prisma.$disconnect();
     }
