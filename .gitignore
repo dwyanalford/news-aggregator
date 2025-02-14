@@ -38,6 +38,7 @@ next-env.d.ts
 
 # contains old files, unused files, testing files etc
 /playground
+/logs
 
 project-structure.txt
-/logs
+
