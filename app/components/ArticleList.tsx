@@ -62,7 +62,7 @@ export default function ArticlesList({ articles }: ArticlesListProps) {
 
               {/* ✅ Article Metadata (Date, Author, Source) */}
               <p className="text-gray-500 text-sm">
-                {article.date} • {article.author || "Unknown Author"} • {article.source}
+                {article.date} •  Written by {article.author || "Unknown Author"} 
               </p>
 
               {/* ✅ Article Summary */}
@@ -77,6 +77,8 @@ export default function ArticlesList({ articles }: ArticlesListProps) {
               >
                 Read More
               </a>
+              <p className="text-gray-500 text-sm mt-4">Category: {article.category}</p>
+              <p className="text-gray-500 text-sm">Source: {article.source}</p>
             </li>
           ))}
         </ul>

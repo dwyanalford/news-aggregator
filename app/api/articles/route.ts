@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     // ✅ Ensure UTC-based filtering
     const startOfToday = new Date();
-    startOfToday.setUTCHours(0, 0, 0, 0);  // Forces 00:00 UTC
+    startOfToday.setUTCHours(0, 0, 0, 0); // Forces 00:00 UTC
 
     const endOfToday = new Date();
     endOfToday.setUTCHours(23, 59, 59, 999); // Forces 23:59 UTC
@@ -20,6 +20,9 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10', 10);
     const skip = (page - 1) * limit;
 
+    // ✅ Extract optional region filter
+    const region = searchParams.get('region'); // Allows filtering by region
+
     // ✅ Fetch articles from database with proper UTC filtering
     const articles = await prisma.savedArticle.findMany({
       where: {
@@ -27,10 +30,23 @@ export async function GET(req: NextRequest) {
           gte: startOfToday,
           lte: endOfToday,
         },
+        ...(region ? { region } : {}), // ✅ Conditionally apply region filter if provided
       },
       orderBy: { date: 'desc' },
       take: limit,
       skip: skip,
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        link: true,
+        summary: true,
+        imageURL: true,  // ✅ Ensure images are included
+        author: true,
+        source: true,
+        category: true,
+        region: true,
+      },
     });
 
     // ✅ Return response with success flag
