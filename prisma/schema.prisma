@@ -53,6 +53,8 @@ model SavedArticle {
   link      String                @unique
   summary   String
   imageURL  String?
+  source    String                // New field for publication name
+  author    String?               // New field for author (optional)
   users     UserSavedArticle[]    @relation("SavedArticleToUserSavedArticle")  // Relation to UserSavedArticle
 }
 
@@ -81,3 +83,14 @@ model UserSavedArticleTag {
   user                User              @relation(fields: [userId], references: [id], name: "UserToUserSavedArticleTags")  // New relation to User
 }
 
+model RSSFeed {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  url         String  @unique
+  purpose     String
+  logoSmall   String?  // Formerly "logo"
+  logoLarge   String?  // Formerly "logo2"
+  active      Boolean @default(true)
+  region      String  @default("USA") // New field for location/region
+  createdAt   DateTime @default(now())
+}

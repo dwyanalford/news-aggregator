@@ -14,7 +14,7 @@ const blackAmericanData: NewsSource[] = [
     url: 'https://www.theroot.com/rss',
     purpose: 'Black News and Black Views with a Whole Lotta Attitude',
     logo: '/images/logos/the-root.png',
-    logo2: '/images/logos/the-root-2.png' // New logo2 key
+    logo2: '/images/logos/the-root-2.png'
   },
   {
     name: 'Atlantic Black Star',
@@ -156,14 +156,6 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/black-press-media.png',
     logo2: '/images/logos/black-press-media-2.png'
   },
-  // need to check why this one is failing.
-  // {
-  //   name: 'Network Journal',
-  //   url: 'https://tnj.com/feed/',
-  //   purpose: 'Black Professionals and Small Business Magazine.',
-  //   logo: '/images/logos/network-journal.png',
-  //   logo2: '/images/logos/network-journal-2.png'
-  // },
   {
     name: 'BlackGirlNerds',
     url: 'https://blackgirlnerds.com/feed/',
@@ -262,13 +254,6 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/afram.png',
     logo2: '/images/logos/afram-2.png'
   },
-  // {
-  //   name: 'LA Sentinel',
-  //   url: 'https://lasentinel.net/feed',
-  //   purpose: '',
-  //   logo: '',
-  //   logo2: ''
-  // },
   {
     name: 'Our Time Press',
     url: 'https://ourtimepress.com/feed/',
@@ -290,13 +275,6 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/wash-inform.png',
     logo2: '/images/logos/wash-inform-2.png'
   },
-  // {
-  //   name: 'SoulVision Magazine',
-  //   url: 'https://soulvisionmagazine.com/feed/',
-  //   purpose: 'Positive coverage of the urban community.',
-  //   logo: '/images/logos/soul-vision.png',
-  //   logo2: '/images/logos/soul-vision-2.png'
-  // },
   {
     name: 'TSDMemphis.com',
     url: 'http://tri-statedefender.com/feed/',
@@ -318,13 +296,6 @@ const blackAmericanData: NewsSource[] = [
     logo: '/images/logos/nubian-message.png',
     logo2: '/images/logos/nubian-message-2.png'
   },
-  // {
-  //   name: 'Nation of Islam',
-  //   url: 'https://noi.org/feed/',
-  //   purpose: 'The Nation of Islam (The Nation of Peace) represents hope to millions of our people in America and around the globe who have been deprived of the high standards of a righteous way of life.',
-  //   logo: '/images/logos/noi.png',
-  //   logo2: '/images/logos/noi-2.png'
-  // },
   {
     name: 'Tennessee Tribune',
     url: 'https://tntribune.com/feed/',
