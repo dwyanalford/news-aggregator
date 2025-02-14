@@ -41,8 +41,11 @@ interface FetchedNewsItems {
   items: NewsItem[];
   region: string;
   filteredCount: number;
-  failed: boolean; // ✅ Add failed status
+  failed: boolean;
+  url: string; // ✅ Ensure URL is included
+  errorMessage?: string; // ✅ Ensure naming consistency
 }
+
 
 
 /**
@@ -94,14 +97,16 @@ export async function fetchNewsItems(
         if (!response.data.trim().startsWith('<?xml')) {
           console.warn(`⚠️ Skipping ${name}: Response is not XML (possibly blocked by Cloudflare)`);
         
-          return {
-            source: name,
-            purpose,
-            region: region || "Unknown",
-            items: [],
-            filteredCount: 0,
-            failed: true,  // ✅ Return failed = true for this feed
-          };
+          return { 
+            source: name, 
+            purpose, 
+            region, 
+            items: [], 
+            filteredCount: 0, 
+            failed: true, 
+            url, 
+        };
+        
         }
         
 
@@ -167,21 +172,22 @@ export async function fetchNewsItems(
 
         // console.log(`📅 Filtered ${finalItems.length} articles for ${filterType} from ${name}`);
 
-        return { source: name, purpose, region, items: finalItems, filteredCount: finalItems.length, failed: false };
+        return { source: name, purpose, region, items: finalItems, filteredCount: finalItems.length, failed: false, url: url ?? ""};
 
 
       } catch (error) {
-        console.error(`❌ Failed to fetch ${name} news:`, error);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error"; // ✅ Capture error message
 
-        return {
-          source: name,
-          purpose,
-          region,
-          items: [],
-          filteredCount: 0,  // No articles retrieved
-          failed: true,  // ✅ Marking it as a failed source
-      };       
-        
+        return { 
+          source: name, 
+          purpose, 
+          region, 
+          items: [], 
+          filteredCount: 0, 
+          failed: true, 
+          url, 
+          errorMessage // ✅ Corrected variable name
+        };
       }
     })
   );
