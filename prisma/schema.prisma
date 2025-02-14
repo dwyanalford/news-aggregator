@@ -53,9 +53,11 @@ model SavedArticle {
   link      String                @unique
   summary   String
   imageURL  String?
-  source    String                // New field for publication name
-  author    String?               // New field for author (optional)
-  users     UserSavedArticle[]    @relation("SavedArticleToUserSavedArticle")  // Relation to UserSavedArticle
+  author    String?
+  source    String
+  category  String?               // AI will determine this
+  region    String?               // Pulled from RSS feed
+  users     UserSavedArticle[]    @relation("SavedArticleToUserSavedArticle")
 }
 
 model UserSavedArticle {

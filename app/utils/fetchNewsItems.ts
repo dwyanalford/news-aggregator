@@ -2,13 +2,25 @@
 
 import axios from 'axios';
 import xml2json from 'xml-js';
-import * as cheerio from 'cheerio';  // Correct import for named exports
-import { DEFAULT_FILTER } from "@/app/config/defaults"
+import * as cheerio from 'cheerio';
+import { DEFAULT_FILTER } from "@/app/config/defaults";
+
+/**
+ * Interface Definitions
+ *
+ * These interfaces define the structure of the RSS sources and the news items.
+ * - `Source`: Represents an RSS feed source with name, URL, purpose, and region.
+ * - `NewsItem`: Represents an article fetched from the RSS feed.
+ * - `FetchedNewsItems`: Represents a processed response containing news articles.
+ *
+ * Update these interfaces if new fields need to be stored or new sources are added.
+ */
 
 interface Source {
   name: string;
   url: string;
   purpose: string;
+  region: string;
 }
 
 interface NewsItem {
@@ -16,34 +28,84 @@ interface NewsItem {
   pubDate: string;
   link: string | null;
   description: string;
-  author: string;
+  imageURL?: string;
+  author?: string;
+  source: string;
+  category?: string;
+  region?: string;
 }
 
 interface FetchedNewsItems {
   source: string;
   purpose: string;
   items: NewsItem[];
+  region: string;
+  filteredCount: number;
+  failed: boolean; // ✅ Add failed status
 }
 
+
+/**
+ * Fetch News Items Function
+ *
+ * This function fetches news articles from a list of RSS sources.
+ * - It sends HTTP requests to the RSS feed URLs.
+ * - Parses the XML response and extracts relevant article data.
+ * - Filters articles based on the specified date range (`today`, `pastWeek`, `pastTwoWeeks`).
+ * - Returns an array of `FetchedNewsItems` containing parsed articles.
+ */
 export async function fetchNewsItems(
   sources: Source[],
   filterType: 'today' | 'pastWeek' | 'pastTwoWeeks' = DEFAULT_FILTER
 ): Promise<FetchedNewsItems[]> {
 
+  /**
+   * Removes HTML tags from article descriptions.
+   * This ensures that the extracted content is clean and readable.
+   */
   function removeHTMLTags(html: string): string {
-    const $ = cheerio.load(html);  // Load the HTML content using cheerio
-    const textContent = $('body').text();  // Extract and return all text from the body
-    return textContent.trim();  // Return the cleaned text content, removing any excess whitespace
+    const $ = cheerio.load(html);
+    const textContent = $('body').text();
+    return textContent.trim();
   }
-  
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  console.log(`🚀 Fetching news articles with filter: ${filterType}`);
+
   const newsItems = await Promise.all(
-    sources.map(async ({ name, url, purpose }) => {
+
+    sources.map(async ({ name, url, purpose, region }) => {
+      let finalItems: NewsItem[] = []; // Ensures `finalItems` exists in all scenarios
+
       try {
-        const response = await axios.get(url);
+        // console.log(`🌐 Fetching news from: ${name} (${url})`);
+
+        const response = await axios.get(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+            'Accept': 'application/xml, text/xml',
+            'Referer': 'https://www.google.com/',
+          }
+        });
+
+        // Validate that the response is an XML document
+        if (!response.data.trim().startsWith('<?xml')) {
+          console.warn(`⚠️ Skipping ${name}: Response is not XML (possibly blocked by Cloudflare)`);
+        
+          return {
+            source: name,
+            purpose,
+            region: region || "Unknown",
+            items: [],
+            filteredCount: 0,
+            failed: true,  // ✅ Return failed = true for this feed
+          };
+        }
+        
+
+        // console.log(`✅ Successfully fetched data from ${name}, parsing XML...`);
 
         const data: any = xml2json.xml2js(response.data, {
           compact: true,
@@ -52,14 +114,21 @@ export async function fetchNewsItems(
           sanitize: true,
         });
 
-        // Type check to ensure the correct structure
-        const items: NewsItem[] = Array.isArray(data?.feed?.entry) // Atom Feed check
-          ? data.feed.entry.map((item: any) => parseFeedItem(item, name, removeHTMLTags))
-          : Array.isArray(data?.rss?.channel?.item) // RSS Feed check
-          ? data.rss.channel.item.map((item: any) => parseFeedItem(item, name, removeHTMLTags))
-          : []; // Default to empty if neither structure matches
+        /**
+         * Parses the XML structure based on RSS or Atom feed format.
+         * - If it's an Atom feed, entries are stored in `feed.entry`.
+         * - If it's an RSS feed, articles are found in `rss.channel.item`.
+         * - Returns an empty array if neither format is detected.
+         */
+        const items: NewsItem[] = Array.isArray(data?.feed?.entry)
+          ? data.feed.entry.map((item: any) => parseFeedItem(item, name, removeHTMLTags, region))
+          : Array.isArray(data?.rss?.channel?.item)
+          ? data.rss.channel.item.map((item: any) => parseFeedItem(item, name, removeHTMLTags, region))
+          : [];
 
-        // Slice description at nearest period to the 255 character mark
+        // console.log(`📄 Parsed ${items.length} articles from ${name}`);
+
+        // Ensures descriptions are properly truncated at the nearest period within 255 characters.
         const updatedItems = items.map(item => {
           const slicePoint = Math.min(255, item.description.length);
           const lastPeriodIdx = item.description.slice(0, slicePoint).lastIndexOf('.');
@@ -68,87 +137,90 @@ export async function fetchNewsItems(
           }
           return item;
         });
+    
+        // console.log(`✂️ Trimmed descriptions for ${updatedItems.length} articles from ${name}`);
 
-        // Filter items for today's news
-const itemsToday = updatedItems.filter(item => {
-  const pubDate = new Date(item.pubDate);
-  pubDate.setHours(0, 0, 0, 0);
-  return pubDate.getTime() === today.getTime();
-});
+        // Filter articles based on date range
+        if (filterType === 'today') {
+          finalItems = updatedItems.filter(item => {
+            const pubDate = new Date(item.pubDate);
+            pubDate.setHours(0, 0, 0, 0);
+            return pubDate.getTime() === today.getTime();
+          });
+        } else if (filterType === 'pastWeek') {
+          const oneWeekAgo = new Date(today);
+          oneWeekAgo.setDate(today.getDate() - 6);
+          finalItems = updatedItems.filter(item => {
+            const pubDate = new Date(item.pubDate);
+            pubDate.setHours(0, 0, 0, 0);
+            return pubDate >= oneWeekAgo && pubDate <= today;
+          });
+        } else {
+          const twoWeeksAgo = new Date(today);
+          twoWeeksAgo.setDate(today.getDate() - 13);
+          finalItems = updatedItems.filter(item => {
+            const pubDate = new Date(item.pubDate);
+            pubDate.setHours(0, 0, 0, 0);
+            return pubDate >= twoWeeksAgo && pubDate <= today;
+          });
+        }
 
-// Filter items for the past week (last 7 days including today)
-const itemsPastWeek = updatedItems.filter(item => {
-  const pubDate = new Date(item.pubDate);
-  pubDate.setHours(0, 0, 0, 0);
-  const oneWeekAgo = new Date(today);
-  oneWeekAgo.setDate(today.getDate() - 6);
-  return pubDate >= oneWeekAgo && pubDate <= today;
-});
+        // console.log(`📅 Filtered ${finalItems.length} articles for ${filterType} from ${name}`);
 
-// Filter items for the past two weeks (last 14 days including today)
-const itemsPastTwoWeeks = updatedItems.filter(item => {
-  const pubDate = new Date(item.pubDate);
-  pubDate.setHours(0, 0, 0, 0);
-  const twoWeeksAgo = new Date(today);
-  twoWeeksAgo.setDate(today.getDate() - 13);
-  return pubDate >= twoWeeksAgo && pubDate <= today;
-});
-
-// Select final items based on the filterType parameter
-let finalItems: NewsItem[];
-switch (filterType) {
-  case 'today':
-    finalItems = itemsToday;
-    break;
-  case 'pastWeek':
-    finalItems = itemsPastWeek;
-    break;
-  case 'pastTwoWeeks':
-  default:
-    finalItems = itemsPastTwoWeeks;
-    break;
-}
+        return { source: name, purpose, region, items: finalItems, filteredCount: finalItems.length, failed: false };
 
 
-        return { source: name, purpose, items: finalItems };
       } catch (error) {
-        console.error(`Failed to fetch ${name} news:`, error);
-      
-        // Ensure error is typed correctly
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-      
+        console.error(`❌ Failed to fetch ${name} news:`, error);
+
         return {
           source: name,
           purpose,
+          region,
           items: [],
-          fetchError: `Failed to fetch news from ${name}: ${errorMessage}`, // Use narrowed error message
-        };
-      }      
+          filteredCount: 0,  // No articles retrieved
+          failed: true,  // ✅ Marking it as a failed source
+      };       
+        
+      }
     })
   );
+
+  console.log(`🎉 Completed fetching news from ${sources.length} sources`);
 
   return newsItems;
 }
 
-// Helper function to parse a feed item
-function parseFeedItem(item: any, sourceName: string, removeHTMLTags: (html: string) => string): NewsItem {
-  let title = item.title?._cdata || item.title?._text || (item.title?.__cdata || '');
+/**
+ * Parses an individual RSS feed item.
+ * - Extracts title, publication date, link, description, and author.
+ * - Cleans and limits the description to 255 characters.
+ * - Returns a `NewsItem` object with all extracted fields.
+ */
+function parseFeedItem(
+  item: any,
+  sourceName: string,
+  removeHTMLTags: (html: string) => string,
+  region: string
+): NewsItem {
+  let title = item.title?._cdata || item.title?._text || '';
   let pubDate = item.pubDate?._text || '';
   let link = item.link?._attributes?.href || item.link?._text || null;
-  let description = (item.description?._cdata || item.description?._text || (item.description?.__cdata || '')).slice(0, 255);
-  let author = item.author ? item.author._text : (item["dc:creator"]?._cdata || '');
+  let description = removeHTMLTags(
+    item.description?._cdata || item.description?._text || ''
+  ).slice(0, 255);
+  let author = item.author?._text || (item["dc:creator"]?._cdata || '');
+  let imageURL = item.image?._text || null;
 
-  // Ensure the author is always a string
-  author = typeof author === 'string' ? author : '';
-
-  if (['The Huffington Post', 'USA Today', 'The Guardian Africa', 'The Guardian'].includes(sourceName)) {
-    description = removeHTMLTags(description); // Remove HTML tags from result
-  }
-
-  if (['The Economist', 'Africa News'].includes(sourceName)) {
-    author = ''; // These RSS feeds don't provide an author field.
-  }
-
-  return { title, pubDate, link, description, author };
+  return {
+    title,
+    pubDate,
+    link,
+    description,
+    imageURL,
+    author,
+    source: sourceName,
+    category: undefined,
+    region,
+  };
 }
