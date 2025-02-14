@@ -1,0 +1,492 @@
+🚀 Fetching RSS feed articles...
+
+=============================================================
+📌 RSS Feed Summary for: AAIHS
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 0
+📅 Filtered for Today: 0
+⚠️ Skipped (Already in DB): 0
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Afram News
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: AfroTech
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 10
+📅 Filtered for Today: 10
+⚠️ Skipped (Already in DB): 10
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Amsterdam News
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Andscape
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 3
+📅 Filtered for Today: 3
+⚠️ Skipped (Already in DB): 3
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Atlantic Black Star
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 15
+📅 Filtered for Today: 15
+⚠️ Skipped (Already in DB): 15
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Birmingham Times
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Black America Web
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 22
+📅 Filtered for Today: 22
+⚠️ Skipped (Already in DB): 22
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Black Doctor
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 9
+📅 Filtered for Today: 9
+⚠️ Skipped (Already in DB): 9
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 0
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Black Press USA
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: BlackGirlNerds
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 4
+📅 Filtered for Today: 4
+⚠️ Skipped (Already in DB): 4
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: BlackNews.com
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 10
+📅 Filtered for Today: 10
+⚠️ Skipped (Already in DB): 10
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: BlackPRWire
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 1
+📅 Filtered for Today: 1
+⚠️ Skipped (Already in DB): 1
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Blavity
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 10
+📅 Filtered for Today: 10
+⚠️ Skipped (Already in DB): 10
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Chicago Defender
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Diverse
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 1
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Essence
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 10
+📅 Filtered for Today: 10
+⚠️ Skipped (Already in DB): 10
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Face2Face Africa
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 7
+📅 Filtered for Today: 7
+⚠️ Skipped (Already in DB): 7
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: MadameNoire
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 6
+📅 Filtered for Today: 6
+⚠️ Skipped (Already in DB): 6
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: News Afro
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 4
+📅 Filtered for Today: 4
+⚠️ Skipped (Already in DB): 4
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: News One
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 9
+📅 Filtered for Today: 9
+⚠️ Skipped (Already in DB): 9
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Nubian Message
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 0
+📅 Filtered for Today: 0
+⚠️ Skipped (Already in DB): 0
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Our Time Press
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 5
+📅 Filtered for Today: 5
+⚠️ Skipped (Already in DB): 5
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Our weekly
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Philly Tribune
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 8
+📅 Filtered for Today: 8
+⚠️ Skipped (Already in DB): 8
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Rolling Out
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 10
+📅 Filtered for Today: 10
+⚠️ Skipped (Already in DB): 10
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: SoulBounce
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 2
+📅 Filtered for Today: 2
+⚠️ Skipped (Already in DB): 2
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Source
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 29
+📅 Filtered for Today: 29
+⚠️ Skipped (Already in DB): 29
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: St. Louis American
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 5
+📅 Filtered for Today: 5
+⚠️ Skipped (Already in DB): 5
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: TSDMemphis.com
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 4
+📅 Filtered for Today: 4
+⚠️ Skipped (Already in DB): 4
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Tennessee Tribune
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 0
+📅 Filtered for Today: 0
+⚠️ Skipped (Already in DB): 0
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: The Grio
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 15
+📅 Filtered for Today: 15
+⚠️ Skipped (Already in DB): 15
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: The Root
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 20
+📅 Filtered for Today: 20
+⚠️ Skipped (Already in DB): 20
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Travel Noire
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 8
+📅 Filtered for Today: 8
+⚠️ Skipped (Already in DB): 8
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Urban Faith
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 1
+📅 Filtered for Today: 1
+⚠️ Skipped (Already in DB): 1
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Urban Geekz
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 1
+📅 Filtered for Today: 1
+⚠️ Skipped (Already in DB): 1
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Vibe
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 10
+📅 Filtered for Today: 10
+⚠️ Skipped (Already in DB): 10
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Washington Informer
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 1
+📅 Filtered for Today: 1
+⚠️ Skipped (Already in DB): 1
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: Watch The Yard
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 1
+📅 Filtered for Today: 1
+⚠️ Skipped (Already in DB): 1
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+📌 RSS Feed Summary for: XXL
+===============================================================
+🌍 Region: USA
+📄 Total Articles in Feed: 7
+📅 Filtered for Today: 7
+⚠️ Skipped (Already in DB): 7
+✅ Saved to Database: 0
+❌ RSS Feeds Failed to Fetch: 2
+================================================================
+
+
+=============================================================
+            📊 FINAL DATABASE SUMMARY
+=============================================================
+📅 Total articles in database for today: 270
+🆕 New articles saved to database this run: 0
+📦 Total articles in database: 497
+❌ RSS Feeds Failed to Fetch: 2
+=============================================================
+
+🎉 RSS feed fetch & save complete!

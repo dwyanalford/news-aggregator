@@ -2,45 +2,58 @@
 
 import { fetchNewsItems } from '@/app/utils/fetchNewsItems';
 import { PrismaClient } from '@prisma/client';
+import fs from 'fs';
+import path from 'path';
 
 const prisma = new PrismaClient();
+
+// ✅ Create logs directory if it doesn’t exist
+const logsDir = path.join(__dirname, '../logs');
+if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// ✅ Generate log file name (e.g., logs/rss_feed_log_2025-02-14.txt)
+const logFilePath = path.join(logsDir, `rss_feed_log_${new Date().toISOString().split('T')[0]}.txt`);
+
+// ✅ Function to log both to console and file
+function logMessage(message: string) {
+    console.log(message);
+    fs.appendFileSync(logFilePath, message + '\n', 'utf8');
+}
 
 async function saveArticles() {
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
 
-    console.log('🚀 Fetching RSS feed articles...');
+    logMessage('🚀 Fetching RSS feed articles...');
 
     let parsedCount = 0;
     let skippedCountTotal = 0;
     let savedCountTotal = 0;
-    let failedFeedsCount = 0; // ✅ Track failed RSS feeds
+    let failedFeedsCount = 0;
 
     try {
-        // Get all RSS feeds from the database
         const rssFeeds = await prisma.rSSFeed.findMany();
 
         if (rssFeeds.length === 0) {
-            console.log('⚠️ No RSS feeds found in the database.');
+            logMessage('⚠️ No RSS feeds found in the database.');
             return;
         }
 
-        // Fetch news articles from these feeds
         const fetchedNews = await fetchNewsItems(rssFeeds);
 
         for (const source of fetchedNews) {
             if (source.failed) {
-                failedFeedsCount++;  // ✅ Increment failed count
-                console.log(`❌ Failed to fetch RSS Feed: ${source.source} (${source.region})`);
-                continue;  // ✅ Skip processing for failed feeds
+                failedFeedsCount++;
+                continue;
             }
 
             let skippedCount = 0;
             let savedCountForFeed = 0;
-            let filteredCount = source.filteredCount ?? 0;
-
             parsedCount += source.items.length;
 
+            let filteredCount = source.filteredCount ?? 0;
             const totalArticlesInFeed = source.items.length;
             const filteredForToday = filteredCount;
 
@@ -66,6 +79,7 @@ async function saveArticles() {
                             category: "Uncategorized",
                         },
                     });
+                    logMessage(`✅ Saving article: "${article.title}" to database.`);
                     savedCountForFeed++;
                     savedCountTotal++;
                 } else {
@@ -75,40 +89,40 @@ async function saveArticles() {
 
             skippedCountTotal += skippedCount;
 
-            console.log("\n=============================================================");
-            console.log(`📌 RSS Feed Summary for: ${source.source}`);
-            console.log("===============================================================");
-            console.log(`🌍 Region: ${source.region}`);
-            console.log(`📄 Total Articles in Feed: ${totalArticlesInFeed}`);
-            console.log(`📅 Filtered for Today: ${filteredForToday}`);
-            console.log(`⚠️ Skipped (Already in DB): ${skippedCount}`);
-            console.log(`✅ Saved to Database: ${savedCountForFeed}`);
-            console.log("================================================================\n");
+            logMessage("\n=============================================================");
+            logMessage(`📌 RSS Feed Summary for: ${source.source}`);
+            logMessage("===============================================================");
+            logMessage(`🌍 Region: ${source.region}`);
+            logMessage(`📄 Total Articles in Feed: ${totalArticlesInFeed}`);
+            logMessage(`📅 Filtered for Today: ${filteredForToday}`);
+            logMessage(`⚠️ Skipped (Already in DB): ${skippedCount}`);
+            logMessage(`✅ Saved to Database: ${savedCountForFeed}`);
+            logMessage(`❌ RSS Feeds Failed to Fetch: ${failedFeedsCount}`);
+            logMessage("================================================================\n");
         }
 
-        // Query total articles in the database after this run
         const totalArticlesInDatabase = await prisma.savedArticle.count();
         const totalArticlesToday = await prisma.savedArticle.count({
             where: {
                 date: {
                     gte: new Date(todayDate.setHours(0, 0, 0, 0)),
-                    lt: new Date(todayDate.setHours(23, 59, 59, 999))
+                    lt: new Date(todayDate.setHours(23, 59, 59, 999)),
                 }
             }
         });
 
-        console.log("\n=============================================================");
-        console.log("            📊 FINAL DATABASE SUMMARY");
-        console.log("=============================================================");
-        console.log(`📅 Total articles in database for today: ${totalArticlesToday}`);
-        console.log(`🆕 New articles saved to database this run: ${savedCountTotal}`);
-        console.log(`📦 Total articles in database: ${totalArticlesInDatabase}`);
-        console.log(`❌ RSS Feeds Failed to Fetch: ${failedFeedsCount}`); // ✅ Now correctly displayed
-        console.log("=============================================================\n");
+        logMessage("\n=============================================================");
+        logMessage("            📊 FINAL DATABASE SUMMARY");
+        logMessage("=============================================================");
+        logMessage(`📅 Total articles in database for today: ${totalArticlesToday}`);
+        logMessage(`🆕 New articles saved to database this run: ${savedCountTotal}`);
+        logMessage(`📦 Total articles in database: ${totalArticlesInDatabase}`);
+        logMessage(`❌ RSS Feeds Failed to Fetch: ${failedFeedsCount}`);
+        logMessage("=============================================================\n");
 
-        console.log('🎉 RSS feed fetch & save complete!');
+        logMessage('🎉 RSS feed fetch & save complete!');
     } catch (error) {
-        console.error('❌ Error fetching or saving articles:', error);
+        logMessage(`❌ Error fetching or saving articles: ${error}`);
     } finally {
         await prisma.$disconnect();
     }
