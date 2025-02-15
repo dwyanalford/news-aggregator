@@ -72,6 +72,23 @@ export async function fetchNewsItems(
     return textContent.trim();
   }
 
+  async function fetchArticleImage(articleUrl: string): Promise<string | null> {
+    try {
+      const response = await axios.get(articleUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0' }
+      });
+
+      const $ = cheerio.load(response.data);
+      const firstImage = $('img').first().attr('src');
+
+      return firstImage || null;
+    } catch (error) {
+      console.error(`❌ Failed to fetch image from ${articleUrl}:`, (error as Error).message);
+      return null;
+    }
+  }
+
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -134,14 +151,24 @@ export async function fetchNewsItems(
         // console.log(`📄 Parsed ${items.length} articles from ${name}`);
 
         // Ensures descriptions are properly truncated at the nearest period within 255 characters.
-        const updatedItems = items.map(item => {
-          const slicePoint = Math.min(255, item.description.length);
-          const lastPeriodIdx = item.description.slice(0, slicePoint).lastIndexOf('.');
-          if (lastPeriodIdx !== -1) {
-            item.description = item.description.slice(0, lastPeriodIdx + 1);
-          }
-          return item;
-        });
+        const updatedItems = await Promise.all(
+          items.map(async (item) => {
+            // ✅ Truncate description at the nearest period within 255 characters
+            const slicePoint = Math.min(255, item.description.length);
+            const lastPeriodIdx = item.description.slice(0, slicePoint).lastIndexOf('.');
+            if (lastPeriodIdx !== -1) {
+              item.description = item.description.slice(0, lastPeriodIdx + 1);
+            }
+        
+            // ✅ Fetch article image if missing
+            if (!item.imageURL) {
+              const image = await fetchArticleImage(item.link || '');
+              item.imageURL = image || undefined; // ✅ Ensures `undefined` instead of `null`
+            }
+        
+            return item;
+          })
+        );
     
         // console.log(`✂️ Trimmed descriptions for ${updatedItems.length} articles from ${name}`);
 
@@ -216,7 +243,14 @@ function parseFeedItem(
     item.description?._cdata || item.description?._text || ''
   ).slice(0, 255);
   let author = item.author?._text || (item["dc:creator"]?._cdata || '');
-  let imageURL = item.image?._text || null;
+  // ✅ Extract image from multiple RSS fields
+  let imageURL =
+  item.image?._text ||  
+  item["media:content"]?._attributes?.url ||  
+  item["enclosure"]?._attributes?.url ||  
+  item["media:thumbnail"]?._attributes?.url ||  
+  null;
+
 
   return {
     title,
