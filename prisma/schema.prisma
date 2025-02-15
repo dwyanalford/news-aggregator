@@ -86,13 +86,14 @@ model UserSavedArticleTag {
 }
 
 model RSSFeed {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  url         String  @unique
+  url         String   @unique
   purpose     String
-  logoSmall   String?  // Formerly "logo"
-  logoLarge   String?  // Formerly "logo2"
-  active      Boolean @default(true)
-  region      String  @default("USA") // New field for location/region
+  logoSmall   String?
+  logoLarge   String?
+  active      Boolean  @default(true)
+  region      String   @default("USA")
   createdAt   DateTime @default(now())
+  failureCount   Int      @default(0) // Tracks consecutive failures before deactivation
 }

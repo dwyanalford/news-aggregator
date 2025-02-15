@@ -14,7 +14,7 @@ import { logInfo, logError } from '@/app/utils/logger';
  */
 export async function extractImageFromArticle(articleUrl: string): Promise<string | null> {
   try {
-    logInfo(`🔍 Fetching article for image extraction: ${articleUrl}`);
+    logInfo("🔍 Fetching article for image extraction...");
 
     if (!articleUrl) {
       logError("❌ No article URL provided.");
@@ -39,7 +39,11 @@ export async function extractImageFromArticle(articleUrl: string): Promise<strin
       null;
 
     if (imageUrl) {
-      logInfo(`✅ Image extracted: ${imageUrl}`);
+        const truncatedImageUrl = imageUrl.length > 25 
+        ? `${imageUrl.slice(0, 20)}..${imageUrl.slice(-5)}` 
+        : imageUrl; 
+    
+    logInfo(`✅ Image extracted: ${truncatedImageUrl}`);
       return imageUrl;
     } else {
       logError(`⚠️ No image found for: ${articleUrl}`);
