@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ArticleListLayout from "@/app/components/ArticleListLayout";
 import ArticleList from "@/app/components/ArticleList";
 
 interface Article {
@@ -45,18 +46,8 @@ export default function ArticlesPage() {
   if (error) return <p className="text-center p-4 text-red-500">Error: {error}</p>;
 
   return (
-    <div className="flex">
-      {/* Sidebar Placeholder */}
-      <aside className="w-1/4 p-4 bg-gray-100">
-        <h2 className="font-bold mb-4">Filters</h2>
-        <p>Sidebar placeholder – filtering options will go here.</p>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-4">
-        <h1 className="text-center text-3xl font-bold my-6">Articles</h1>
-        <ArticleList articles={articles} />
-      </main>
-    </div>
+          <ArticleListLayout>
+            <ArticleList articles={articles} />
+          </ArticleListLayout>
   );
 }

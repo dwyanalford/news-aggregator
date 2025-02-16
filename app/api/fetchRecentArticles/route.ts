@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { date: 'desc' },
       // Remove pagination for now; you can remove 'take' when you're ready for all results.
-      take: 10,
+      // take: 30,
       select: {
         id: true,
         title: true,

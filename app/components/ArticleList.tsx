@@ -1,5 +1,6 @@
-// app/components/ArticleList.tsx
 "use client";
+
+import { FaRegHeart, FaRegBookmark, FaShare, FaMagic, FaExternalLinkAlt } from "react-icons/fa";
 
 interface Article {
   id: string;
@@ -20,45 +21,146 @@ interface ArticlesListProps {
 
 export default function ArticlesList({ articles }: ArticlesListProps) {
   if (articles.length === 0) {
-    return <p className="text-gray-500">No articles available.</p>;
+    return <p>No articles available.</p>;
   }
+
+  // Format today's date
+  const todayDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {articles.map((article) => (
-          <li key={article.id} className="article-card mb-6">
-          {article.imageURL && (
-            <img
-              src={article.imageURL}
-              alt={article.title}
-              className="w-full h-48 object-cover rounded mb-3"
-              loading="lazy"
-            />
-          )}
+    <div className="articles-container">
+      <div className="articles-wrapper">
         
-          <h2 className="article-card-title">{article.title}</h2>
-          <p className="article-card-meta">
-            {article.date} 
-            {article.author && <> • {article.author}</>}
-          </p>
-        
-          <p className="article-card-summary">{article.summary}</p>
-        
-          <div className="article-card-actions">
-            <a
-              href={article.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="article-card-button"
-            >
-              Read More
-            </a>
-            {/* Example “Save” or other button */}
-            <button className="article-card-button">Save</button>
+       {/* Header Section: Latest News + Total Articles */}
+        <div className="flex fixed top-20 mt-6 gap-4 z-50">
+
+        {/* Latest News Box (Your existing code stays the same) */}
+          <div className="flex flex-col text-gray-400 font-medium bg-gray-200 border border-gray-300 shadow-md rounded-lg px-6 py-4 text-base w-[400px] hover:text-slate-950 hover:bg-gray-200 hover:border-gray-400">
+            <div className="flex items-center gap-3">
+              {/* Fancy "LATEST" Badge */}
+              <span className="bg-green-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full tracking-wide shadow-md animate-fade">
+                LATEST
+              </span>
+              <h1 className="articles-title text-xl font-bold">News Articles</h1>
+            </div>
+            <span className="text-gray-500 text-md">{todayDate}</span>
           </div>
-        </li>
-        ))}
-      </ul>
+
+          {/* New Total Articles Box */}
+          <div className="flex flex-col text-gray-400 font-medium bg-gray-200 border border-gray-300 shadow-md rounded-lg px-6 py-4 text-base w-[400px] hover:text-slate-950 hover:bg-gray-200 hover:border-gray-400">
+            <h1 className="text-xl font-bold">Total Articles Retrieved</h1>
+            <span className="text-gray-500 text-md">{articles.length} Articles Loaded</span>
+          </div>
+        </div>
+
+        {/* Articles Grid */}
+        <div className="articles-flex-wrap mt-[125px] z-10">
+          {articles.map((article) => (
+            <div
+              key={article.id}
+              className="w-[400px] h-[475px] flex flex-col bg-card overflow-hidden bg-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-gray-300 hover:scale-105 rounded-lg"
+            >
+              {/* Image Section */}
+              <div className="relative overflow-hidden">
+                {article.imageURL && (
+                  <img
+                    src={article.imageURL}
+                    alt={article.title}
+                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                <div className="absolute top-2 right-2">
+                  <span className="article-card-badge">{article.category}</span>
+                </div>
+              </div>
+              
+              {/* Main Card Content */}
+              <div className="p-6 flex-1 flex flex-col">
+                <h2 className="text-xl font-semibold mb-3 line-clamp-2 flex-grow">
+                  {article.title}
+                </h2>
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                  <span>{new Date(article.date).toLocaleDateString()}</span>
+                  {article.author && (
+                    <>
+                      <span>•</span>
+                      <span className="text-gray-400">Author: {article.author}</span>
+                    </>
+                  )}
+                </div>
+
+                <p className="text-gray-500 mb-4 line-clamp-3">
+                  {article.summary}
+                </p>
+                
+                {/* Footer Actions */}
+                <div className="flex items-center justify-between mt-auto p-2 border bg-gray-100 rounded-md hover:border-gray-300 hover:shadow-lg">
+                  <div className="flex items-center gap-4">
+                    <HoverTooltip label="Like">
+                      <FaRegHeart className="w-5 h-5 cursor-pointer" />
+                    </HoverTooltip>
+
+                    <HoverTooltip label="Save">
+                      <FaRegBookmark className="w-5 h-5 cursor-pointer" />
+                    </HoverTooltip>
+
+                    <HoverTooltip label="Share">
+                      <FaShare className="w-5 h-5 cursor-pointer" />
+                    </HoverTooltip>
+
+                    <HoverTooltip label="Summarize">
+                      <FaMagic className="w-5 h-5 cursor-pointer" />
+                    </HoverTooltip>
+                  </div>
+                  
+                  <HoverTooltip label="Read Full">
+                    <a
+                      href={article.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <FaExternalLinkAlt className="w-5 h-5" />
+                    </a>
+                  </HoverTooltip>
+                </div>
+
+                <div className="text-sm text-gray-400 mt-2">
+                  <span>Source: <span className="text-gray-700">{article.source}</span></span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Tooltip Component */
+function HoverTooltip({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative inline-block group">
+      <div className="p-2 rounded-full hover:bg-muted transition-colors">
+        {children}
+      </div>
+      <span className="pointer-events-none absolute whitespace-nowrap 
+                       -top-8 left-1/2 -translate-x-1/2 bg-gray-700 text-white 
+                       text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100
+                       transition-opacity">
+        {label}
+      </span>
     </div>
   );
 }

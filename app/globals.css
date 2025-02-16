@@ -68,30 +68,102 @@ a.source-link {
 }
 
 /* Global Article Card Styles */
+
+/* Badge Base */
+.badge {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors 
+         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Variants (adjust colors as you like) */
+.badge-default {
+  @apply border-transparent bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.badge-secondary {
+  @apply border-transparent bg-gray-200 text-gray-900 hover:bg-gray-300;
+}
+
+.badge-destructive {
+  @apply border-transparent bg-red-600 text-white hover:bg-red-700;
+}
+
+.badge-outline {
+  @apply text-gray-900 border border-gray-300;
+}
+
+/* globals.css (example) */
+
+/* Container for the whole articles list page */
+.articles-container {
+  @apply min-h-screen dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+}
+
+/* Wrapper for centering content (like max-w-7xl, etc.) */
+.articles-wrapper {
+  @apply mx-auto;
+}
+
+/* Page title styling */
+.articles-title {
+  @apply text-4xl font-bold mb-1 text-gray-900 dark:text-white;
+}
+
+/* Flex container to wrap cards with spacing */
+.articles-flex-wrap {
+  @apply flex flex-wrap gap-6 xl:gap-16;
+}
+
+/* Individual card with fixed size (16:9 ratio ~ 400×225 plus extra vertical space) */
 .article-card {
-  @apply bg-white dark:bg-gray-800 
-         border border-gray-200 dark:border-gray-700 
-         rounded-lg shadow-md p-6 
-         hover:shadow-lg transition-shadow duration-300;
+  @apply w-[400px] h-[475px] flex flex-col overflow-hidden 
+           shadow-lg hover:shadow-2xl transition-all duration-300 
+           border border-gray-300 hover:scale-105 
+           bg-gray-100 dark:bg-gray-800;
 }
 
+/* Image container (top portion) */
+.article-card-image {
+  @apply relative overflow-hidden;
+}
+
+.article-card-badge {
+  @apply bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-xs 
+         dark:bg-gray-600/80;
+}
+/* Card content area (bottom portion) */
+.article-card-content {
+  @apply p-6 flex-1 flex flex-col
+           text-sm text-gray-500 dark:text-gray-300;
+}
+
+/* Title at bottom (clamped lines) */
 .article-card-title {
-  @apply text-xl font-bold mb-2 
-         text-gray-900 dark:text-white;
+  @apply text-xl font-semibold mb-3 line-clamp-2 flex-grow;
 }
 
-.article-card-meta {
-  @apply text-sm text-gray-500 dark:text-gray-400 mb-2;
-}
-
+/* Summary text (clamped lines) */
 .article-card-summary {
-  @apply text-gray-700 dark:text-gray-300 mb-4;
+  @apply text-gray-500 mb-4 line-clamp-3 
+         dark:text-gray-300; /* adjust if needed */
 }
 
-.article-card-actions {
-  @apply flex items-center justify-between;
+/* Footer actions at the bottom of the card */
+.article-card-footer {
+  @apply flex items-center justify-between mt-auto p-4 border
+           bg-gray-200 rounded-md hover:border-gray-300 hover:shadow-lg
+           dark:bg-gray-700 dark:border-gray-600;
 }
 
-.article-card-button {
-  @apply text-blue-500 hover:underline;
+/* Example: an icon button with tooltip */
+.icon-button {
+  @apply p-2 rounded-full hover:bg-gray-600 transition-colors cursor-pointer;
+}
+
+/* Simple tooltip style (on hover) */
+.hover-tooltip {
+  @apply pointer-events-none absolute whitespace-nowrap 
+         -top-8 left-1/2 -translate-x-1/2 bg-gray-700 text-white 
+         text-xs py-1 px-2 rounded opacity-0 
+         group-hover:opacity-100 transition-opacity;
 }
