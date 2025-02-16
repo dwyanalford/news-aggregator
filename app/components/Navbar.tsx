@@ -7,6 +7,7 @@ import ActiveLink from "./ActiveLink";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import UserMenu from "./UserMenu";
+import DarkModeToggle from "@/app/components/DarkModeToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -137,7 +138,7 @@ const Navbar = () => {
           </div>
 
           <span className="inline-block">
-            <ActiveLink href="/events">Events</ActiveLink>
+            <ActiveLink href="/articles">Articles</ActiveLink>
           </span>
 
           <span className="inline-block">
@@ -146,6 +147,10 @@ const Navbar = () => {
 
           <span className="inline-block">
             <ActiveLink href="/contact">Contact</ActiveLink>
+          </span>
+
+          <span>
+            <DarkModeToggle/>
           </span>
 
           {/* Dashboard Link - Visible only when logged in */}

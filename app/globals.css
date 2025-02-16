@@ -66,3 +66,32 @@ a.source-link {
   width: 36px;
   height: 36px;
 }
+
+/* Global Article Card Styles */
+.article-card {
+  @apply bg-white dark:bg-gray-800 
+         border border-gray-200 dark:border-gray-700 
+         rounded-lg shadow-md p-6 
+         hover:shadow-lg transition-shadow duration-300;
+}
+
+.article-card-title {
+  @apply text-xl font-bold mb-2 
+         text-gray-900 dark:text-white;
+}
+
+.article-card-meta {
+  @apply text-sm text-gray-500 dark:text-gray-400 mb-2;
+}
+
+.article-card-summary {
+  @apply text-gray-700 dark:text-gray-300 mb-4;
+}
+
+.article-card-actions {
+  @apply flex items-center justify-between;
+}
+
+.article-card-button {
+  @apply text-blue-500 hover:underline;
+}

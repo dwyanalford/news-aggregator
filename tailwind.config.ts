@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}", // All files in /app folder
     "./app/components/**/*.{js,ts,jsx,tsx,mdx}", // Components folder inside /app
