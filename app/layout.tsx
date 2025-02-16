@@ -25,7 +25,7 @@ export default function RootLayout({
         <meta name="author" content="Dwyan Alford" />
         <link rel="icon" href="./favicon.png" />
       </head>
-      <body className={`${rubik.className} bg-gray-300`}>
+      <body className={`${rubik.className}`}>
         <SessionProvider>
           <Navbar />
           <NewsContainer>{children}</NewsContainer>

@@ -118,14 +118,15 @@ a.source-link {
 .article-card {
   @apply w-[400px] h-[475px] flex flex-col overflow-hidden 
            shadow-lg hover:shadow-2xl transition-all duration-300 
-           border border-gray-300 hover:scale-105 
-           bg-gray-100 dark:bg-gray-800;
+           border border-gray-300 hover:scale-105 dark:bg-gray-800;
 }
 
 /* Image container (top portion) */
 .article-card-image {
-  @apply relative overflow-hidden;
+  @apply relative object-cover w-full h-full hover:scale-105;
 }
+
+/* object-cover w-full h-full hover:scale-105 transition-transform duration-300 */
 
 .article-card-badge {
   @apply bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-xs 

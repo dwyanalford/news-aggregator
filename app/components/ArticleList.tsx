@@ -63,7 +63,7 @@ export default function ArticlesList({ articles }: ArticlesListProps) {
           {articles.map((article) => (
             <div
               key={article.id}
-              className="w-[400px] h-[475px] flex flex-col bg-card overflow-hidden bg-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-gray-300 hover:scale-105 rounded-lg"
+              className="w-[400px] h-[475px] flex flex-col bg-card overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-black/10 hover:scale-105 rounded-lg"
             >
               {/* Image Section */}
               <div className="relative overflow-hidden">
@@ -71,7 +71,7 @@ export default function ArticlesList({ articles }: ArticlesListProps) {
                   <img
                     src={article.imageURL}
                     alt={article.title}
-                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                    className="article-card-image"
                   />
                 )}
                 <div className="absolute top-2 right-2">

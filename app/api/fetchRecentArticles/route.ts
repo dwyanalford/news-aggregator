@@ -8,15 +8,26 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest) {
   try {
     const now = new Date();
-    const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
+
+    // Get today's date at 00:00:00
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Get yesterday's date at 00:00:00
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+    // Get today's date at 23:59:59 to include all articles from today
+    const todayEnd = new Date(todayStart);
+    todayEnd.setHours(23, 59, 59, 999);
 
     const articles = await prisma.savedArticle.findMany({
       where: {
         date: {
-          gte: twoDaysAgo,
-          lte: now,
+          gte: yesterdayStart, // Include yesterday
+          lte: todayEnd, // Up to the end of today
         },
       },
+
       orderBy: { date: 'desc' },
       // Remove pagination for now; you can remove 'take' when you're ready for all results.
       // take: 30,
