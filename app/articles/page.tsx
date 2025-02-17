@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import SidebarLayout from "@/app/components/SidebarLayout";
 import ArticleListLayout from "@/app/components/ArticleListLayout";
 import ArticleList from "@/app/components/ArticleList";
 import ArticleHeader from "@/app/components/ArticleHeader";
+import ArticleFilterPanel from "@/app/components/ArticleFilterPanel";
 
 interface Article {
   id: string;
@@ -24,6 +25,8 @@ export default function ArticlesPage() {
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const categories = [...new Set(articles.map(article => article.category))].filter(Boolean);
+  const publications = [...new Set(articles.map(article => article.source))].filter(Boolean);
 
   useEffect(() => {
     async function fetchArticles() {
@@ -45,13 +48,17 @@ export default function ArticlesPage() {
     fetchArticles();
   }, []);
 
-  const handleFilter = (type: string, value: string) => {
-    if (type === "all") {
-      setFilteredArticles(articles);
-    } else {
-      setFilteredArticles(articles.filter((article) => article[type as keyof Article] === value));
-    }
-  };
+  const handleFilter = useCallback((type: "category" | "publication", value: string) => {
+    setFilteredArticles(
+      articles.filter((article) =>
+        type === "category" ? article.category === value : article.source === value
+      )
+    );
+  }, [articles]);  // Dependencies ensure function updates only when `articles` change
+
+  const resetFilter = useCallback(() => {
+    setFilteredArticles(articles);
+  }, [articles]);
 
   // Calculate today's date
   const todayDate = new Date().toLocaleDateString("en-US", {
@@ -71,7 +78,13 @@ export default function ArticlesPage() {
     <div className="flex">
       {/* Sidebar */}
       <SidebarLayout>
-        <div>Hello there, welcome to the sidebar layout</div>
+      <ArticleFilterPanel 
+        totalArticles={totalArticles} 
+        categories={categories} 
+        publications={publications} 
+        onFilter={handleFilter} 
+        onReset={resetFilter}   
+      />
       </SidebarLayout>
 
       {/* Main Content Area with Articles */}
