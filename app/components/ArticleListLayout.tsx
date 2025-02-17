@@ -8,18 +8,16 @@ interface ArticleListLayoutProps {
 
 export default function ArticleListLayout({ children }: ArticleListLayoutProps) {
   return (
-    <div className="flex mt-[100px]">
-      {/* Sidebar Placeholder */}
-      <aside className="w-72 bg-gray-300 p-4 fixed shadow-lg border border-gray-200 h-full">
-        <h2 className="font-bold mb-4">Filters</h2>
-        <p>Sidebar placeholder – filtering options will go here.</p>
-      </aside>
+    // bg-blue-100
+    <div className="flex flex-wrap justify-center gap-6 p-6 min-h-screen mt-[80px] dark:text-gray-100"> 
+      {/* Debugging Background - Will be removed later */}
+      <div className="w-full p-4 rounded-md">
+      </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 ml-[350px] p-2">
-        {/* children can be anything, including your ArticleList */}
+      {/* Articles Section */}
+      <div className="flex flex-wrap justify-start gap-6 w-full p-6 rounded-md">
         {children}
-      </main>
+      </div>
     </div>
   );
 }

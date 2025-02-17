@@ -121,11 +121,6 @@ a.source-link {
            border border-gray-300 hover:scale-105 dark:bg-gray-800;
 }
 
-/* Image container (top portion) */
-.article-card-image {
-  @apply relative object-cover w-full h-full hover:scale-105;
-}
-
 /* object-cover w-full h-full hover:scale-105 transition-transform duration-300 */
 
 .article-card-badge {
