@@ -7,6 +7,7 @@ import ArticleList from "@/app/components/ArticleList";
 import ArticleHeader from "@/app/components/ArticleHeader";
 import ArticleFilterPanel from "@/app/components/ArticleFilterPanel";
 
+// Define the structure of an article object
 interface Article {
   id: string;
   title: string;
@@ -21,46 +22,62 @@ interface Article {
 }
 
 export default function ArticlesPage() {
+  console.log("Rendering ArticlesPage...");
+
+  // State for storing all articles and the currently filtered articles
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Extract unique categories and publications from articles
   const categories = [...new Set(articles.map(article => article.category))].filter(Boolean);
   const publications = [...new Set(articles.map(article => article.source))].filter(Boolean);
 
+  // Fetch recent articles from API on component mount
   useEffect(() => {
     async function fetchArticles() {
+      console.log("Fetching articles from API...");
       try {
         const res = await fetch("/api/fetchRecentArticles");
         const json = await res.json();
+
         if (json.success) {
+          console.log(`Successfully fetched ${json.data.length} articles.`);
           setArticles(json.data);
           setFilteredArticles(json.data);
         } else {
+          console.error("Failed to fetch articles.");
           setError("Failed to fetch articles.");
         }
       } catch (err: any) {
+        console.error("Error fetching articles:", err.message);
         setError(err.message || "Error fetching articles.");
       } finally {
         setLoading(false);
       }
     }
+
     fetchArticles();
   }, []);
 
+  // Handle filtering articles by category or publication
   const handleFilter = useCallback((type: "category" | "publication", value: string) => {
+    console.log(`Applying filter: ${type} = ${value}`);
     setFilteredArticles(
       articles.filter((article) =>
         type === "category" ? article.category === value : article.source === value
       )
     );
-  }, [articles]);  // Dependencies ensure function updates only when `articles` change
+  }, [articles]);
 
+  // Reset filters to show all articles
   const resetFilter = useCallback(() => {
+    console.log("Resetting filters, showing all articles.");
     setFilteredArticles(articles);
   }, [articles]);
 
-  // Calculate today's date
+  // Format today's date
   const todayDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -68,27 +85,31 @@ export default function ArticlesPage() {
     day: "numeric",
   });
 
-  // Count total articles
+  // Count total articles after filtering
   const totalArticles = filteredArticles.length;
+  console.log(`Total articles after filtering: ${totalArticles}`);
 
+  // Handle loading and error states
   if (loading) return <p className="text-center p-4">Loading articles...</p>;
   if (error) return <p className="text-center p-4 text-red-500">Error: {error}</p>;
 
   return (
     <div className="flex">
-      {/* Sidebar */}
+      {/* Sidebar containing filtering options */}
       <SidebarLayout>
-      <ArticleFilterPanel 
-        totalArticles={totalArticles} 
-        categories={categories} 
-        publications={publications} 
-        onFilter={handleFilter} 
-        onReset={resetFilter}   
-      />
+        <ArticleFilterPanel 
+          totalArticles={totalArticles} 
+          categories={categories} 
+          publications={publications} 
+          onFilter={handleFilter} 
+          onReset={resetFilter}   
+        />
       </SidebarLayout>
 
-      {/* Main Content Area with Articles */}
+      {/* Fixed article header above the list */}
       <ArticleHeader totalArticles={totalArticles} todayDate={todayDate} />
+
+      {/* Main content area displaying filtered articles */}
       <ArticleListLayout>
         <ArticleList articles={filteredArticles} />
       </ArticleListLayout>

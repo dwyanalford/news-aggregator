@@ -11,22 +11,23 @@ interface FilterPanelProps {
 }
 
 export default function ArticleFilterPanel({ totalArticles, categories, publications, onFilter, onReset }: FilterPanelProps) {
+  console.log("Rendering ArticleFilterPanel...");
+
   // State to track which filter section (category or publication) is currently open
   const [activeFilter, setActiveFilter] = useState<"category" | "publication" | null>(null);
 
-  console.log("Rendering ArticleFilterPanel...");
-  console.log("Total Articles:", totalArticles);
-  console.log("Categories:", categories);
-  console.log("Publications:", publications);
+  console.log("Total Articles Available:", totalArticles);
+  console.log("Available Categories:", categories);
+  console.log("Available Publications:", publications);
 
   /**
-   * Handles a filter selection (either category or publication)
-   * - Calls `onFilter` function passed from `page.tsx`
+   * Handles user selection of a filter (Category or Publication)
+   * - Calls the `onFilter` function (provided by `page.tsx`)
    * - Logs actions for debugging
-   * - Auto-closes sidebar on mobile
+   * - Automatically closes sidebar on mobile for better UX
    */
   const handleFilterSelection = (type: "category" | "publication", value: string) => {
-    console.log(`Filtering by ${type}:`, value);
+    console.log(`User selected ${type}: ${value}`);
     onFilter(type, value);
 
     // Auto-close sidebar on mobile (if width < 1024px)
@@ -37,42 +38,48 @@ export default function ArticleFilterPanel({ totalArticles, categories, publicat
   };
 
   /**
-   * Toggles the active filter section (Category or Publication)
+   * Toggles the visibility of the selected filter section
+   * - If the section is already open, it closes it
+   * - Otherwise, it opens the selected section and closes the other
    */
   const toggleFilter = (filterType: "category" | "publication") => {
     setActiveFilter(activeFilter === filterType ? null : filterType);
-    console.log(`Toggled filter panel: ${filterType}, Now Active:`, activeFilter);
+    console.log(`Toggled filter: ${filterType} | Currently Active:`, activeFilter);
   };
 
-  // Ensure this component renders correctly before returning UI
-  console.log("Active Filter Section:", activeFilter);
+  // Debug log to ensure correct rendering
+  console.log("Currently Active Filter Section:", activeFilter);
 
   return (
-    <div className="h-full flex flex-col p-4 bg-gray-100 text-gray-800">
-      {/* Sidebar Heading */}
-      <h2 className="text-lg font-bold mb-4">Filters</h2>
+    <div className="h-full flex flex-col p-4 bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+      {/* Sidebar Title */}
+      <h2 className="text-lg font-bold mb-4 dark:text-white">Filters</h2>
 
-      {/* Latest News Button - Resets Filters */}
+      {/* Latest News Button - Resets all filters */}
       <button 
         onClick={() => {
-          console.log("Resetting articles to latest news...");
+          console.log("Resetting filters - Showing latest news articles...");
           onReset();
         }} 
-        className="w-full flex items-center justify-between bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600"
+        className="w-full flex items-center justify-between bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
       >
         Latest News
-        <span className="bg-white text-blue-500 text-sm font-bold px-2 py-1 rounded-full">{totalArticles}</span>
+        <span className="bg-white text-blue-500 text-sm font-bold px-2 py-1 rounded-full dark:bg-gray-800 dark:text-white">
+          {totalArticles}
+        </span>
       </button>
 
-      {/* Filtering Options */}
+      {/* Filter Options Section */}
       <div className="mt-4">
-        {/* Category Filter */}
+        {/* Category Filter Toggle */}
         <button 
           onClick={() => toggleFilter("category")} 
-          className="w-full text-center font-semibold py-2 hover:text-blue-500 block"
+          className="w-full text-left font-semibold py-2 hover:text-blue-500 dark:hover:text-blue-400"
         >
           Category {activeFilter === "category" ? "▼" : "▶"}
         </button>
+
+        {/* Category Options (Dropdown) */}
         {activeFilter === "category" && (
           <div className="pl-4 flex flex-col space-y-2">
             {categories.length > 0 ? (
@@ -80,24 +87,26 @@ export default function ArticleFilterPanel({ totalArticles, categories, publicat
                 <button 
                   key={category} 
                   onClick={() => handleFilterSelection("category", category)} 
-                  className="text-sm text-gray-700 hover:text-blue-500"
+                  className="text-sm text-gray-700 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400"
                 >
                   {category}
                 </button>
               ))
             ) : (
-              <p className="text-sm text-gray-500">No categories available</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No categories available</p>
             )}
           </div>
         )}
 
-        {/* Publication Filter */}
+        {/* Publication Filter Toggle */}
         <button 
           onClick={() => toggleFilter("publication")} 
-          className="w-full text-center font-semibold py-2 hover:text-blue-500 mt-2 block"
+          className="w-full text-left font-semibold py-2 hover:text-blue-500 dark:hover:text-blue-400 mt-2"
         >
           Publication {activeFilter === "publication" ? "▼" : "▶"}
         </button>
+
+        {/* Publication Options (Dropdown) */}
         {activeFilter === "publication" && (
           <div className="pl-4 flex flex-col space-y-2">
             {publications.length > 0 ? (
@@ -105,13 +114,13 @@ export default function ArticleFilterPanel({ totalArticles, categories, publicat
                 <button 
                   key={pub} 
                   onClick={() => handleFilterSelection("publication", pub)} 
-                  className="text-sm text-gray-700 hover:text-blue-500"
+                  className="text-sm text-gray-700 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400 text-left"
                 >
                   {pub}
                 </button>
               ))
             ) : (
-              <p className="text-sm text-gray-500">No publications available</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No publications available</p>
             )}
           </div>
         )}

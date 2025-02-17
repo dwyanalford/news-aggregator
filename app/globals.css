@@ -4,6 +4,11 @@
 
 /* global.css */
 
+.hover-trigger:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
 /* Headlines */
 h1 {
   @apply text-3xl font-bold leading-tight;
@@ -19,12 +24,17 @@ h3 {
 
 /* Inactive Button */
 .button-inactive {
-  @apply text-gray-400 font-medium bg-gray-100 border border-gray-300 shadow-md rounded-lg hover:text-slate-950 hover:bg-gray-200 hover:border-gray-400 px-4 py-2 text-base; /* Add text-base for consistency */
+  @apply text-gray-400 font-medium bg-gray-100 border border-gray-300 shadow-md rounded-lg 
+         hover:text-slate-950 hover:bg-gray-200 hover:border-gray-400 px-4 py-2 text-base 
+         dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 
+         dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500;
 }
 
 /* Active Button */
 .button-active {
-  @apply text-white font-medium bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 shadow-xl border-0 rounded-lg px-4 py-2 text-base; /* Add text-base for consistency */
+  @apply text-white font-medium bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 shadow-xl 
+         border-0 rounded-lg px-4 py-2 text-base 
+         dark:from-blue-400 dark:via-blue-500 dark:to-blue-600 dark:shadow-lg;
 }
 
 
