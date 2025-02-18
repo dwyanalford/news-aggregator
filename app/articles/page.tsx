@@ -21,6 +21,13 @@ interface Article {
   region: string;
 }
 
+// Define the structure for publication details
+interface Publication {
+  name: string;
+  logo: string;
+  purpose: string;
+}
+
 export default function ArticlesPage() {
   console.log("Rendering ArticlesPage...");
 
@@ -29,6 +36,8 @@ export default function ArticlesPage() {
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // New state for selected publication
+  const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
 
   // Extract unique categories and publications from articles
   const categories = [...new Set(articles.map(article => article.category))].filter(Boolean);
@@ -69,12 +78,30 @@ export default function ArticlesPage() {
         type === "category" ? article.category === value : article.source === value
       )
     );
+    if (type === "publication") {
+      // Fetch publication data (logo and purpose) from the API
+      fetch(`/api/rss?publication=${value}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            setSelectedPublication(data.data); // Set the selected publication
+          } else {
+            setSelectedPublication(null); // Fallback if publication data fetch fails
+            console.error("Failed to fetch publication data");
+          }
+        })
+        .catch(error => {
+          setSelectedPublication(null); // Fallback on error
+          console.error("Error fetching publication data:", error);
+        });
+    }
   }, [articles]);
 
   // Reset filters to show all articles
   const resetFilter = useCallback(() => {
     console.log("Resetting filters, showing all articles.");
     setFilteredArticles(articles);
+    setSelectedPublication(null);
   }, [articles]);
 
   // Format today's date
@@ -107,7 +134,11 @@ export default function ArticlesPage() {
       </SidebarLayout>
 
       {/* Fixed article header above the list */}
-      <ArticleHeader totalArticles={totalArticles} todayDate={todayDate} />
+      <ArticleHeader 
+        totalArticles={totalArticles} 
+        todayDate={todayDate} 
+        selectedPublication={selectedPublication || undefined} 
+      />
 
       {/* Main content area displaying filtered articles */}
       <ArticleListLayout>

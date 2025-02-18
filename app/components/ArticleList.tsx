@@ -28,7 +28,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-6 justify-center">
+    <div className="flex flex-wrap gap-6 justify-center mt-6">
       {articles.map((article) => (
         <div
           key={article.id}
@@ -73,7 +73,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
           {/* Main Card Content */}
           <div className="p-6 flex-1 flex flex-col">
             {/* Article Title */}
-            <h2 className="text-xl font-semibold mb-3 line-clamp-2 flex-grow text-gray-900 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-100">
+            <h2 className="text-lg font-semibold mb-3 line-clamp-2 flex-grow dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-100 dark:text-white/80 dark:hover:text-white/90">
               {article.title}
             </h2>
 
@@ -95,7 +95,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
             </div>
 
             {/* Article Summary */}
-            <p className="text-gray-500 dark:text-gray-300 mb-4 line-clamp-3 group-hover:text-gray-700 dark:group-hover:text-gray-100">
+            <p className="text-gray-500 dark:text-gray-400 mb-4 line-clamp-3 group-hover:text-gray-700 dark:group-hover:text-gray-100 text-sm">
               {article.summary}
             </p>
 

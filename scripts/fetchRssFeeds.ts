@@ -109,7 +109,7 @@ export async function fetchRSSFeeds() {
 
                     // Extract image for the article
                     let articleImage = item.enclosure?.url || item["media:content"]?.url || null;
-                    if (!articleImage) {
+                    if (!articleImage) { 
                         logInfo("🔎 No RSS image found");
                         articleImage = await extractImageFromArticle(articleLink);
                     }

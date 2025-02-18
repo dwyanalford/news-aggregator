@@ -3,8 +3,8 @@
 
 import { Rubik } from "next/font/google";
 import "./globals.css";
-import NewsContainer from "./components/NewsContainer";
-import Navbar from "./components/Navbar";
+import AppContainer from "@/app/components/AppContainer";
+import HeaderLayout from "@/app/components/HeaderLayout";
 import { SessionProvider } from "next-auth/react";
 
 const rubik = Rubik({
@@ -27,11 +27,10 @@ export default function RootLayout({
       </head>
       <body className={`${rubik.className} bg-gray-200 text-gray-900 dark:bg-gray-900 dark:text-gray-200`}>
         <SessionProvider>
-          <Navbar />
-          <NewsContainer>{children}</NewsContainer>
+          <HeaderLayout />
+          <AppContainer>{children}</AppContainer>
         </SessionProvider>
       </body>
     </html>
   );
 }
-[]

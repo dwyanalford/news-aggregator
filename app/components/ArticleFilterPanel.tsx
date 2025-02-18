@@ -22,32 +22,42 @@ export default function ArticleFilterPanel({ totalArticles, categories, publicat
 
   /**
    * Handles user selection of a filter (Category or Publication)
-   * - Calls the `onFilter` function (provided by `page.tsx`)
-   * - Logs actions for debugging
-   * - Automatically closes sidebar on mobile for better UX
    */
-  const handleFilterSelection = (type: "category" | "publication", value: string) => {
+  const handleFilterSelection = async (type: "category" | "publication", value: string) => {
     console.log(`User selected ${type}: ${value}`);
     onFilter(type, value);
-
+  
+    // Fetch publication data (logo and purpose)
+    if (type === "publication") {
+      try {
+        const response = await fetch(`/api/rss?publication=${value}`);
+        const data = await response.json();
+  
+        if (data.success) {
+          // Pass the logo and purpose to the parent or ArticleHeader component
+          onPublicationSelect(data.data); // You will need to define this function
+        } else {
+          console.error("Failed to fetch publication data:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching publication data:", error);
+      }
+    }
+  
     // Auto-close sidebar on mobile (if width < 1024px)
     if (window.innerWidth < 1024) {
-      console.log("Auto-closing sidebar on mobile...");
       document.body.click(); // Simulating sidebar close behavior
     }
   };
 
   /**
    * Toggles the visibility of the selected filter section
-   * - If the section is already open, it closes it
-   * - Otherwise, it opens the selected section and closes the other
    */
   const toggleFilter = (filterType: "category" | "publication") => {
     setActiveFilter(activeFilter === filterType ? null : filterType);
     console.log(`Toggled filter: ${filterType} | Currently Active:`, activeFilter);
   };
 
-  // Debug log to ensure correct rendering
   console.log("Currently Active Filter Section:", activeFilter);
 
   return (
@@ -127,4 +137,8 @@ export default function ArticleFilterPanel({ totalArticles, categories, publicat
       </div>
     </div>
   );
+}
+
+function onPublicationSelect(data: any) {
+  throw new Error("Function not implemented.");
 }

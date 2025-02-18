@@ -1,6 +1,6 @@
 // app/news/[region]/page.tsx
 
-import NewsContainer from '@/app/components/NewsContainer';
+import NewsContainer from '@/app/components/AppContainer';
 import NewsContent from '@/app/components/NewsContent';
 import { Metadata } from 'next';
 import blackAmericanData from '@/app/data/blackAmericanData';

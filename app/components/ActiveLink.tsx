@@ -13,20 +13,15 @@ interface ActiveLinkProps {
 
 const ActiveLink = ({ href, children }: ActiveLinkProps) => {
   const pathname = usePathname(); // Get the current path using usePathname
-  const isActive =
-  href === "#"
-    ? pathname.startsWith("/news")
-    : pathname === href || (href === "/news" && pathname.startsWith("/news"));
- // Determine if the link is active
+  const isActive = pathname === href || pathname.startsWith(href); // Check if it's active based on the start of the pathname
 
   return (
     <Link
-    href={href}
-    className={`${isActive ? 'button-active' : 'button-inactive'} w-32 lg:w-auto text-center mx-auto lg:mx-0`}
+      href={href}
+      className={`${isActive ? 'button-active' : 'button-inactive'} w-32 lg:w-auto text-center mx-auto lg:mx-0`}
     >
-    {children}
+      {children}
     </Link>
-
   );
 };
 

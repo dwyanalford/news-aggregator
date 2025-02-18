@@ -58,11 +58,11 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   }, []);
 
   return (
-    <div className={`flex z-50 transition-all duration-300 ${isOpen ? "mr-[350px]" : "mr-[100px]"}`}>
+    <div className={`flex transition-all duration-300 ${isOpen ? "mr-[350px]" : "mr-[100px]"}`}>
       {/* Sidebar Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`fixed left-0 top-1/2 -translate-y-1/2 z-40 p-2 bg-gray-100 text-gray-600 shadow-md 
+        className={`fixed left-0 top-1/2 z-50 -translate-y-1/2 z-40 p-2 bg-gray-100 text-gray-600 shadow-md 
           hover:text-blue-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-blue-400 transition-all duration-300 
           ${isOpen ? "translate-x-[280px] rounded-r-md" : "translate-x-0 rounded-r-md"}`}
         aria-label="Toggle Sidebar"
@@ -72,8 +72,8 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-[70px] left-0 h-[calc(100vh-4rem)] w-[280px] bg-gray-100 border-r border-gray-300 
-          dark:bg-gray-900 dark:border-gray-700 transform transition-transform duration-300 ease-in-out z-30 
+        className={`fixed left-0 h-full w-[280px] bg-gray-100 border-r border-gray-300 
+          dark:bg-gray-900 dark:border-gray-700 transform transition-transform duration-300 ease-in-out z-45
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Scrollable Content */}
@@ -83,7 +83,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
       {/* Mobile Overlay (Backdrop) */}
       <div
         onClick={toggleSidebar}
-        className={`md:hidden fixed inset-0 bg-black/50 z-20 transition-opacity duration-300 
+        className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 
           ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         aria-hidden="true"
       />

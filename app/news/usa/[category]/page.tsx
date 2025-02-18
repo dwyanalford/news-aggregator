@@ -1,6 +1,6 @@
 // app/news/usa/[category]/page.tsx
 
-import NewsContainer from '@/app/components/NewsContainer';
+import NewsContainer from '@/app/components/AppContainer';
 import NewsContent from '@/app/components/NewsContent';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
