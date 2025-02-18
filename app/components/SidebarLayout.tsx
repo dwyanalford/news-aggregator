@@ -72,12 +72,12 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed left-0 h-full w-[280px] bg-gray-100 border-r border-gray-300 
-          dark:bg-gray-900 dark:border-gray-700 transform transition-transform duration-300 ease-in-out z-45
+        className={`fixed h-full w-[280px] bg-gray-100 border-gray-300 z-50 top-[88px]
+          dark:bg-gray-900 dark:border-gray-700 transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Scrollable Content */}
-        <div className="h-full overflow-y-auto py-6 px-4 dark:text-gray-200">{children}</div>
+        <div className="h-[calc(100vh-88px-50px)] overflow-y-auto dark:text-gray-200">{children}</div>
       </aside>
 
       {/* Mobile Overlay (Backdrop) */}

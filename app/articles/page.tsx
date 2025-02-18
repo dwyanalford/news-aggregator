@@ -39,10 +39,6 @@ export default function ArticlesPage() {
   // New state for selected publication
   const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
 
-  // Extract unique categories and publications from articles
-  const categories = [...new Set(articles.map(article => article.category))].filter(Boolean);
-  const publications = [...new Set(articles.map(article => article.source))].filter(Boolean);
-
   // Fetch recent articles from API on component mount
   useEffect(() => {
     async function fetchArticles() {
@@ -70,7 +66,21 @@ export default function ArticlesPage() {
     fetchArticles();
   }, []);
 
-  // Handle filtering articles by category or publication
+  // Extract unique categories and publications from the complete articles set
+  const categories = [...new Set(articles.map(article => article.category))].filter(Boolean);
+  const publications = [...new Set(articles.map(article => article.source))].filter(Boolean);
+
+  // Compute static publication counts based on the initial articles set
+  const publicationCounts = publications.reduce((acc, pub) => {
+    acc[pub] = articles.filter(article => article.source === pub).length;
+    return acc;
+  }, {} as { [key: string]: number });
+
+  // The "Latest News" count remains the total number of articles fetched
+  const totalArticles = articles.length;
+  console.log(`Total articles (latest news): ${totalArticles}`);
+
+  // Handle filtering articles by category or publication (updates only filteredArticles)
   const handleFilter = useCallback((type: "category" | "publication", value: string) => {
     console.log(`Applying filter: ${type} = ${value}`);
     setFilteredArticles(
@@ -112,10 +122,6 @@ export default function ArticlesPage() {
     day: "numeric",
   });
 
-  // Count total articles after filtering
-  const totalArticles = filteredArticles.length;
-  console.log(`Total articles after filtering: ${totalArticles}`);
-
   // Handle loading and error states
   if (loading) return <p className="text-center p-4">Loading articles...</p>;
   if (error) return <p className="text-center p-4 text-red-500">Error: {error}</p>;
@@ -128,12 +134,13 @@ export default function ArticlesPage() {
           totalArticles={totalArticles} 
           categories={categories} 
           publications={publications} 
+          publicationCounts={publicationCounts}
           onFilter={handleFilter} 
           onReset={resetFilter}   
         />
       </SidebarLayout>
 
-      {/* Fixed article header above the list */}
+      {/* Fixed article header showing total (static) count and today's date */}
       <ArticleHeader 
         totalArticles={totalArticles} 
         todayDate={todayDate} 
