@@ -16,22 +16,19 @@ const HeaderUserActions = ({ status }: { status: string }) => {
         <UserMenu />
       ) : (
         <>
-          <HoverTooltip label="Login">
-            <ActiveLink href="/login">
-                <Link href="/login">
-                <FontAwesomeIcon icon={faSignInAlt} className="w-6 h-6 text-gray-500 hover:text-yellow-500 xl:hidden" />
-                <span className="hidden xl:inline-block">Login</span>
-                </Link>
-            </ActiveLink>
-          </HoverTooltip>
-          <HoverTooltip label="Register">
-            <ActiveLink href="/register">
-                <Link href="/register">
-                <FontAwesomeIcon icon={faUserPlus} className="w-6 h-6 text-gray-500 hover:text-blue-500 xl:hidden" />
-                <span className="hidden xl:inline-block">Register</span>
-                </Link>
-            </ActiveLink>
-          </HoverTooltip>
+            <HoverTooltip label="Login">
+                <ActiveLink href="/login">
+                    <FontAwesomeIcon icon={faSignInAlt} className="w-6 h-6 text-gray-500 hover:text-yellow-500 xl:hidden" />
+                    <span className="hidden xl:inline-block">Login</span>
+                </ActiveLink>
+            </HoverTooltip>
+
+            <HoverTooltip label="Register">
+                <ActiveLink href="/register">
+                    <FontAwesomeIcon icon={faUserPlus} className="w-6 h-6 text-gray-500 hover:text-blue-500 xl:hidden" />
+                    <span className="hidden xl:inline-block">Register</span>
+                </ActiveLink>
+            </HoverTooltip>
         </>
       )}
     </div>
