@@ -39,10 +39,13 @@ export default function TestPage() {
 
 
 
-
-
             <aside id="sidebar" className="fixed h-full w-[280px] bg-yellow-600 z-40 top-0"></aside>
       
+
+
+
+
+
 
         <div id="articles" className="ml-[350px] mt-[190px] bg-red-400 flex flex-wrap justify-center gap-8">
                 <div className="test flex flex-col p-2 rounded-lg">

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import SidebarLayout from "@/app/components/SidebarLayout";
-import ArticleListLayout from "@/app/components/ArticleListLayout";
 import ArticleList from "@/app/components/ArticleList";
 import ArticleHeader from "@/app/components/ArticleHeader";
 import ArticleFilterPanel from "@/app/components/ArticleFilterPanel";
@@ -148,9 +147,7 @@ export default function ArticlesPage() {
       />
 
       {/* Main content area displaying filtered articles */}
-      <ArticleListLayout>
         <ArticleList articles={filteredArticles} />
-      </ArticleListLayout>
     </div>
   );
 }

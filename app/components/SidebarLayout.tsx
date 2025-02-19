@@ -58,7 +58,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   }, []);
 
   return (
-    <div className={`flex transition-all duration-300 ${isOpen ? "mr-[350px]" : "mr-[100px]"}`}>
+    <div className={`flex transition-all duration-300 ${isOpen ? "mr-[350px] md:mr-[0px] lg:mr-[350px]" : "mr-[100px] md:mr-[0px] lg:mr-[100px]"}`}>
       {/* Sidebar Toggle Button */}
       <button
         onClick={toggleSidebar}
