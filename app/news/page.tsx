@@ -17,6 +17,10 @@ export default function TestPage() {
                     <p className="bg-green-800">Sign in/Account</p>
                 </div>
             </nav>
+
+
+
+            
             <header id="hero" className="fixed w-full h-[85px] mt-[85px] bg-red-300 z-40 top-0">
                 <div className="flex flex-row gap-2">
                     <div className="bg-green-200 w-1/5"></div>
@@ -31,6 +35,12 @@ export default function TestPage() {
                     <div className="bg-green-200 w-1/5 flex justify-end"><p>Tuesday Feb 20, 2025</p></div>
                 </div>
             </header>
+
+
+
+
+
+
             <aside id="sidebar" className="fixed h-full w-[280px] bg-yellow-600 z-40 top-0"></aside>
       
 

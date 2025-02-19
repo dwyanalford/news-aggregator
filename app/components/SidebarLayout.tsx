@@ -77,7 +77,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Scrollable Content */}
-        <div className="h-[calc(100vh-88px-50px)] overflow-y-auto dark:text-gray-200">{children}</div>
+        <div className="h-[calc(100vh-88px-50px)] hover:overflow-y-auto dark:text-gray-200">{children}</div>
       </aside>
 
       {/* Mobile Overlay (Backdrop) */}

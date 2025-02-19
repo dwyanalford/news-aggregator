@@ -19,31 +19,44 @@ export default function ArticleHeader({ totalArticles, todayDate, selectedPublic
   console.log("Rendering ArticleHeader...");
 
   return (
-    <div className="fixed top-[90px] w-full bg-gray-200 text-gray-800 dark:bg-gray-900 dark:text-gray-200 z-40">
-      <div className="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
-        {selectedPublication ? (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Image
-                src={selectedPublication.logo}
-                alt={selectedPublication.name}
-                width={40}
-                height={40}
-                className="rounded-full object-cover"
-              />
-              <h1 className="text-2xl font-bold">{selectedPublication.name}</h1>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{selectedPublication.purpose}</p>
+    <div className="fixed mt-[85px] h-[110px] ml-[280px] w-full z-40 top-0 overflow-hidden bg-gray-200 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+      {selectedPublication ? (
+        <div className="flex flex-row justify-start items-center p-4">
+          {/* Logo Wrapper */}
+          <div className="mr-4 flex items-center justify-center">
+            <Image
+              src={selectedPublication.logo}
+              alt={selectedPublication.name}
+              width={50}
+              height={50}
+              className="rounded-full object-cover min-h-[50px] min-w-[50px]"
+            />
           </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <span className="bg-green-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full tracking-wide shadow-md">
-              LATEST
-            </span>
-            <h1 className="text-2xl font-bold">News Articles</h1>
+  
+          {/* Text Wrapper */}
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold">{selectedPublication.name}</h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400">{selectedPublication.purpose}</p>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex flex-row items-center p-4">
+          <span className="bg-green-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full tracking-wide shadow-md mr-4">
+            LATEST
+          </span>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold">Articles and News</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

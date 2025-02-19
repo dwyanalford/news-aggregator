@@ -42,7 +42,7 @@ export default function ArticleFilterPanel({
   };
 
   return (
-    <div className="h-full flex flex-col p-4 bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+    <div className="flex flex-col p-4 bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
       {/* Sidebar Title */}
       <h2 className="text-lg font-bold mb-4 dark:text-white">Filters</h2>
 
@@ -52,9 +52,9 @@ export default function ArticleFilterPanel({
           console.log("Resetting filters - Showing latest news articles...");
           onReset();
         }}
-        className="w-full flex items-center justify-between bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
+        className="flex items-center justify-between button-active w-[200px] hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
       >
-        Latest News
+        Latest Articles
         {/* The static totalArticles count */}
         <span className="bg-white text-blue-500 text-sm font-bold px-2 py-1 rounded-full dark:bg-gray-800 dark:text-white">
           {totalArticles}
