@@ -42,7 +42,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
   };
 
   return (
-    <div id="articles" className="flex flex-wrap justify-start gap-10 mt-[176px] w-full">
+    <div id="articles" className="flex flex-wrap justify-start gap-10 mt-[200px] w-full">
       {articles.map((article) => (
         <div key={article.id} id="articles-wrapper" className="
           flex flex-col rounded-lg
@@ -60,10 +60,10 @@ export default function ArticleList({ articles }: ArticleListProps) {
           /* Hover & Transitions */
               hover:scale-105 transition-all duration-300
             ">
-          {/* Image + Main Card Content Wrapper */}
-          <div id="article-image" className="h-[250px] w-full overflow-hidden p-1">
+        {/* Image + Main Card Content Wrapper */}
+        <div id="article-image" className="h-[250px] w-full overflow-hidden p-1 relative">
             {/* Image Section */}
-            <div className="h-full w-full">
+            <div className="h-full w-full relative">
               {article.imageURL && (
                 <img 
                   src={article.imageURL} 
@@ -71,8 +71,9 @@ export default function ArticleList({ articles }: ArticleListProps) {
                   className="h-full w-full object-cover hover:scale-105"
                 />
               )}
-              <div>
-                <span>{article.category}</span>
+              <div className="absolute top-2 right-2">
+                <span className="bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-xs 
+         dark:bg-gray-600/80">{article.category}</span>
               </div>
             </div>
           </div>
