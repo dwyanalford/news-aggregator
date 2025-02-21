@@ -1,3 +1,6 @@
+// purely handle the cateogorization logic and return the result, all logging and output 
+// should happen in the script.
+
 import "dotenv/config"; // ✅ Ensures the .env file is loaded
 import axios from "axios";
 
@@ -9,29 +12,34 @@ if (!HF_TOKEN) {
 }
 
 // ✅ Updated Model URL (facebook/bart-large-mnli)
-const HF_API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli";
+//const HF_API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli";
+//const HF_API_URL = "https://api-inference.huggingface.co/models/joeddav/xlm-roberta-large-xnli";
+const HF_API_URL = "https://api-inference.huggingface.co/models/MoritzLaurer/deberta-v3-large-zeroshot-v2.0";
+
 
 // ✅ Define categories with clear AI guidance
-// ✅ Define categories with clear AI guidance
+
 const CATEGORY_GUIDANCE = {
-  "Politics": "Articles about government actions, elections, legislative policies, political debates, public figures, civil rights advocacy, campaign updates, voting laws, and congressional affairs. Excludes corporate DEI programs. Includes advocacy efforts by organizations like the NAACP related to public policies.",
-
-  "Business": "Articles about financial markets, corporate mergers, entrepreneurship, company policies, investment trends, industry regulations, corporate diversity programs, brand partnerships, and economic developments. Includes sneaker brand collaborations but excludes general celebrity endorsements, entertainment industry disputes, music industry feuds, artist credibility controversies, and stand-up comedy censorship. **Excludes media censorship affecting comedians, TV hosts, or musicians.**",
-
-  "Science & Technology": "Articles about AI advancements, space exploration, cybersecurity risks, engineering breakthroughs, medical innovations, environmental research, and cutting-edge scientific discoveries. Excludes corporate tech business deals unless focused on technological innovation.",
-
-  "Health & Wellness": "Articles about medical research, disease prevention, mental health awareness, nutrition trends, fitness studies, healthcare accessibility, public health initiatives, and emerging wellness treatments.",
-
-  "Sports": "Articles about professional and college athletics, major tournaments, athlete milestones, league standings, championship events, Olympic competitions, sports controversies, and player activism. Excludes sneaker releases unrelated to performance and excludes actors or entertainers wearing sports apparel in non-sports settings.",
-
-  "Travel & Leisure": "Articles about tourism hotspots, airline policies, travel experiences, destination reviews, hospitality trends, adventure tourism, and vacation planning. Excludes migration or relocation discussions.",
-
-  "Music & Film": "Articles about the entertainment industry, film releases, television productions, music awards, artist controversies, directorial work, album launches, and streaming platform updates. Includes **performance credibility disputes, lip-syncing accusations, live performance controversies, artist feuds, and backlash related to artistic authenticity.** Explicitly includes **public artist responses to criticism or performance accusations.** Excludes financial reports, business contracts, and record label revenue-based disputes.",
-
-  "Pop Culture & Celebrities": "Articles about celebrity lifestyles, viral trends, social media movements, reality TV moments, influencer culture, entertainment industry gossip, red carpet fashion, and high-profile relationships. Includes **stand-up comedy controversies, TV show censorship debates, public appearances by entertainers, and actors wearing designer or sports brands.** Explicitly includes **censorship cases involving comedians, late-night TV hosts, and entertainment figures facing restrictions on speech or performance.** Excludes financial aspects of TV networks and corporate business policies.",
-
-  "Education": "Articles about school funding, curriculum reforms, student programs, higher education policies, scholarship opportunities, standardized testing, university rankings, and HBCU initiatives. Excludes labor-related academic disputes."
-};
+    "Politics & Law": "Articles about government actions, elections, legislation, political debates, public figures, civil rights, and campaigns.",
+  
+    "Business & Finance": "Articles about financial markets, corporate activities, entrepreneurship, investments, legal disputes, and economic developments. Excludes celebrity gossip, social media trends, and entertainment.",
+  
+    "Science & Technology": "Articles about AI, space exploration, cybersecurity, engineering, medical innovations, and scientific research. Excludes business mergers, entertainment news, and celebrity involvement.",
+  
+    "Health & Wellness": "Articles about medical research, disease prevention, mental health, fitness, healthcare accessibility, and wellness trends.",
+  
+    "Sports": "Articles about professional and college sports, tournaments, athlete milestones, league standings, and sports controversies.",
+  
+    "Travel & Food": "Articles about travel destinations, airline policies, travel experiences, hospitality trends, culinary tourism, restaurant reviews, and global cuisine.",
+  
+    "Fashion": "Articles about fashion trends, designer profiles, runway shows, fashion weeks, industry news, clothing innovations, and style icons.",
+  
+    "Music & Film": "Articles about entertainment industry news, film releases, television productions, music awards, and artist achievements.",
+  
+    "Pop Culture & Celebrities": "Articles about celebrity news, viral trends, social media movements, influencer culture, and entertainment gossip.",
+  
+    "Education": "Articles about school funding, curriculum reforms, higher education policies, scholarships, and academic achievements."
+  };
 
 /**
  * Categorizes an article based on its title and summary.
@@ -70,7 +78,6 @@ export async function categorizeArticle(title: string, summary: string): Promise
         }
 
         const bestCategory = response.data.labels[0]; // ✅ Selects the highest-confidence category
-        console.log(`✅ Category assigned: ${bestCategory}`);
         return bestCategory;
 
     } catch (error: any) {

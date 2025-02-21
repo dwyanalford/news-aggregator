@@ -33,7 +33,7 @@ export async function saveArticleToDatabase(article: {
 }, userId: string = SYSTEM_USER_ID): Promise<void> {
   
   try {
-    logInfo(`🔍 Checking if article already exists: ${article.link}`);
+    // logInfo(`🔍 Checking if article in database: ${article.link}`);
 
     // Check if the article already exists in the database
     let savedArticle = await prisma.savedArticle.findUnique({
@@ -41,7 +41,8 @@ export async function saveArticleToDatabase(article: {
     });
 
     if (!savedArticle) {
-      logInfo(`🆕 Article not found, creating new entry: ${article.title}`);
+      // logInfo(`🆕 Article not in database, creating new entry: ${article.title}`);
+      logInfo(`🆕 Article not in database, creating new entry:`);
 
       // Create a new article entry
       savedArticle = await prisma.savedArticle.create({
@@ -58,7 +59,9 @@ export async function saveArticleToDatabase(article: {
         },
       });
 
-      logInfo(`✅ Article saved in database: ${article.title}`);
+      //logInfo(`✅ Article saved in database: ${article.title}`);
+      logInfo(`✅ Article successfully saved to database: `);
+      
     }
 
     logInfo(`🔗 Linking article to user: ${userId}`);
@@ -81,6 +84,7 @@ export async function saveArticleToDatabase(article: {
       });
 
       logInfo(`✅ Article linked to user successfully.`);
+      logInfo("____________________________________________"); // 🔍 Separates each article for better readability
     } else {
       logInfo(`⚠️ Article already saved by user.`);
     }

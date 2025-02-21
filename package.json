@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "rss": "npx tsx scripts/fetchRssFeeds.ts"
+    "rss": "npx tsx scripts/fetchAndCategorizeRss.ts "
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",

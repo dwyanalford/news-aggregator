@@ -1,16 +1,12 @@
-console.log("🚀 Script is running...");
+// File: scripts/fetchAndCategorizeRSS.ts
 
 import axios from 'axios';
 import RSSParser from 'rss-parser';
-import { logInfo, logError } from '@/app/utils/logger'; // Logging functions
-import { saveArticleToDatabase } from '@/app/utils/saveArticleToDatabase'; // Function to save articles
-import { extractImageFromArticle } from '@/app/utils/extractImageFromArticle'; // Function to extract images
+import { logInfo, logError } from '@/app/utils/logger';
+import { saveArticleToDatabase } from '@/app/utils/saveArticleToDatabase';
+import { extractImageFromArticle } from '@/app/utils/extractImageFromArticle';
 import { PrismaClient } from '@prisma/client';
-import { categorizeArticle } from '@/app/utils/categorizeArticle'; 
-
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+import { categorizeArticle } from '@/app/utils/categorizeArticle';
 
 const prisma = new PrismaClient();
 const parser = new RSSParser();
@@ -19,227 +15,225 @@ const parser = new RSSParser();
 const DEFAULT_IMAGE_PATH = "/images/default.webp";
 const BACKUP_IMAGE_FOLDER = "/images/rss_backup/";
 
+// Retry configuration for categorization failures
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000; // 2 seconds
+
 /**
- * Fetches RSS feeds from the database.
+ * Sleep function to introduce delays.
+ * @param ms - Milliseconds to sleep.
+ */
+function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Fetches active RSS feeds from the database.
  */
 async function getRSSFeedsFromDB() {
-  try {
-    const feeds = await prisma.rSSFeed.findMany({
-      where: { active: true }, // ✅ Only fetch active feeds
-    });
-    return feeds.map(feed => ({
-      id: feed.id,
-      name: feed.name,
-      url: feed.url,
-      region: feed.region || "Unknown",
-      failureCount: feed.failureCount || 0, // ✅ Track failure count
-    }));
-  } catch (error) {
-    logError(`❌ Error fetching RSS feeds from database: ${(error as Error).message}`);
-    return [];
-  }
+    try {
+        const feeds = await prisma.rSSFeed.findMany({
+            where: { active: true },
+        });
+        return feeds.map(feed => ({
+            id: feed.id,
+            name: feed.name,
+            url: feed.url,
+            region: feed.region || "Unknown",
+            failureCount: feed.failureCount || 0,
+        }));
+    } catch (error) {
+        logError(`❌ Error fetching RSS feeds from database: ${(error as Error).message}`);
+        return [];
+    }
 }
 
 /**
- * Fetches and processes RSS feed articles.
+ * Main function to fetch and process RSS feeds.
  */
-export async function fetchRSSFeeds() {
-  const rssFeeds = await getRSSFeedsFromDB();
+export async function fetchAndCategorizeRSS() {
+    const rssFeeds = await getRSSFeedsFromDB();
 
-  if (rssFeeds.length === 0) {
-    logError("⚠️ No active RSS feeds found in the database.");
-    return;
-  }
-
-  logInfo(`🚀 Starting RSS Feed Fetching Process - Processing ${rssFeeds.length} feeds`);
-
-  // Get today's date in UTC
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
-  let totalArticlesFetched = 0;
-  let filteredTodayTotal = 0;
-  let totalSkipped = 0;
-  let totalSaved = 0;
-  let failedFeeds: { id: string; name: string; error: string }[] = [];
-  // NEW: Counters for categorization
-  let categorizedCount = 0;
-  let generalCount = 0;
-
-  for (const feed of rssFeeds) {
-    let totalArticles = 0;
-    let filteredToday = 0;
-    let skipped = 0;
-    let saved = 0;
-
-    logInfo("\n=======================================================================================");
-    logInfo(`📢 RSS Feed Summary for: ${feed.name.padEnd(25)}`);
-    logInfo("_______________________________________________________________");
-
-    try {
-      logInfo(`🌐 Fetching RSS url feed: ${feed.url}`);
-
-      const response = await axios.get(feed.url, { timeout: 5000, headers: { 'User-Agent': 'Mozilla/5.0' } });
-      const parsedFeed = await parser.parseString(response.data);
-
-      if (!parsedFeed.items || parsedFeed.items.length === 0) {
-        logError(`⚠️ No articles found in feed: ${feed.name}`);
-        throw new Error("No articles found.");
-      }
-
-      totalArticles = parsedFeed.items.length;
-
-      for (const item of parsedFeed.items) {
-        try {
-          const articleTitle = item.title || "Untitled";
-          const articleLink = item.link || "";
-          const articleDate = item.pubDate ? new Date(item.pubDate) : new Date();
-          const articleSummary = item.contentSnippet || item.description || "No summary available.";
-          const articleAuthor = item.creator || item.author;
-          const articleRegion = feed.region || "Unknown";
-          const articleCategory = await categorizeArticle(articleTitle, articleSummary);
-            await sleep(500);
-
-          // Ensure the article has a valid link
-          if (!articleLink) {
-            logError(`❌ Skipping article "${articleTitle}" from ${feed.name} due to missing link.`);
-            continue;
-          }
-
-          // Check if the article is from today
-          const articleUTCDate = new Date(articleDate);
-          articleUTCDate.setUTCHours(0, 0, 0, 0);
-          if (articleUTCDate.getTime() !== today.getTime()) {
-            continue;
-          }
-
-          filteredToday++;
-
-          // Extract image for the article
-          let articleImage = item.enclosure?.url || item["media:content"]?.url || null;
-          if (!articleImage) { 
-            logInfo("🔎 No RSS image found");
-            articleImage = await extractImageFromArticle(articleLink);
-          }
-
-          // Fallback to backup image if needed
-          if (!articleImage) {
-            const backupImagePath = `${BACKUP_IMAGE_FOLDER}${feed.name.toLowerCase().replace(/\s+/g, '')}.webp`;
-            logInfo(`🖼️ Using backup image for "${articleTitle}": ${backupImagePath}`);
-            articleImage = backupImagePath;
-          }
-
-          // Fallback to default image if all else fails
-          if (!articleImage) {
-            logInfo(`🖼️ Using default image for "${articleTitle}"`);
-            articleImage = DEFAULT_IMAGE_PATH;
-          }
-
-          // NEW: Categorize article using title and summary
-          categorizedCount++;
-          if (articleCategory.toLowerCase() === "general") {
-            generalCount++;
-          }
-
-          // Check if the article is already in the database before saving
-          const existingArticle = await prisma.savedArticle.findUnique({
-            where: { link: articleLink }
-          });
-
-          if (existingArticle) {
-            skipped++;
-          } else {
-            await saveArticleToDatabase({
-              title: articleTitle,
-              date: articleDate,
-              link: articleLink,
-              summary: articleSummary,
-              imageURL: articleImage,
-              author: articleAuthor,
-              source: feed.name,
-              region: articleRegion,
-              category: articleCategory  // Save the AI-determined category
-            }, process.env.SYSTEM_USER_ID as string);
-
-            saved++;
-          }
-
-        } catch (articleError) {
-          logError(`❌ Failed processing article in ${feed.name}: ${(articleError as Error).message}`);
-        }
-      }
-
-      // ✅ Reset fail count on successful fetch
-      await prisma.rSSFeed.update({
-        where: { id: feed.id },
-        data: { failureCount: 0 }
-      });
-
-    } catch (feedError) {
-      failedFeeds.push({ id: feed.id, name: feed.name, error: (feedError as Error).message });
-
-      // ✅ Increment failure count
-      await prisma.rSSFeed.update({
-        where: { id: feed.id },
-        data: { failureCount: { increment: 1 } }
-      });
-
-      // ✅ Deactivate feed if it fails twice in a row
-      const updatedFeed = await prisma.rSSFeed.findUnique({
-        where: { id: feed.id },
-        select: { failureCount: true }
-      });
-
-      if (updatedFeed && updatedFeed.failureCount >= 2) {
-        await prisma.rSSFeed.update({
-          where: { id: feed.id },
-          data: { active: false }
-        });
-        logError(`🚨 RSS feed ${feed.name} has failed twice. Marking as inactive.`);
-      }
+    if (rssFeeds.length === 0) {
+        logError("⚠️ No active RSS feeds found in the database.");
+        return;
     }
 
-    totalSaved += saved;
-    filteredTodayTotal += filteredToday;
-    totalArticlesFetched += totalArticles;
-    totalSkipped += skipped;
+    logInfo(`🚀 Running Categorization and RSS Fetch Script - Processing ${rssFeeds.length} feeds`);
 
-    logInfo(`🌍 Region:             ${feed.region}`);
-    logInfo(`✅ Articles Fetched:   ${String(totalArticles).padStart(5)}`);
-    logInfo(`📅 Filtered Today:     ${String(filteredToday).padStart(5)}`);
-    logInfo(`⚠️ Skipped (In DB):     ${String(skipped).padStart(5)}`);
-    logInfo(`✅ Saved to Database:  ${String(saved).padStart(5)}`);
-    logInfo("=============================================================");
-  }
+    // Get current date and time
+    const now = new Date();
 
-  // Final Summary
-  logInfo("\n=============================================================");
-  logInfo("               📊 FINAL DATABASE SUMMARY");
-  logInfo("=============================================================");
-  logInfo(`📑 Total Articles Fetched:     ${String(totalArticlesFetched).padStart(5)}`);
-  logInfo(`📅 Total Articles Filtered:    ${String(filteredTodayTotal).padStart(5)}`);
-  logInfo(`⚠️ Total Skipped Articles:      ${String(totalSkipped).padStart(5)}`);
-  logInfo(`✅ Total Saved Articles:       ${String(totalSaved).padStart(5)}`);
-  logInfo(`📦 Total Articles in Database: ${String(await prisma.savedArticle.count()).padStart(5)}`);
-  logInfo(`📝 Total Articles Categorized: ${categorizedCount}`);
-  logInfo(`📌 Total 'General' Articles:   ${generalCount}`);
-  logInfo("-------------------------------------------------------------");
-  logInfo(`❌ RSS Feeds Failed:           ${String(failedFeeds.length).padStart(5)}`);
+    // Initialize counters and storage for summaries
+    let totalArticlesFetched = 0;
+    let totalArticlesFiltered = 0;
+    let totalArticlesInDB = 0;
+    let totalArticlesCategorized = 0;
+    let totalArticlesSkippedDueToCategorization = 0;
+    let totalArticlesSavedToDB = 0;
+    const categoryCounts: { [key: string]: number } = {};
+    const failedFeeds: { id: string; name: string; error: string }[] = [];
 
-  if (failedFeeds.length > 0) {
-    failedFeeds.forEach(feed => logInfo(`   - ❌ ${feed.name} | Error: ${feed.error}`));
-  }
+    for (const feed of rssFeeds) {
+      // Initialize per-feed counters
+    let feedArticlesFetched = 0;
+    let feedArticlesFiltered = 0;
+    let feedArticlesInDB = 0;
+    let feedArticlesSaved = 0;
+        logInfo("\n=======================================================================================");
+        logInfo(`📢 RSS Feed Summary for: ${feed.name.padEnd(25)}`);
+        logInfo("_______________________________________________________________");
 
-  logInfo("=============================================================");
+        try {
+            logInfo(`🌐 Fetching RSS feed: ${feed.url}`);
+
+            const response = await axios.get(feed.url, { timeout: 5000, headers: { 'User-Agent': 'Mozilla/5.0' } });
+            const parsedFeed = await parser.parseString(response.data);
+
+            if (!parsedFeed.items || parsedFeed.items.length === 0) {
+                logError(`⚠️ No articles found in feed: ${feed.name}`);
+                throw new Error("No articles found.");
+            }
+
+            const articles = parsedFeed.items;
+            totalArticlesFetched += articles.length;
+            feedArticlesFetched += articles.length;
+
+            for (const item of articles) {
+                const articleTitle = item.title || "Untitled";
+                const articleLink = item.link || "";
+                const articleDate = item.pubDate ? new Date(item.pubDate) : new Date();
+                const articleSummary = item.contentSnippet || item.description || "No summary available.";
+                const articleAuthor = item.creator || item.author || "Unknown";
+                const articleRegion = feed.region || "Unknown";
+
+                // Check if the article is within the last 24 hours, just change number "24" to "48" for 2 days etc etc.
+                const timeDiff = now.getTime() - articleDate.getTime();
+                const hoursDiff = timeDiff / (1000 * 3600);
+                if (hoursDiff > 24) {
+                    continue;
+                }
+                totalArticlesFiltered++;
+                feedArticlesFiltered++;
+
+                // Check if the article is already in the database
+                const existingArticle = await prisma.savedArticle.findUnique({
+                    where: { link: articleLink }
+                });
+
+                if (existingArticle) {
+                    totalArticlesInDB++;
+                    feedArticlesInDB++;
+                    continue;
+                }
+
+                // Retry mechanism for categorization
+                let articleCategory = "Uncategorized";
+                let categorizationSuccess = false;
+                for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                    try {
+                        articleCategory = await categorizeArticle(articleTitle, articleSummary);
+                        categorizationSuccess = true;
+                        break; // Exit loop on success
+                    } catch (error) {
+                        logError(`❌ Categorization failed for article "${articleTitle}" from "${feed.name}": ${(error as Error).message}`);
+                        if (attempt < MAX_RETRIES) {
+                            logInfo(`🔄 Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
+                            await sleep(RETRY_DELAY_MS);
+                        }
+                    }
+                }
+
+                if (!categorizationSuccess) {
+                    totalArticlesSkippedDueToCategorization++;
+                    continue;
+                }
+
+                totalArticlesCategorized++;
+                // logInfo(`📝 Article: "${articleTitle}"`);
+                logInfo(`   Assigned Category: ${articleCategory}`);
+
+                // Update category count
+                if (categoryCounts[articleCategory]) {
+                    categoryCounts[articleCategory]++;
+                } else {
+                    categoryCounts[articleCategory] = 1;
+                }
+
+                // Extract image for the article
+                let articleImage = item.enclosure?.url || item["media:content"]?.url || null;
+                if (!articleImage) {
+                    articleImage = await extractImageFromArticle(articleLink);
+                }
+                if (!articleImage) {
+                    articleImage = `${BACKUP_IMAGE_FOLDER}${feed.name.toLowerCase().replace(/\s+/g, '')}.webp`;
+                }
+                if (!articleImage) {
+                    articleImage = DEFAULT_IMAGE_PATH;
+                }
+
+                // Save the categorized article to the database
+                await saveArticleToDatabase({
+                    title: articleTitle,
+                    date: articleDate,
+                    link: articleLink,
+                    summary: articleSummary,
+                    imageURL: articleImage,
+                    author: articleAuthor,
+                    source: feed.name,
+                    region: articleRegion,
+                    category: articleCategory
+                }, process.env.SYSTEM_USER_ID as string);
+
+                totalArticlesSavedToDB++;
+                feedArticlesSaved++;
+            }
+
+                // ✅ Summary for the current RSS feed
+                logInfo("============================================================");
+                logInfo(`✅ Articles Fetched:      ${String(feedArticlesFetched).padStart(5)}`);
+                logInfo(`📅 Filtered Last 24h:    ${String(feedArticlesFiltered).padStart(5)}`);
+                logInfo(`⚠️  Skipped (In DB):       ${String(feedArticlesInDB).padStart(5)}`);
+                logInfo(`✅ Saved to Database:     ${String(feedArticlesSaved).padStart(5)}`);
+                logInfo("============================================================");
+
+        } catch (feedError) {
+            failedFeeds.push({ id: feed.id, name: feed.name, error: (feedError as Error).message });
+        }
+    }
+
+    const totalArticlesInDatabase = await prisma.savedArticle.count();
+
+    // Summarized Database and Categorization Output
+    logInfo("\n============================== 📊 FINAL SUMMARY 📊 ==============================");
+    logInfo(`📑 Total Articles Fetched:                ${String(totalArticlesFetched).padStart(5)}`);
+    logInfo(`📅 Total Articles Filtered (48h):         ${String(totalArticlesFiltered).padStart(5)}`);
+    logInfo(`🗄️ Total Articles Already in Database:   ${String(totalArticlesInDB).padStart(5)}`);
+    logInfo(`📌 Total Articles Successfully Categorized: ${String(totalArticlesCategorized).padStart(5)}`);
+    logInfo(`🚫 Total Articles Categorization Failure:  ${String(totalArticlesSkippedDueToCategorization).padStart(5)}`);
+    logInfo(`✅ Total Articles Saved to Database:      ${String(totalArticlesSavedToDB).padStart(5)}`);
+    logInfo(`🗂️ Total Articles in Database (update): ${String(totalArticlesInDatabase).padStart(5)}`);
+
+    logInfo("\n🔍 Categorization Breakdown:");
+    Object.entries(categoryCounts).forEach(([category, count]) => {
+        const percentage = ((count / totalArticlesCategorized) * 100).toFixed(2);
+        logInfo(`   - ${category}: ${count} articles (${percentage}%)`);
+    });
+
+    if (failedFeeds.length > 0) {
+        logInfo(`❌ RSS Feeds Failed: ${failedFeeds.length}`);
+        failedFeeds.forEach(feed => logInfo(`   - ${feed.name} | Error: ${feed.error}`));
+    }
+
+    logInfo("===============================================================================");
+
 }
-
-logInfo("=============================================================");
 
 // Top-level invocation
 (async () => {
-  try {
-    await fetchRSSFeeds();
-  } catch (error) {
-    logError(`🚨 Fatal Error in RSS Fetching Process: ${(error as Error).message}`);
-  }
+    try {
+        await fetchAndCategorizeRSS();
+    } catch (error) {
+        logError(`🚨 Fatal Error in RSS Fetching Process: ${(error as Error).message}`);
+    }
 })();
