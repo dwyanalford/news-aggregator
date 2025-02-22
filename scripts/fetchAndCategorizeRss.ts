@@ -192,7 +192,7 @@ export async function fetchAndCategorizeRSS() {
                 // ✅ Summary for the current RSS feed
                 logInfo("============================================================");
                 logInfo(`✅ Articles Fetched:      ${String(feedArticlesFetched).padStart(5)}`);
-                logInfo(`📅 Filtered Last 24h:    ${String(feedArticlesFiltered).padStart(5)}`);
+                logInfo(`📅 Filtered Last 24h:     ${String(feedArticlesFiltered).padStart(5)}`);
                 logInfo(`⚠️  Skipped (In DB):       ${String(feedArticlesInDB).padStart(5)}`);
                 logInfo(`✅ Saved to Database:     ${String(feedArticlesSaved).padStart(5)}`);
                 logInfo("============================================================");
@@ -206,13 +206,13 @@ export async function fetchAndCategorizeRSS() {
 
     // Summarized Database and Categorization Output
     logInfo("\n============================== 📊 FINAL SUMMARY 📊 ==============================");
-    logInfo(`📑 Total Articles Fetched:                ${String(totalArticlesFetched).padStart(5)}`);
-    logInfo(`📅 Total Articles Filtered (48h):         ${String(totalArticlesFiltered).padStart(5)}`);
-    logInfo(`🗄️ Total Articles Already in Database:   ${String(totalArticlesInDB).padStart(5)}`);
-    logInfo(`📌 Total Articles Successfully Categorized: ${String(totalArticlesCategorized).padStart(5)}`);
-    logInfo(`🚫 Total Articles Categorization Failure:  ${String(totalArticlesSkippedDueToCategorization).padStart(5)}`);
-    logInfo(`✅ Total Articles Saved to Database:      ${String(totalArticlesSavedToDB).padStart(5)}`);
-    logInfo(`🗂️ Total Articles in Database (update): ${String(totalArticlesInDatabase).padStart(5)}`);
+    logInfo(`📑 Total Articles Fetched:                   ${String(totalArticlesFetched).padStart(5)}`);
+    logInfo(`📅 Total Articles Filtered (48h):            ${String(totalArticlesFiltered).padStart(5)}`);
+    logInfo(`🗄️ Total Articles Already in Database:       ${String(totalArticlesInDB).padStart(5)}`);
+    logInfo(`📌 Total Articles Successfully Categorized:  ${String(totalArticlesCategorized).padStart(5)}`);
+    logInfo(`🚫 Total Articles Categorization Failure:    ${String(totalArticlesSkippedDueToCategorization).padStart(5)}`);
+    logInfo(`✅ Total Articles Saved to Database:         ${String(totalArticlesSavedToDB).padStart(5)}`);
+    logInfo(`🗂️ Total Articles in Database (update):      ${String(totalArticlesInDatabase).padStart(5)}`);
 
     logInfo("\n🔍 Categorization Breakdown:");
     Object.entries(categoryCounts).forEach(([category, count]) => {
