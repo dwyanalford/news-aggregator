@@ -84,7 +84,7 @@ export async function saveArticleToDatabase(article: {
       });
 
       logInfo(`✅ Article linked to user successfully.`);
-      logInfo("____________________________________________"); // 🔍 Separates each article for better readability
+      logInfo("        "); // 🔍 Separates each article for better readability
     } else {
       logInfo(`⚠️ Article already saved by user.`);
     }

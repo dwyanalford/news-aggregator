@@ -58,6 +58,8 @@ model SavedArticle {
   category  String?               // AI will determine this
   region    String?               // Pulled from RSS feed
   users     UserSavedArticle[]    @relation("SavedArticleToUserSavedArticle")
+
+  @@unique([author, title, summary]) // Composite unique constraint
 }
 
 model UserSavedArticle {
