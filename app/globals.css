@@ -2,28 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* global.css */
+/* globals.css */
 
-.test {
-  @apply bg-blue-500 h-[450px] w-[400px];
+/* Force Rubik Font on All Text Elements */
+* {
+  font-family: 'Rubik', sans-serif !important;
 }
 
-.hover-trigger:hover .tooltip {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
+/* Resetting margin and padding for consistency */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Headlines */
+/* Body default styles */
+body {
+  font-family: 'Rubik', sans-serif;
+  background-color: #f3f4f6; /* light gray */
+  color: #1f2937; /* dark gray */
+  line-height: 1.6;
+}
+
+/* Headings */
 h1 {
-  @apply text-3xl font-bold leading-tight;
+  font-size: 2.5rem; /* 40px */
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
 h2 {
-  @apply text-2xl font-semibold leading-snug;
+  font-size: 2rem; /* 32px */
+  font-weight: 600;
+  margin-bottom: 0.75rem;
 }
 
 h3 {
-  @apply text-xl font-medium;
+  font-size: 1.5rem; /* 24px */
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+p {
+  font-size: 1rem; /* 16px */
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+/* Links */
+a {
+  color: #2563eb; /* Tailwind blue-600 */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* General utility styles */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
 /* Inactive Button */

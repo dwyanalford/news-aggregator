@@ -6,6 +6,7 @@ import "./globals.css";
 import AppContainer from "@/app/components/AppContainer";
 import HeaderLayout from "@/app/components/HeaderLayout";
 import { SessionProvider } from "next-auth/react";
+import Footer from "@/app/components/Footer";
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -29,6 +30,7 @@ export default function RootLayout({
         <SessionProvider>
           <HeaderLayout />
           <AppContainer>{children}</AppContainer>
+          <Footer/>
         </SessionProvider>
       </body>
     </html>
