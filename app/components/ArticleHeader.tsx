@@ -24,7 +24,7 @@ export default function ArticleHeader({ totalArticles, todayDate, selectedPublic
         <div className="flex flex-row justify-start items-center p-4">
           {/* Logo Wrapper */}
           <div className="mr-4 flex items-center justify-center">
-            <Image
+            <img
               src={selectedPublication.logo}
               alt={selectedPublication.name}
               width={50}

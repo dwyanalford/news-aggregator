@@ -1,47 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { Playfair_Display } from 'next/font/google';
+import { Article } from "@/app/types";
 
-const playfair = Playfair_Display({ subsets: ['latin'] });
+interface EducationSectionProps {
+  articles: Article[];
+}
 
-const educationArticles = [
-  {
-    title: "HBCU Enrollment Sees Historic Surge",
-    summary: "Record number of students choose historically Black colleges and universities",
-    source: "Education Weekly",
-    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b"
-  },
-  {
-    title: "New STEM Initiative Launches in Urban Schools",
-    summary: "Program aims to increase diversity in technology fields",
-    source: "Tech Education Today",
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7"
-  },
-  {
-    title: "Educational Equity Program Expands Nationwide",
-    summary: "Federal funding boosts access to quality education",
-    source: "Education News",
-    image: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45"
-  },
-  {
-    title: "Digital Learning Revolution in Communities",
-    summary: "Technology bridges educational gaps in underserved areas",
-    source: "Digital Learning Report",
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7"
-  },
-  {
-    title: "Scholarship Opportunities Transform Lives",
-    summary: "New funding programs open doors for minority students",
-    source: "Higher Ed Chronicle",
-    image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846"
+export default function EducationSection( {articles}: EducationSectionProps) {
+  if (!articles || articles.length === 0) {
+    return (
+      <section className="min-h-screen flex items-center justify-center text-white">
+        <p>No Politics articles available.</p>
+      </section>
+    );
   }
-];
-
-export default function EducationSection() {
-  const mainArticle = educationArticles[0];
-  const gridArticles = educationArticles.slice(1);
+  
+  const mainArticle = articles[0];
+  const gridArticles = articles.slice(1, 5);
 
   return (
     <section className="h-screen flex flex-row-reverse">
@@ -53,11 +29,12 @@ export default function EducationSection() {
         className="w-full md:w-1/2 h-screen relative"
       >
         <div className="absolute inset-0">
-          <Image
-            src={mainArticle.image}
+          <img
+            src={mainArticle.imageURL || "/images/default.webp"}
             alt={mainArticle.title}
-            fill
-            className="object-cover"
+            
+            className="object-cover w-full h-full"
+            
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         </div>
@@ -67,10 +44,10 @@ export default function EducationSection() {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <span className={`inline-block px-3 py-1 text-sm font-semibold bg-blue-600 text-white rounded-full mb-4 ${playfair.className}`}>
+            <span className={`inline-block px-3 py-1 text-sm font-semibold bg-blue-600 text-white rounded-full mb-4`}>
               Featured in Education
             </span>
-            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4 ${playfair.className}`}>
+            <h2 className={`text-3xl md:text-4xl font-bold text-white mb-4`}>
               {mainArticle.title}
             </h2>
             <p className="text-lg text-white/90 mb-2">
@@ -94,16 +71,17 @@ export default function EducationSection() {
             className="relative group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
           >
             <div className="relative h-40">
-              <Image
-                src={article.image}
+              <img
+                src={article.imageURL || "/images/default.webp"}
                 alt={article.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                
+                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
             <div className="p-4">
-              <h3 className={`text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors ${playfair.className}`}>
+              <h3 className={`text-lg font-semibold mb-2 group-hover:text-blue-600 transition-colors`}>
                 {article.title}
               </h3>
               <p className="text-sm text-gray-600 mb-2 line-clamp-2">

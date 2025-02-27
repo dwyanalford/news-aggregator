@@ -1,50 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { Cpu, Atom, Microscope, Globe, Wifi } from "lucide-react";
-import { Space_Grotesk } from 'next/font/google';
 import { useEffect, useState } from 'react';
+import { Article } from "@/app/types";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'] });
+interface ScienceTechSectionProps {
+  articles: Article[];
+}
 
-const scienceTechArticles = [
-  {
-    title: "AI Innovation: Breaking New Ground in Machine Learning",
-    summary: "Revolutionary algorithms reshape the future of artificial intelligence",
-    publication: "MIT Technology Review",
-    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485",
-    category: "Technology"
-  },
-  {
-    title: "Quantum Computing Breakthrough by Research Team",
-    summary: "New quantum processor achieves unprecedented stability",
-    publication: "Scientific American",
-    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb",
-    category: "Science"
-  },
-  {
-    title: "Green Tech Solutions for Sustainable Future",
-    summary: "Innovative approaches to environmental challenges",
-    publication: "Nature",
-    image: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1",
-    category: "Environment"
-  },
-  {
-    title: "Medical Tech Advances in Disease Prevention",
-    summary: "AI-powered diagnostics revolutionize healthcare",
-    publication: "Science Daily",
-    image: "https://images.unsplash.com/photo-1576086213369-97a306d36557",
-    category: "Healthcare"
-  },
-  {
-    title: "Space Exploration: New Frontiers in Technology",
-    summary: "Latest developments in space research and innovation",
-    publication: "Space.com",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa",
-    category: "Space"
-  }
-];
 
 const BackgroundGrid = () => (
   <div className="absolute inset-0 overflow-hidden opacity-10">
@@ -113,7 +77,15 @@ const FloatingParticles = () => {
   );
 };
 
-export default function ScienceTechSection() {
+export default function ScienceTechSection( {articles}: ScienceTechSectionProps) {
+  if (!articles || articles.length === 0) {
+    return (
+      <section className="min-h-screen flex items-center justify-center text-white">
+        <p>No Politics articles available.</p>
+      </section>
+    );
+  }
+  
   return (
     <section className="min-h-screen relative bg-gradient-to-br from-[#0a192f] via-[#112240] to-[#0a192f] overflow-hidden">
       <BackgroundGrid />
@@ -132,11 +104,11 @@ export default function ScienceTechSection() {
             }}
           >
             <div className="relative h-full rounded-lg overflow-hidden border border-blue-400/20">
-              <Image
-                src={scienceTechArticles[0].image}
-                alt={scienceTechArticles[0].title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              <img
+                src={articles[0].imageURL || "/images/default.webp"}
+                alt={articles[0].title}
+                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
               <div className="absolute bottom-0 left-0 p-8 w-full">
@@ -147,16 +119,16 @@ export default function ScienceTechSection() {
                 >
                   <div className="flex items-center gap-2 mb-4">
                     <Cpu className="w-6 h-6 text-blue-400" />
-                    <span className={`text-blue-400 font-bold tracking-wider ${spaceGrotesk.className}`}>
+                    <span className={`text-blue-400 font-bold tracking-wider`}>
                       FEATURED IN TECH
                     </span>
                   </div>
                   <h2 className={`text-4xl font-bold text-white mb-4 group-hover:text-blue-400 
-                               transition-colors duration-300 ${spaceGrotesk.className}`}>
-                    {scienceTechArticles[0].title}
+                               transition-colors duration-300`}>
+                    {articles[0].title}
                   </h2>
-                  <p className="text-lg text-white/90 mb-2">{scienceTechArticles[0].summary}</p>
-                  <p className="text-sm text-white/70">{scienceTechArticles[0].publication}</p>
+                  <p className="text-lg text-white/90 mb-2">{articles[0].summary}</p>
+                  <p className="text-sm text-white/70">{articles[0].source}</p>
                 </motion.div>
               </div>
             </div>
@@ -164,7 +136,7 @@ export default function ScienceTechSection() {
 
           {/* Side Articles - Vertical Stack */}
           <div className="col-span-12 md:col-span-5 grid grid-rows-4 gap-4">
-            {scienceTechArticles.slice(1).map((article, index) => (
+            {articles.slice(1, 5).map((article, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: 100 }}
@@ -174,22 +146,22 @@ export default function ScienceTechSection() {
                          hover:border-blue-400/40 transition-all duration-300"
               >
                 <div className="relative h-full">
-                  <Image
-                    src={article.image}
+                  <img
+                    src={article.imageURL || "/images/default.webp"}
                     alt={article.title}
-                    fill
-                    className="object-cover transition-all duration-500 group-hover:scale-105"
+                    className="object-cover w-full h-full transition-all duration-500 group-hover:scale-105"
+                    
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
                   <div className="absolute inset-0 p-4 flex flex-col justify-end">
                     <div className="flex items-center gap-2 mb-2">
                       <Microscope className="w-4 h-4 text-blue-400" />
-                      <span className={`text-blue-400 text-sm font-bold tracking-wider ${spaceGrotesk.className}`}>
+                      <span className={`text-blue-400 text-sm font-bold tracking-wider`}>
                         {article.category}
                       </span>
                     </div>
                     <h3 className={`text-xl font-bold text-white group-hover:text-blue-400 
-                                transition-all duration-300 ${spaceGrotesk.className}`}>
+                                transition-all duration-300`}>
                       {article.title}
                     </h3>
                     <p className="text-sm text-white/70 mt-2 line-clamp-2">{article.summary}</p>

@@ -1,18 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Scale } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { Article } from "@/app/types";
 
-interface PoliticsSectionProps {
+interface BusinessFinanceSectionProps {
   articles: Article[];
 }
 
-export default function PoliticsSection({ articles }: PoliticsSectionProps) {
-  if (!articles || articles.length === 0) {
+export default function BusinessFinanceSection({ articles }: BusinessFinanceSectionProps) {
+  if (articles.length === 0) {
     return (
       <section className="min-h-screen flex items-center justify-center text-white">
-        <p>No Politics articles available.</p>
+        <p>No Business & Finance articles available.</p>
       </section>
     );
   }
@@ -45,9 +45,9 @@ export default function PoliticsSection({ articles }: PoliticsSectionProps) {
             transition={{ delay: 0.2 }}
           >
             <div className="flex items-center gap-2 mb-4">
-              <Scale className="w-5 h-5 text-blue-400" />
-              <span className="text-blue-400 font-bold tracking-wider">
-                FEATURED IN POLITICS
+              <DollarSign className="w-5 h-5 text-green-400" />
+              <span className="text-green-400 font-bold tracking-wider">
+                FEATURED IN BUSINESS
               </span>
             </div>
             <h2 className="text-4xl font-bold text-white mb-4">
@@ -82,12 +82,12 @@ export default function PoliticsSection({ articles }: PoliticsSectionProps) {
             </div>
             <div className="relative h-full p-4 flex flex-col justify-end transform transition-transform duration-300">
               <div className="flex items-center gap-2 mb-2">
-                <Scale className="w-4 h-4 text-blue-400" />
-                <span className="text-blue-400 text-sm font-semibold">
-                  Politics
+                <DollarSign className="w-4 h-4 text-green-400" />
+                <span className="text-green-400 text-sm font-semibold">
+                  Business
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 
+              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-green-400 
                              transition-colors duration-300 line-clamp-2">
                 {article.title}
               </h3>

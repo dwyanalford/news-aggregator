@@ -206,28 +206,24 @@ export async function fetchAndCategorizeRSS() {
               } catch (err: unknown) {
                 const error = err as { response?: { data?: string, status?: number }, message?: string };
                 let errorMessage = '';
-                if (error.response) {
-                  if (error.response.status === 503) {
-                    errorMessage = 'Hugging Face API returned a 503 error.';
-                  } else if (typeof error.response.data === 'string') {
-                    if (error.response.data.includes('<!DOCTYPE html>')) {
-                      errorMessage = 'Hugging Face API error: Service Unavailable.';
-                    } else {
-                      // Strip all HTML tags
-                      errorMessage = error.response.data.replace(/<[^>]+>/g, '').trim();
-                    }
-                  }
+            
+                if (error.response?.data && typeof error.response.data === 'string') {
+                  // Remove all HTML tags, then truncate to 100 characters.
+                  const stripped = error.response.data.replace(/<[^>]+>/g, '').trim();
+                  errorMessage = stripped.substring(0, 100) + (stripped.length > 100 ? '...' : '');
+                } else if (error.message && typeof error.message === 'string') {
+                  errorMessage = error.message.substring(0, 100) + (error.message.length > 100 ? '...' : '');
+                } else {
+                  errorMessage = 'Unknown error occurred.';
                 }
-                if (!errorMessage) {
-                  errorMessage = error.message || String(error);
-                }
+                
                 feedLog(`❌ Categorization failed for "${truncate(article.title, 30)}": ${errorMessage}`);
                 if (attempt < MAX_RETRIES) {
                   feedLog(`🔄 Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
                   await sleep(RETRY_DELAY_MS);
                 }
               }
-            }            
+            }       
 
             if (!categorizationSuccess) {
               totalArticlesSkippedDueToCategorization++;

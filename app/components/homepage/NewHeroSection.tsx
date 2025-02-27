@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
-import Image from "next/image";
 
 interface NewHeroSectionProps {
   onExplore: () => void;
@@ -13,12 +12,11 @@ export default function NewHeroSection({ onExplore }: NewHeroSectionProps) {
     <section className="relative h-screen w-full overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
-        <Image
-          src="https://images.unsplash.com/photo-1516733725897-4615ac98d9ca"
+        <img
+          src="/images/default.webp"
           alt="Black family walking together"
-          fill
-          className="object-cover"
-          priority
+          className="object-cover w-full h-full"
+          
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
       </div>

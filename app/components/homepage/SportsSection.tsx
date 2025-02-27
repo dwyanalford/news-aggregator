@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { Trophy } from "lucide-react";
 import { Article } from "@/app/types";
 
@@ -29,11 +28,12 @@ export default function SportsSection({ articles }: SportsSectionProps) {
                   className="relative group overflow-hidden rounded-lg border-2 border-white/10 hover:border-yellow-400/50 transition-all duration-300"
                 >
                   <div className="relative h-full">
-                    <Image
-                      src={articles[index].imageURL || "/placeholder.png"}
+                    <img
+                      src={articles[index].imageURL || "/images/default.webp"}
                       alt={articles[index].title}
-                      fill
-                      className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:blur-[1px]"
+                      
+                      className="object-cover w-full h-full transition-all duration-500 group-hover:scale-105 group-hover:blur-[1px]"
+                      
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-4 w-full">
@@ -64,11 +64,12 @@ export default function SportsSection({ articles }: SportsSectionProps) {
                 className="row-span-2 relative group"
               >
                 <div className="relative h-full rounded-xl overflow-hidden border-4 border-white/10">
-                  <Image
+                  <img
                     src={articles[0].imageURL || "/placeholder.png"}
                     alt={articles[0].title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105 group-hover:blur-[2px]"
+                    
+                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105 group-hover:blur-[2px]"
+                    
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-8">
@@ -100,11 +101,10 @@ export default function SportsSection({ articles }: SportsSectionProps) {
                     className="relative group overflow-hidden rounded-lg border-2 border-white/10 hover:border-yellow-400/50 transition-all duration-300"
                   >
                     <div className="relative h-full">
-                      <Image
+                      <img
                         src={articles[index].imageURL || "/placeholder.png"}
                         alt={articles[index].title}
-                        fill
-                        className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:blur-[1px]"
+                        className="object-cover w-full h-full transition-all duration-500 group-hover:scale-105 group-hover:blur-[1px]"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                       <div className="absolute bottom-0 left-0 p-4 w-full">
@@ -135,11 +135,10 @@ export default function SportsSection({ articles }: SportsSectionProps) {
                   className="relative group overflow-hidden rounded-lg border-2 border-white/10 hover:border-yellow-400/50 transition-all duration-300"
                 >
                   <div className="relative h-full">
-                    <Image
+                    <img
                       src={articles[index].imageURL || "/placeholder.png"}
                       alt={articles[index].title}
-                      fill
-                      className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:blur-[1px]"
+                      className="object-cover w-full h-full transition-all duration-500 group-hover:scale-105 group-hover:blur-[1px]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-4 w-full">

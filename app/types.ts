@@ -17,3 +17,23 @@ export interface Tag {
     category: string;
     region?: string;
   }
+
+  export interface Category {
+    id: string;
+    name: string;
+    icon: 
+      | "ArrowUp"
+      | "DollarSign"
+      | "Scale"
+      | "Heart"
+      | "GraduationCap"
+      | "Star"
+      | "Utensils"
+      | "Film"
+      | "Shirt"
+      | "Trophy"
+      | "Cpu"
+      | "ArrowDown";
+    articles: Article[];
+  }
+  

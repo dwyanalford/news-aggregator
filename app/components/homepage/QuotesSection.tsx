@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import { Playfair_Display } from 'next/font/google';
-
-const playfair = Playfair_Display({ subsets: ['latin'] });
 
 const quotes = [
   {
@@ -83,15 +79,15 @@ export default function QuotesSection() {
           >
             <div className="flex flex-col items-center space-y-4">
               <div className="relative w-16 h-16 md:w-20 md:h-20">
-                <Image
+                <img
                   src={quotes[currentIndex].image}
                   alt={quotes[currentIndex].name}
-                  fill
-                  className="rounded-full object-cover border-2 border-white/30"
+                  className="rounded-full object-cover w-full h-full border-2 border-white/30"
+                  
                 />
               </div>
               
-              <div className={`relative max-w-4xl mx-auto mb-4 ${playfair.className}`}>
+              <div className={`relative max-w-4xl mx-auto mb-4`}>
                 <span className="absolute -left-2 md:-left-4 top-0 text-white/10 text-5xl md:text-6xl">"</span>
                 <p className="text-2xl md:text-3xl lg:text-4xl font-light text-white/90 leading-relaxed tracking-wide px-6 md:px-12"
                    style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.2)" }}>

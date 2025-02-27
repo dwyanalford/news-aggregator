@@ -4,6 +4,7 @@ const config = {
     tailwindcss: {},
     autoprefixer: {},  // Add autoprefixer for better cross-browser support
   },
+  
 };
 
 export default config;
