@@ -90,7 +90,10 @@ export default function CategorySidebar({
                     transition={{ delay: index * 0.05 }}
                   >
                     <button
-                      onClick={() => onCategoryClick(index)}
+                      onClick={() => {
+                        console.log(`Clicked category: ${category.name}, Sidebar index: ${index}, Mapped section index: ${index + 1}`);
+                        onCategoryClick(index); // Adjusting for sectionsRef in page.tsx
+                      }}
                       className={`flex items-center space-x-1 md:space-x-2 text-xs md:text-sm 
                                 transition-all group whitespace-nowrap
                                 ${

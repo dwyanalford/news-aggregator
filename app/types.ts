@@ -4,7 +4,7 @@ export interface Tag {
     name: string;
     count: number;
   }
-
+  
   export interface Article {
     id: string;
     title: string;
@@ -16,24 +16,5 @@ export interface Tag {
     source: string;
     category: string;
     region?: string;
-  }
-
-  export interface Category {
-    id: string;
-    name: string;
-    icon: 
-      | "ArrowUp"
-      | "DollarSign"
-      | "Scale"
-      | "Heart"
-      | "GraduationCap"
-      | "Star"
-      | "Utensils"
-      | "Film"
-      | "Shirt"
-      | "Trophy"
-      | "Cpu"
-      | "ArrowDown";
-    articles: Article[];
   }
   

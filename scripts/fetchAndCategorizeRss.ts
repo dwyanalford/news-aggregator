@@ -66,6 +66,23 @@ async function getRSSFeedsFromDB() {
   }
 }
 
+/**
+ * Extracts the author as a string if possible; otherwise, returns null.
+ * @param author - The author field from the RSS feed.
+ * @returns A string if available, otherwise null.
+ */
+function extractAuthor(author: any): string | null {
+  if (!author) return null; // ✅ If there's no author, return null
+  if (typeof author === "string") return author.trim(); // ✅ If it's already a string, return it (trimmed)
+  
+  if (typeof author === "object" && author["$"] && typeof author["$"] === "string") {
+    return author["$"].trim(); // ✅ Extract the author's name if it's inside an object
+  }
+
+  return null; // ✅ Default to null if we can't extract a valid string
+}
+
+
 // used to truncate any strings in the logs (optional)
 function truncate(str: string, maxLength: number): string {
     return str.length > maxLength ? str.slice(0, maxLength) + '...' : str;
@@ -99,6 +116,8 @@ export async function fetchAndCategorizeRSS() {
   const failedFeeds: { id: string; name: string; error: string }[] = [];
   let totalArticlesSkippedDueToMissingImage = 0;
   let totalArticlesSkippedDueToDuplicates = 0;
+  let totalArticlesSkippedDueToDBError = 0;
+
 
   await Promise.all(rssFeeds.map(async (feed) => {
     // Create a buffer for feed-specific logs
@@ -202,28 +221,38 @@ export async function fetchAndCategorizeRSS() {
               try {
                 articleCategory = await categorizeArticle(article.title, article.summary);
                 categorizationSuccess = true;
-                break; // Exit loop on success
+                break; // ✅ Exit loop on success
               } catch (err: unknown) {
-                const error = err as { response?: { data?: string, status?: number }, message?: string };
-                let errorMessage = '';
+                const error = err as { response?: { data?: string; status?: number }; message?: string };
+                let errorMessage = "";
             
-                if (error.response?.data && typeof error.response.data === 'string') {
-                  // Remove all HTML tags, then truncate to 100 characters.
-                  const stripped = error.response.data.replace(/<[^>]+>/g, '').trim();
-                  errorMessage = stripped.substring(0, 100) + (stripped.length > 100 ? '...' : '');
-                } else if (error.message && typeof error.message === 'string') {
-                  errorMessage = error.message.substring(0, 100) + (error.message.length > 100 ? '...' : '');
+                if (error.response?.data && typeof error.response.data === "string") {
+                  // ✅ Remove all HTML tags and extra spaces, then truncate to 100 characters.
+                  const stripped = error.response.data.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+            
+                  // ✅ Ignore generic Hugging Face errors and only log meaningful content.
+                  if (!stripped.startsWith("Hugging Face - The AI community building the future")) {
+                    errorMessage = stripped.substring(0, 100) + (stripped.length > 100 ? "..." : "");
+                  }
+                } else if (error.message && typeof error.message === "string") {
+                  errorMessage = error.message.substring(0, 100) + (error.message.length > 100 ? "..." : "");
                 } else {
-                  errorMessage = 'Unknown error occurred.';
+                  errorMessage = "Unknown error occurred.";
                 }
-                
-                feedLog(`❌ Categorization failed for "${truncate(article.title, 30)}": ${errorMessage}`);
+            
+                // ✅ Log only if there's a meaningful error message
+                if (errorMessage) {
+                  feedLog(`❌ Categorization failed for "${truncate(article.title, 50)}": ${errorMessage}`);
+                }
+            
                 if (attempt < MAX_RETRIES) {
                   feedLog(`🔄 Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
                   await sleep(RETRY_DELAY_MS);
                 }
               }
-            }       
+            }
+            
+            
 
             if (!categorizationSuccess) {
               totalArticlesSkippedDueToCategorization++;
@@ -268,11 +297,12 @@ export async function fetchAndCategorizeRSS() {
               link: article.link,
               summary: article.summary,
               imageURL: articleImage,
-              author: article.author,
+              author: extractAuthor(article.author), // ✅ Fix applied here
               source: feed.name,
               region: feed.region,
               category: articleCategory
             });
+            
 
             feedLog(`✅ Article from ${feed.name} added to batch save.`);
             categoryCounts[articleCategory] = (categoryCounts[articleCategory] || 0) + 1;
@@ -293,6 +323,7 @@ export async function fetchAndCategorizeRSS() {
               totalArticlesSkippedDueToDuplicates++;
               feedLog(`⚠️ Duplicate article detected and skipped: ${truncate(article.title, 30)}`);
             } else {
+              totalArticlesSkippedDueToDBError++; // ✅ Track unexpected DB errors separately
               feedLog(`❌ Error saving article "${article.title}": ${dbError}`);
             }
           }
@@ -350,49 +381,72 @@ export async function fetchAndCategorizeRSS() {
   const totalArticlesInDatabase = await prisma.savedArticle.count();
   const totalArticlesReady = totalArticlesFiltered - totalArticlesInDB;
 
-  logInfo(`\n============================== 📊 FINAL SUMMARY 📊 ==============================`);
-  logInfo(`📑 Total Articles Fetched:                   ${String(totalArticlesFetched).padStart(5)}`);
-  logInfo(`📅 Total Articles Filtered (24h):            ${String(totalArticlesFiltered).padStart(5)}`);
-  logInfo(`🗄️  Total Articles Already in Database:       ${String(totalArticlesInDB).padStart(5)}`);
-  logInfo(`📝 Total Articles Ready for Categorization:  ${String(totalArticlesReady).padStart(5)}`);
-  logInfo(`🚫 Total Articles Categorization Failure:    ${String(totalArticlesSkippedDueToCategorization).padStart(5)}`);
-  logInfo(`✅ Total Articles Successfully Categorized:  ${String(totalArticlesCategorized).padStart(5)}`);
-  logInfo(`❌ Articles Skipped Due to Missing Image:    ${String(totalArticlesSkippedDueToMissingImage).padStart(5)}`);
-logInfo(`❌ Articles Skipped Due to Duplicates:       ${String(totalArticlesSkippedDueToDuplicates).padStart(5)}`);
-  logInfo(`✅ Total Articles Saved to Database:         ${String(totalArticlesSavedToDB).padStart(5)}`);
-  logInfo(`🗂️  Total Articles in Database (updated):     ${String(totalArticlesInDatabase).padStart(5)}`);
+  const numWidth = 5; // Set width for numeric alignment
+
+logInfo(`\n============================== 📊 FINAL SUMMARY 📊 ==============================`);
+
+// Right-align numbers using padStart(numWidth)
+logInfo(`📑 Total Articles Fetched:                  ${String(totalArticlesFetched).padStart(numWidth)}`);
+logInfo(`📅 Total Articles Filtered (24h):           ${String(totalArticlesFiltered).padStart(numWidth)}`);
+logInfo(`🗄️  Total Articles Already in Database:      ${String(totalArticlesInDB).padStart(numWidth)}`);
+logInfo(`📝 Total Articles Ready for Categorization: ${String(totalArticlesReady).padStart(numWidth)}`);
+logInfo(`🚫 Total Articles Categorization Failure:   ${String(totalArticlesSkippedDueToCategorization).padStart(numWidth)}`);
+logInfo(`✅ Total Articles Successfully Categorized: ${String(totalArticlesCategorized).padStart(numWidth)}`);
+logInfo(`❌ Articles Skipped Due to Missing Image:   ${String(totalArticlesSkippedDueToMissingImage).padStart(numWidth)}`);
+logInfo(`❌ Articles Skipped Due to Duplicates:      ${String(totalArticlesSkippedDueToDuplicates).padStart(numWidth)}`);
+logInfo(`❌ Articles Skipped Due to DB Save Error:   ${String(totalArticlesSkippedDueToDBError).padStart(numWidth)}`); 
+logInfo(`✅ Total Articles Saved to Database:        ${String(totalArticlesSavedToDB).padStart(numWidth)}`);
+logInfo(`🗂️  Total Articles in Database (updated):   ${String(totalArticlesInDatabase).padStart(numWidth)}`);
 
   logInfo(`\n🔍 Categorization Breakdown:`);
   Object.entries(categoryCounts).forEach(([category, count]) => {
     const percentage = totalArticlesCategorized > 0 ? ((count / totalArticlesCategorized) * 100).toFixed(2) : "0.00";
-    logInfo(`   - ${category.padEnd(30)} ${count} articles (${percentage}%)`);
+    logInfo(`   - ${category.padEnd(30)} ${String(count).padStart(numWidth)} articles (${percentage}%)`);
   });
 
   const totalRssFeeds = await prisma.rSSFeed.count(); 
-  logInfo(`🗂️ Total RSS Feeds in Database: ${totalRssFeeds}`);
-  logInfo(`🚀 Total RSS Feeds Processed: ${rssFeeds.length}`);
+  logInfo(`🗂️ Total RSS Feeds in Database: ${String(totalRssFeeds).padStart(numWidth)}`);
+  logInfo(`🚀 Total RSS Feeds Processed: ${String(rssFeeds.length).padStart(numWidth)}`);
 
   if (failedFeeds.length > 0) {
-    logInfo(`❌ Total RSS Feeds Failed: ${failedFeeds.length}`);
+    logInfo(`❌ Total RSS Feeds Failed:       ${String(failedFeeds.length).padStart(numWidth)}`);
     failedFeeds.forEach(feed => logInfo(`   - ${feed.name} | Error: ${feed.error}`));
   } else {
-    logInfo(`❌ Total RSS Feeds Failed:      0`);
+    logInfo(`❌ Total RSS Feeds Failed:       ${"0".padStart(numWidth)}`);
   }
-
+  
   logInfo(`Process ended at: ${endTime.toLocaleString()}`);
 
   const durationMs = endTime.getTime() - startTime.getTime();
   const durationSeconds = Math.floor((durationMs / 1000) % 60);
   const durationMinutes = Math.floor((durationMs / (1000 * 60)) % 60);
   const durationHours = Math.floor((durationMs / (1000 * 60 * 60)) % 24);
-
   logInfo(`Total duration: ${durationHours}h ${durationMinutes}m ${durationSeconds}s`);
-}
+  }
+
+/**
+ * ✅ Immediately Invoked Async Function Expression (IIFE)
+ * --------------------------------------------------------
+ * This function **automatically starts** the RSS fetching & categorization process.
+ * 
+ * 🔹 Why is this at the bottom?
+ * - Ensures all functions/variables are **defined before execution**.
+ * - Allows `await` usage at the top level without needing a separate function call.
+ * - Used for **standalone scripts** that should run immediately when executed.
+ * 
+ * 🔹 What does it do?
+ * - Calls `fetchAndCategorizeRSS()`, which:
+ *   - Fetches, filters, and categorizes RSS feed articles.
+ *   - Extracts article images and saves valid ones to the database.
+ * 
+ * 🔹 Error Handling:
+ * - Prevents **script crashes** by catching fatal errors and logging them.
+ */
 
 (async () => {
   try {
-    await fetchAndCategorizeRSS();
+    await fetchAndCategorizeRSS();  // ✅ Start the RSS fetch & categorization process
   } catch (error) {
-    logError(`🚨 Fatal Error in RSS Fetching Process: ${(error as Error).message}`);
+    logError(`🚨 Fatal Error in RSS Process: ${(error as Error).message}`);  // ❌ Log unexpected errors
   }
 })();

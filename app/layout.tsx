@@ -4,9 +4,7 @@
 import { Rubik } from "next/font/google";
 import "./globals.css";
 import AppContainer from "@/app/components/AppContainer";
-import HeaderLayout from "@/app/components/HeaderLayout";
 import { SessionProvider } from "next-auth/react";
-import Footer from "@/app/components/Footer";
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -24,13 +22,11 @@ export default function RootLayout({
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="author" content="Dwyan Alford" />
-        <link rel="icon" href="./favicon.png" />
+        <link rel="icon" href="/favicon.png" />
       </head>
       <body className={`${rubik.className} bg-gray-200 text-gray-900 dark:bg-gray-900 dark:text-gray-200`}>
         <SessionProvider>
-          <HeaderLayout />
           <AppContainer>{children}</AppContainer>
-          <Footer/>
         </SessionProvider>
       </body>
     </html>

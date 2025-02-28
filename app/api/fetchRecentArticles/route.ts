@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
+  console.log("🟡 fetchRecentArticles API was called.");
   try {
     const now = new Date();
 
@@ -20,17 +21,30 @@ export async function GET(req: NextRequest) {
     const todayEnd = new Date(todayStart);
     todayEnd.setHours(23, 59, 59, 999);
 
-    const articles = await prisma.savedArticle.findMany({
-      where: {
-        date: {
-          gte: yesterdayStart, // Include yesterday
-          lte: todayEnd, // Up to the end of today
-        },
-      },
+    // Extract "category" (slug) from query params
+    const { searchParams } = new URL(req.url);
+    const slugParam = searchParams.get('slug');
+    console.log("slugParam from query:", slugParam);
 
+    // Build the "where" clause
+    const whereClause: any = {
+      date: {
+        gte: yesterdayStart,
+        lte: todayEnd,
+      },
+      // If you only want USA articles, uncomment or keep this:
+      region: 'USA',
+    };
+
+    // Filter by slug if present
+    
+if (slugParam) {
+  whereClause.slug = slugParam;
+}
+
+    const articles = await prisma.savedArticle.findMany({
+      where: whereClause,
       orderBy: { date: 'desc' },
-      // Remove pagination for now; you can remove 'take' when you're ready for all results.
-      // take: 30,
       select: {
         id: true,
         title: true,
@@ -42,8 +56,11 @@ export async function GET(req: NextRequest) {
         source: true,
         category: true,
         region: true,
+        slug: true,
       },
     });
+
+    console.log("API Response Data:", articles);
 
     return NextResponse.json({ success: true, data: articles });
   } catch (error) {

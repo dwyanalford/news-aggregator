@@ -4,6 +4,10 @@
 
 /* globals.css */
 
+/* .segment {
+  @apply bg-green-400 h-[300px] w-[430px];
+} */
+
 /* Force Rubik Font on All Text Elements */
 * {
   font-family: 'Rubik', sans-serif !important;
@@ -44,11 +48,11 @@ h3 {
 }
 
 /* Paragraphs */
-p {
-  font-size: 1rem; /* 16px */
+/* p {
+  font-size: 1rem;
   margin-bottom: 1rem;
   line-height: 1.8;
-}
+} */
 
 /* Links */
 a {
