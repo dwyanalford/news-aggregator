@@ -1,5 +1,3 @@
-// app/api/fetchRecentArticles/route.ts
-
 import { NextResponse, NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
@@ -7,6 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
   console.log("🟡 fetchRecentArticles API was called.");
+
   try {
     const now = new Date();
 
@@ -26,23 +25,22 @@ export async function GET(req: NextRequest) {
     const slugParam = searchParams.get('slug');
     console.log("slugParam from query:", slugParam);
 
-    // Build the "where" clause
+    // Build the "where" clause for the first query (today & yesterday)
     const whereClause: any = {
       date: {
         gte: yesterdayStart,
         lte: todayEnd,
       },
-      // If you only want USA articles, uncomment or keep this:
-      region: 'USA',
+      region: 'USA', // Keep this if you only want USA articles
     };
 
-    // Filter by slug if present
-    
-if (slugParam) {
-  whereClause.slug = slugParam;
-}
+    // Apply category filter if present
+    if (slugParam) {
+      whereClause.slug = slugParam;
+    }
 
-    const articles = await prisma.savedArticle.findMany({
+    // Fetch ALL articles from today & yesterday (NO LIMIT)
+    let recentArticles = await prisma.savedArticle.findMany({
       where: whereClause,
       orderBy: { date: 'desc' },
       select: {
@@ -60,11 +58,50 @@ if (slugParam) {
       },
     });
 
-    console.log("API Response Data:", articles);
+    console.log(`🟢 Found ${recentArticles.length} articles from today & yesterday.`);
 
-    return NextResponse.json({ success: true, data: articles });
+    // If we have at least 16, return them immediately
+    if (recentArticles.length >= 16) {
+      return NextResponse.json({ success: true, data: recentArticles });
+    }
+
+    // Otherwise, fetch additional older articles to fill up to 16
+    const remainingCount = 16 - recentArticles.length;
+
+    console.log(`🟠 Fetching ${remainingCount} older articles to fill.`);
+
+    const olderArticles = await prisma.savedArticle.findMany({
+      where: {
+        slug: slugParam, // Keep it within the same category
+        region: 'USA', // Ensure only relevant region
+        date: { lt: yesterdayStart }, // Fetch articles older than yesterday
+      },
+      orderBy: { date: 'desc' }, // Get the most recent older ones first
+      take: remainingCount, // Fetch only what's needed
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        link: true,
+        summary: true,
+        imageURL: true,
+        author: true,
+        source: true,
+        category: true,
+        region: true,
+        slug: true,
+      },
+    });
+
+    console.log(`🟢 Retrieved ${olderArticles.length} older articles.`);
+
+    // Merge the two sets of articles
+    const allArticles = [...recentArticles, ...olderArticles];
+
+    return NextResponse.json({ success: true, data: allArticles });
+
   } catch (error) {
-    console.error('Error fetching recent articles:', error);
+    console.error('🔴 Error fetching recent articles:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

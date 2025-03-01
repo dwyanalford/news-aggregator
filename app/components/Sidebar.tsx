@@ -1,18 +1,24 @@
 // components/Sidebar.tsx
+
 import React, { useState } from 'react';
 import ActiveLink from './ActiveLink';
+import { 
+  Briefcase, GraduationCap, Shirt, HeartPulse, Film, Gavel, Users, 
+  Atom, Trophy, Plane 
+} from "lucide-react"; // Importing appropriate icons
+import DarkModeToggle from '@/app/components/DarkModeToggle';
 
 const categories = [
-  { name: 'Business & Finance', slug: 'business-and-finance' },
-  { name: 'Education', slug: 'education' },
-  { name: 'Fashion', slug: 'fashion' },
-  { name: 'Health & Wellness', slug: 'health-and-wellness' },
-  { name: 'Music & Film', slug: 'music-and-film' },
-  { name: 'Politics & Law', slug: 'politics-and-law' },
-  { name: 'Pop Culture & Celebrities', slug: 'pop-culture-and-celebrities' },
-  { name: 'Science & Technology', slug: 'science-and-technology' },
-  { name: 'Sports', slug: 'sports' },
-  { name: 'Travel & Food', slug: 'travel-and-food' },
+  { name: 'Business & Finance', slug: 'business-and-finance', icon: Briefcase },
+  { name: 'Education', slug: 'education', icon: GraduationCap },
+  { name: 'Fashion', slug: 'fashion', icon: Shirt },
+  { name: 'Health & Wellness', slug: 'health-and-wellness', icon: HeartPulse },
+  { name: 'Music & Film', slug: 'music-and-film', icon: Film },
+  { name: 'Politics & Law', slug: 'politics-and-law', icon: Gavel },
+  { name: 'Pop Culture & Celebrities', slug: 'pop-culture-and-celebrities', icon: Users },
+  { name: 'Science & Technology', slug: 'science-and-technology', icon: Atom },
+  { name: 'Sports', slug: 'sports', icon: Trophy },
+  { name: 'Travel & Food', slug: 'travel-and-food', icon: Plane },
 ];
 
 const Sidebar: React.FC = () => {
@@ -33,26 +39,34 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen w-64 z-40 transform transition-transform duration-300 ${
+        onMouseLeave={toggleSidebar} 
+        className={`fixed top-0 left-0 h-screen w-72 z-40 transform transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } bg-black bg-opacity-70 backdrop-blur-sm`}
+        } bg-white dark:bg-black bg-opacity-70 dark:bg-opacity-70 backdrop-blur-sm dark:backdrop-blur-sm`}
       >
+
         <div className="relative h-full">
           {/* Close button */}
           <button 
             onClick={toggleSidebar}
-            className="absolute top-4 right-4 text-white text-2xl"
+            className="absolute top-2 right-2 text-gray-700 text-2xl"
           >
             &times;
           </button>
 
+          <div className='toggle-switch flex mt-2 ml-4'>
+            <div className='flex w-1/7 text-sm'><DarkModeToggle/></div>
+            <h2 className='flex w-6/7 text-sm pt-4'>Light/Dark Mode</h2>
+          </div>
+
           {/* Sidebar Content */}
-          <div className="mt-16 p-4">
-            <h2 className="text-2xl font-bold mb-6 text-white">Categories</h2>
-            <ul className="space-y-4">
+          <div className="p-4">
+            <h2 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-200">Categories</h2>
+            <ul className="space-y-2">
               {categories.map((cat) => (
                 <li key={cat.slug}>
-                  <ActiveLink href={`/usa/${cat.slug}`}>
+                  <ActiveLink href={`/usa/${cat.slug}`} className="flex items-center gap-2 px-4 py-2">
+                    <cat.icon className="w-5 h-5" />
                     {cat.name}
                   </ActiveLink>
                 </li>

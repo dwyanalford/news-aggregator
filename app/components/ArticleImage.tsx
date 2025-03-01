@@ -37,7 +37,7 @@ export default function ArticleImage({ src, alt = "" }: ArticleImageProps) {
     <img
       src={imageSrc}
       alt={alt}
-      className="object-cover w-full h-full absolute top-0 left-0"
+      className="object-cover w-full h-full"
       onError={handleImageError}
     />
   );

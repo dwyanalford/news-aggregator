@@ -1,7 +1,6 @@
 // usa/[slug]/page.tsx
-import ArticleImage from '@/app/components/ArticleImage';
-import { Article } from '@/app/types';
 
+import { Article } from '@/app/types';
 
 
 export default async function SlugTestPage({ params }: { params: { slug: string } }) {
@@ -14,26 +13,29 @@ export default async function SlugTestPage({ params }: { params: { slug: string 
   const articles: Article[] = data.data || [];
 
   return (
-    <div className="articles-container flex flex-wrap flex-row space-x-2 space-y-2 justify-center mt-3">
+    <div className="articles-container flex flex-wrap gap-4 justify-center mt-3">
       {articles.map((article: Article) => (
         <div
           key={article.id}
-          className="article-container h-[300px] w-[430px] flex flex-col justify-between"
+          className="article-container h-[300px] w-[430px] flex flex-col justify-between bg-cover bg-center relative rounded-lg shadow-lg transition-all duration-500 hover:rotate-1 hover:scale-110 hover:shadow-2xl hover:brightness-90 hover:backdrop-blur-md hover:-translate-y-2 hover:-skew-x-1"
+          style={{ backgroundImage: `url(${article.imageURL})` }}
         >
-            <ArticleImage src={article.imageURL} alt={article.title} />
-          <div className="relative z-10 p-2 text-white">
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/40 rounded-lg shadow-lg transition-opacity duration-500 hover:bg-black/20"></div>
+
+          <div className="article-text absolute inset-0 flex flex-col justify-between z-10 p-2 text-gray-200">
             <p className="article-category flex text-xs justify-end pt-3 pr-3">
               {article.category}
             </p>
             <div className="flex flex-col p-2">
-              <div className="flex mb-1">
-                <p className="article-date text-xs w-1/2">{article.date}</p>
+              <div className="flex mb-0">
+                <p className="article-date text-xs w-1/2">{new Date(article.date).toLocaleDateString("en-US")}</p>
               </div>
-              <h2 className="article-title leading-none line-clamp-3 overflow-hidden text-xl">
+              <h2 className="article-title leading-tight line-clamp-3 overflow-hidden text-lg shadow-xl">
                 {article.title}
               </h2>
               <div className="flex">
-                <p className="article-source w-4/5 mb-1 text-sm">
+                <p className="article-source w-4/5 text-xs">
                   Source: {article.source}
                 </p>
                 <a
