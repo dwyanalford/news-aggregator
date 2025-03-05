@@ -32,7 +32,7 @@ const BACKUP_IMAGE_FOLDER = "/images/rss_backup/";
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000; // 2 seconds
 
-const CATEGORY_CONCURRENCY_LIMIT = 3; 
+const CATEGORY_CONCURRENCY_LIMIT = 2; 
 const limit = pLimit(CATEGORY_CONCURRENCY_LIMIT);
 
 /**
@@ -127,6 +127,8 @@ export async function fetchAndCategorizeRSS() {
   let totalArticlesSkippedDueToDuplicates = 0;
   let totalArticlesSkippedDueToDBError = 0;
   const categoryCounts: { [key: string]: number } = {};
+  const failedFeeds: { id: string, name: string, error: string, failureCount: number }[] = [];
+
 
 
   await Promise.all(
@@ -310,6 +312,15 @@ export async function fetchAndCategorizeRSS() {
           where: { id: feed.id },
           select: { failureCount: true },
         });
+
+        // Record this feed's failure.
+        failedFeeds.push({
+          id: feed.id,
+          name: feed.name,
+          error: (feedError as Error).message,
+          failureCount: updatedFeed?.failureCount || 0,
+        });
+
         if (updatedFeed && updatedFeed.failureCount >= 2) {
           await prisma.rSSFeed.update({
             where: { id: feed.id },
@@ -349,9 +360,21 @@ export async function fetchAndCategorizeRSS() {
     logInfo(`   - ${category.padEnd(30)} ${String(count).padStart(numWidth)} articles (${percentage}%)`);
   });
 
-  logInfo(`\n🚀 Total RSS Feeds Processed: ${String(rssFeeds.length).padStart(numWidth)}`);
+  // Replace your existing final logs for RSS feeds processed, database, and failed feeds with this snippet:
+
+  logInfo(`🚀 Total RSS Feeds Processed:              ${String(rssFeeds.length).padStart(numWidth)}`);
   const totalRssFeeds = await prisma.rSSFeed.count();
-  logInfo(`🗂️ Total RSS Feeds in Database: ${String(totalRssFeeds).padStart(numWidth)}`);
+  logInfo(`🗂️  Total RSS Feeds in Database:            ${String(totalRssFeeds).padStart(numWidth)}`);
+
+  logInfo(`\n🚨 Failed RSS Feeds:                        ${String(failedFeeds.length).padStart(numWidth)}`);
+  failedFeeds.forEach(feed => {
+    logInfo(
+      `   - ${feed.name.padEnd(30)} | ` +
+      `Error: ${feed.error.padEnd(50)} | ` +
+      `Failure Count: ${String(feed.failureCount).padStart(numWidth)}`
+    );
+  });
+
 
   logInfo(`Process ended at: ${endTime.toLocaleString()}`);
   const durationMs = endTime.getTime() - startTime.getTime();
