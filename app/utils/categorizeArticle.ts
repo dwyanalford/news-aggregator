@@ -48,7 +48,7 @@ const CATEGORY_GUIDANCE = {
  * @param {string} summary - The article summary.
  * @returns {Promise<string>} - The predicted category.
  */
-export async function categorizeArticle(title: string, summary: string): Promise<string> {
+export async function categorizeArticle(title: string): Promise<string> {
     try {
         console.log("🧠 Categorizing article:", title);
         console.log("🔍 Sending request to Hugging Face API...");
@@ -57,7 +57,7 @@ export async function categorizeArticle(title: string, summary: string): Promise
         const response = await axios.post(
             HF_API_URL,
             {
-                inputs: `${title}\n\n${summary}`,
+                inputs: `${title}`,
                 parameters: {
                     candidate_labels: Object.keys(CATEGORY_GUIDANCE), // ✅ Uses updated categories
                 },

@@ -11,7 +11,6 @@ interface CategorizedArticle {
   title: string;
   link: string;
   date: Date;
-  summary: any;
   author: any;
   region: string;
   item: MyRSSItem;
@@ -30,9 +29,9 @@ const BACKUP_IMAGE_FOLDER = "/images/rss_backup/";
 
 // Retry configuration for categorization failures
 const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 2000; // 2 seconds
+const RETRY_DELAY_MS = 3000; // 2 seconds
 
-const CATEGORY_CONCURRENCY_LIMIT = 2; 
+const CATEGORY_CONCURRENCY_LIMIT = 1; 
 const limit = pLimit(CATEGORY_CONCURRENCY_LIMIT);
 
 /**
@@ -161,14 +160,13 @@ export async function fetchAndCategorizeRSS() {
           const articleTitle = item.title || "Untitled";
           const articleLink = item.link || "";
           const articleDate = item.pubDate ? new Date(item.pubDate) : new Date();
-          const articleSummary = item.contentSnippet || item.description || "No summary available.";
           const articleAuthor = item.creator || item.author || "Unknown";
           const articleRegion = feed.region || "Unknown";
 
           // Step 1: Filter articles within the last 24 hours.
           const timeDiff = now.getTime() - articleDate.getTime();
           const hoursDiff = timeDiff / (1000 * 3600);
-          if (hoursDiff > 24) {
+          if (hoursDiff > 48) {
             feedLog(`Article "${truncate(articleTitle, 30)}" is > 24hrs. Stopped further processing.`);
             break;
           }
@@ -188,34 +186,12 @@ export async function fetchAndCategorizeRSS() {
           }
           processedLinks.add(articleLink);
 
-          // Step 3: Attempt image extraction.
-          let articleImage = item.enclosure?.url || item["media:content"]?.url || null;
-          let imageSource = "RSS Feed";
-          if (!articleImage) {
-            articleImage = await extractImageFromArticle(articleLink);
-            imageSource = articleImage ? "Article Extraction" : "None";
-          }
-          if (!articleImage) {
-            articleImage = BACKUP_IMAGE_FOLDER;
-            imageSource = "RSS_backup_folder";
-          }
-          if (!articleImage) {
-            articleImage = DEFAULT_IMAGE_PATH;
-            imageSource = "Default Image";
-          }
-          if (!articleImage || imageSource === "None") {
-            feedLog(`⚠️ Skipping article: "${truncate(articleTitle, 30)}" - No valid image found.`);
-            totalArticlesSkippedDueToMissingImage++;
-            continue;
-          }
-          feedLog(`✅ Image retrieved from: ${imageSource}`);
-
-          // Step 4: Categorize the article (with retries) before saving.
+          // Step 3: Categorize the article (with retries) before image extraction.
           let articleCategory = "Uncategorized";
           let categorizationSuccess = false;
           for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
-              articleCategory = await categorizeArticle(articleTitle, articleSummary);
+              articleCategory = await categorizeArticle(articleTitle);
               categorizationSuccess = true;
               break;
             } catch (err: unknown) {
@@ -245,6 +221,28 @@ export async function fetchAndCategorizeRSS() {
           }
           const slug = generateSlug(articleCategory);
 
+          // Step 4: Attempt image extraction ONLY AFTER successful categorization
+          let articleImage = item.enclosure?.url || item["media:content"]?.url || null;
+          let imageSource = "RSS Feed";
+          if (!articleImage) {
+            articleImage = await extractImageFromArticle(articleLink);
+            imageSource = articleImage ? "Article Extraction" : "None";
+          }
+          if (!articleImage) {
+            articleImage = BACKUP_IMAGE_FOLDER;
+            imageSource = "RSS_backup_folder";
+          }
+          if (!articleImage) {
+            articleImage = DEFAULT_IMAGE_PATH;
+            imageSource = "Default Image";
+          }
+          if (!articleImage || imageSource === "None") {
+            feedLog(`⚠️ Skipping article: "${truncate(articleTitle, 30)}" - No valid image found.`);
+            totalArticlesSkippedDueToMissingImage++;
+            continue;
+          }
+          feedLog(`✅ Image retrieved from: ${imageSource}`);
+
           // Step 5: Save the article to the database only if categorization succeeded.
           try {
             await prisma.savedArticle.create({
@@ -252,7 +250,6 @@ export async function fetchAndCategorizeRSS() {
                 title: articleTitle,
                 date: articleDate,
                 link: articleLink,
-                summary: articleSummary,
                 imageURL: articleImage,
                 author: extractAuthor(articleAuthor),
                 source: feed.name,

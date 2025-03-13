@@ -51,7 +51,7 @@ model SavedArticle {
   title     String
   date      DateTime
   link      String                @unique
-  summary   String
+  summary   String?
   imageURL  String?
   author    String?
   source    String
