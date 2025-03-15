@@ -31,8 +31,7 @@ h1 {
 
 h2 {
   font-size: 2rem; /* 32px */
-  font-weight: 600;
-  margin-bottom: 0.75rem;
+  font-weight: 00;
 }
 
 h3 {
@@ -50,11 +49,11 @@ h3 {
 
 /* Links */
 a {
-  color: #2563eb; /* Tailwind blue-600 */
   text-decoration: none;
 }
 
 a:hover {
+  color: #2563eb; /* Tailwind blue-600 */
   text-decoration: underline;
 }
 
@@ -81,44 +80,6 @@ img {
 }
 
 
-.button-2 {
-  @apply px-2 py-2; 
-}
-
-.button-4 {
-  @apply px-4 py-2; 
-}
-
-/* Excerpts */
-.excerpt {
-  @apply text-xl text-gray-700 leading-relaxed;
-}
-
-/* Meta Information (Author, Date, Source) */
-.meta-info {
-  @apply text-lg text-gray-500;
-}
-
-/* Links (e.g., Source) */
-a.source-link {
-  @apply text-sm text-blue-600 hover:text-blue-800;
-}
-
-/* News Icon */
-.news-icon {
-  @apply h-5 w-5 text-gray-400 hover:text-gray-800;
-}
-
-/* Text for Sub-titles e.g. purpose and sidebar titles */
-.sub-text {
-  @apply text-gray-700 text-xl font-light;
-}
-
-.check-icon {
-  @apply text-blue-500 mr-2 mb-1;
-  width: 36px;
-  height: 36px;
-}
 
 /* Global Article Card Styles */
 

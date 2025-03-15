@@ -8,57 +8,22 @@ const config: Config = {
     "./app/(routes)/**/*.{js,ts,jsx,tsx,mdx}", // Any routes or special directories inside /app
   ],
   theme: {
-    extend: {
-      typography: {
-        DEFAULT: {
-          css: {
-            h1: {
-              fontSize: '2.25rem', // Main headline size
-              fontWeight: '700',   // Bold
-              lineHeight: '1.3',   // Slightly tight
-            },
-            h2: {
-              fontSize: '1.875rem', // Subheadline size
-              fontWeight: '600',    // Semi-bold
-              lineHeight: '1.4',
-            },
-            h3: {
-              fontSize: '1.5rem',   // Smaller headline size
-              fontWeight: '600',
-              lineHeight: '1.5',
-            },
-            p: {
-              fontSize: '1.125rem', // Larger paragraph size
-              fontWeight: '400',    // Normal weight
-              lineHeight: '1.8',    // Comfortable reading
-            },
-            a: {
-              fontSize: '1.125rem', // Matches paragraph size
-              fontWeight: '500',    // Medium weight
-              lineHeight: '1.8',
-              textDecoration: 'none', // Ensure no underline by default
-            },
-            ul: {
-              listStyleType: 'none', // Removes bullets from <ul> by default
-              paddingLeft: '0',     // Removes left padding
-            },
-            li: {
-              fontSize: '1.125rem', // Matches paragraph size
-              fontWeight: '400',
-              lineHeight: '1.8',
-            },
-            blockquote: {
-              fontSize: '1.125rem', // Matches paragraph size
-              fontWeight: '400',
-              fontStyle: 'italic', // Retain emphasis
-            },
-          },
-        },
-      },
-    },
+    extend: {},
   },
   plugins: [
-    require('@tailwindcss/typography'), // Enables the Tailwind Typography plugin
+    function ({ addUtilities }: { addUtilities: (utilities: Record<string, Record<string, string>>) => void }) {
+      addUtilities({
+        ".text-shadow-sm": {
+          textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",
+        },
+        ".text-shadow-md": {
+          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
+        },
+        ".text-shadow-lg": {
+          textShadow: "3px 3px 6px rgba(0, 0, 0, 0.5)",
+        },
+      });
+    },
   ],
 };
 
