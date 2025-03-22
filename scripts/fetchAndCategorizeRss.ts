@@ -23,6 +23,9 @@ interface MyRSSItem extends RSSParser.Item {
 const prisma = new PrismaClient();
 const parser = new RSSParser();
 
+// change this to fix malformed XML in "Black Enterprise" publication
+// const parser = new RSSParser({ xml2js: { strict: false } });
+
 // Default and backup image paths
 const DEFAULT_IMAGE_PATH = "/images/default.webp";
 const BACKUP_IMAGE_FOLDER = "/images/rss_backup/";
