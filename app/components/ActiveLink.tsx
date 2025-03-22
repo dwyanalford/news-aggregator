@@ -19,11 +19,16 @@ const ActiveLink = ({ href, children, className = '' }: ActiveLinkProps) => {
   return (
     <Link
       href={href}
-      className={`${isActive ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-gray-700 dark:text-gray-300'} transition-colors duration-300 ${className}`}
+      className={`${
+        isActive
+          ? 'text-green-600 dark:text-green-400 font-bold'
+          : 'text-gray-700 dark:text-gray-300'
+      } transition-colors duration-300 hover:text-green-600 dark:hover:text-green-400 ${className}`}
     >
       {children}
     </Link>
   );
+  
 };
 
 export default ActiveLink;
