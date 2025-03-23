@@ -1,29 +1,32 @@
 // components/Sidebar.tsx
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import ActiveLink from './ActiveLink';
 import DarkModeToggle from '@/app/components/DarkModeToggle';
-import { 
+import {
   Menu, Search, Edit3, ChevronDown,
   Zap, BookOpen, Calendar, MessageCircle,
-  Briefcase, GraduationCap, Shirt, HeartPulse, Film, Gavel, Users, 
+  Briefcase, GraduationCap, Shirt, HeartPulse, Film, Gavel, Users,
   Atom, Trophy, Plane,
   Crown
 } from "lucide-react";
 
-// Main menu (without "Articles" because that's now a group header)
+// Global navigation menu with accent colors
 const mainMenu = [
-  { name: 'Features', slug: 'features', icon: Zap },
-  { name: 'Publications', slug: 'publications', icon: BookOpen },
-  { name: 'Events', slug: 'events', icon: Calendar },
-  { name: 'Feedback', slug: 'feedback', icon: MessageCircle },
+  { name: 'Features', slug: 'features', icon: Zap, accent: 'text-blue-500 hover:text-blue-600' },
+  { name: 'Publications', slug: 'publications', icon: BookOpen, accent: 'text-red-500 hover:text-red-600' },
+  { name: 'Events', slug: 'events', icon: Calendar, accent: 'text-purple-500 hover:text-purple-600' },
+  { name: 'Feedback', slug: 'feedback', icon: MessageCircle, accent: 'text-yellow-500 hover:text-yellow-600' },
 ];
 
+// (Optional) Premium menu for registered users
 const premiumMenu = [
   { name: 'Dashboard', slug: 'dashboard', icon: Edit3 },
   { name: 'Profile', slug: 'profile', icon: Edit3 },
 ];
 
+// Region menu – for now, only USA will be active
 const regionMenu = [
   { name: 'Africa', slug: 'africa' },
   { name: 'Caribbean', slug: 'caribbean' },
@@ -31,6 +34,7 @@ const regionMenu = [
   { name: 'USA', slug: 'usa' },
 ];
 
+// Categories (identical across regions)
 const categories = [
   { name: 'Business & Finance', slug: 'business-and-finance', icon: Briefcase },
   { name: 'Education', slug: 'education', icon: GraduationCap },
@@ -46,33 +50,27 @@ const categories = [
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const toggleSidebar = () => setIsOpen(prev => !prev);
+  const toggleSidebar = () => setIsOpen((prev) => !prev);
 
-  // Collapsible state for Region and Category (default open)
-  const [regionOpen, setRegionOpen] = useState(true);
-  const toggleRegion = () => setRegionOpen(prev => !prev);
-  const [categoryOpen, setCategoryOpen] = useState(true);
-  const toggleCategory = () => setCategoryOpen(prev => !prev);
+  // Active region state; default is "usa"
+  const [activeRegion, setActiveRegion] = useState("usa");
 
-  // Example premium check—replace with your real logic
+  // Example premium check (set to false for now)
   const isPremium = false;
 
   return (
     <>
-      {/* Hamburger button (visible when sidebar is closed) */}
+      {/* Hamburger button when sidebar is closed */}
       {!isOpen && (
-        <button 
+        <button
           onClick={toggleSidebar}
           className="fixed top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-md"
         >
-          <Menu 
-            size={20} 
-            className="transition-colors duration-300 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" 
-          />
+          <Menu size={20} className="transition-colors duration-300 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" />
         </button>
       )}
 
-      {/* Main Sidebar */}
+      {/* Main Sidebar with auto-close on mouse leave and fade-out effect */}
       <div
         onMouseLeave={() => setIsOpen(false)}
         className={`fixed top-0 left-0 h-screen w-72 z-40 transform transition-all ${
@@ -82,16 +80,14 @@ const Sidebar: React.FC = () => {
         <div className="flex flex-col h-full text-gray-800 dark:text-gray-200">
           {/* Scrollable Content */}
           <div className="flex-grow overflow-y-auto">
-            {/* Top Menu: Left icon and Right icons */}
+            {/* Top Menu: Hamburger and right icons */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-gray-700">
-              {/* Open/close menu icon on the left */}
-              <button 
-                onClick={toggleSidebar} 
+              <button
+                onClick={toggleSidebar}
                 className="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400"
               >
                 <Menu size={20} className="transition-colors duration-300" />
               </button>
-              {/* Right menu icons */}
               <div className="flex items-center space-x-4">
                 <button className="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400">
                   <Search size={20} className="transition-colors duration-300" />
@@ -105,78 +101,72 @@ const Sidebar: React.FC = () => {
               </div>
             </div>
 
-            {/* Site Logo & Name */}
+            {/* Branding Section */}
             <div className="px-4 py-4 border-b border-gray-300 dark:border-gray-700">
               <div className="flex items-center space-x-2">
-                {/* Replace with your actual logo */}
-                <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full" />
-                <span className="font-semibold text-lg">MyApp</span>
+                {/* <Image
+                  src="/images/logos/logo-dwyan-symbol-small.png"
+                  alt="Logo Symbol"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                /> */}
+                <Image
+                  src="/images/logos/logo-dwyan-text-grey-small.png"
+                  alt="Logo Text"
+                  width={80}
+                  height={23}
+                  className="object-contain"
+                />
               </div>
             </div>
 
-            {/* Articles Group */}
-            <div className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">
-              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400">Articles</h3>
-              
-              {/* Collapsible Region Section */}
-              <div className="mt-2">
-                <button
-                  onClick={toggleRegion}
-                  className="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <span>Region</span>
-                  <ChevronDown
-                    size={16}
-                    className={`transform transition-transform ${regionOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {regionOpen && (
-                  <ul className="ml-4 space-y-1">
-                    {regionMenu.map((region) => (
-                      <li key={region.slug}>
-                        <ActiveLink
-                          href={`/region/${region.slug}`}
-                          className="block px-3 py-1 rounded-md text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          {region.name}
-                        </ActiveLink>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+            {/* Articles Group: Region Selection and Categories */}
+<div className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 mt-2">
+  <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400">Articles</h3>
+  {/* Region Dropdown */}
+  <div className="mt-2">
+    <label htmlFor="region-select" className="block text-xs font-semibold text-gray-500 dark:text-gray-400">
+      Select Region:
+    </label>
+    <select
+      id="region-select"
+      value={activeRegion}
+      onChange={(e) => setActiveRegion(e.target.value)}
+      className="mt-2 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-3 py-1 text-sm focus:outline-none focus:ring focus:ring-gray-200 dark:focus:ring-gray-600 mb-4"
+    >
+      {regionMenu.map((region) => (
+        <option key={region.slug} value={region.slug}>
+          {region.name}
+        </option>
+      ))}
+    </select>
+  </div>
+  {/* Category List for USA (only display if activeRegion is 'usa') */}
+  {activeRegion === "usa" && (
+    <div className="mt-4 mb-3">
+      <label htmlFor="category-select" className="block text-xs font-semibold text-gray-500 dark:text-gray-400">
+        Select Category:
+      </label>
+      <ul id="category-select" className="mt-1 ml-2 space-y-1">
+        {categories.map((cat) => (
+          <li key={cat.slug}>
+            <ActiveLink
+              href={`/${activeRegion}/${cat.slug}`}
+              className="flex items-center gap-2 px-3 py-1 rounded-md text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              <cat.icon size={16} className="transition-colors duration-300 text-current" />
+              {cat.name}
+            </ActiveLink>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
 
-              {/* Collapsible Category Section */}
-              <div className="mt-2">
-                <button
-                  onClick={toggleCategory}
-                  className="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <span>Category</span>
-                  <ChevronDown
-                    size={16}
-                    className={`transform transition-transform ${categoryOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {categoryOpen && (
-                  <ul className="ml-4 space-y-1">
-                    {categories.map((cat) => (
-                      <li key={cat.slug}>
-                        <ActiveLink
-                          href={`/usa/${cat.slug}`}
-                          className="flex items-center gap-2 px-3 py-1 rounded-md text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          <cat.icon size={16} className="transition-colors duration-300 text-current" />
-                          {cat.name}
-                        </ActiveLink>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
 
-            {/* Main Menu */}
+            {/* Global Navigation */}
             <div className="p-4 space-y-2">
               {mainMenu.map((item) => (
                 <ActiveLink
@@ -184,12 +174,11 @@ const Sidebar: React.FC = () => {
                   href={`/${item.slug}`}
                   className="flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <item.icon size={16} className="transition-colors duration-300 text-current" />
+                  <item.icon size={16} className={`${item.accent} transition-colors duration-300`} />
                   {item.name}
                 </ActiveLink>
               ))}
-
-              {/* Premium Menu if applicable */}
+              {/* Premium Menu (if applicable) */}
               {isPremium && (
                 <div className="mt-2 space-y-1">
                   {premiumMenu.map((pItem) => (
@@ -211,8 +200,7 @@ const Sidebar: React.FC = () => {
           {!isPremium && (
             <div className="p-4 border-t border-gray-300 dark:border-gray-700">
               <button
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-white 
-                           bg-green-600 hover:bg-green-700 rounded-md font-normal"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-md font-normal"
               >
                 <Crown size={16} className="transition-colors duration-300" />
                 Upgrade
