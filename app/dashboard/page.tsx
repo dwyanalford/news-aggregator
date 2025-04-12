@@ -10,7 +10,7 @@ import TagFilterMenu from "@/app/components/TagFilterMenu";
 import { fetchUserTags } from '@/app/utils/fetchUserTagsUtils';
 import Loading from "@/app/components/Loading";
 import axios from "axios";
-import SidebarLayout from "../components/SidebarLayout";
+import SidebarLayout from "@/app/components/SidebarLayout";
 
 // Define the Article type
 interface Article {
