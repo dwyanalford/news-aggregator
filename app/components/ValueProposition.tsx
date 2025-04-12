@@ -34,7 +34,7 @@ const ValueProposition = () => {
   }, []);
 
   return (
-    <section className="py-24 bg-gray-50 text-center">
+    <section id="next-section" className="py-24 bg-gray-50 text-center">
       {/* Heading */}
       <div className="mb-16" data-aos="fade-up">
         <h2 className="text-4xl font-bold mb-4">Why Choose Us</h2>

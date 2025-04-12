@@ -3,31 +3,15 @@ import React from 'react';
 import Link from 'next/link';
 import CategoryGrid from '@/app/components/CategoryGrid';
 import ValueProposition from '@/app/components/ValueProposition';
+import Hero from '@/app/components/Hero';
 
 export default function Homepage() {
   return (
     <div className="w-full">
 
       {/* 1. Hero Section */}
-      <section
-        className="relative h-screen w-full bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/black-people-at-computer-office.png')" }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-white text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Delivering What Your Attention Needs
-          </h1>
-          <p className="text-lg md:text-2xl mt-2 mb-6">
-            The Black experience and perspective in America
-          </p>
-          <Link
-            href="/articles"
-            className="bg-white text-black font-semibold px-6 py-3 rounded hover:bg-gray-100 transition mt-2"
-          >
-            Explore Articles
-          </Link>
-        </div>
-      </section>
+      <Hero/>
+
 
       {/* 2. Value Proposition Section */}
       <ValueProposition/>
