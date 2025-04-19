@@ -3,6 +3,19 @@
 @tailwind utilities;
 
 /* globals.css */
+.slide-in {
+  transform: translateX(100vw);
+  animation: slideInFromRight 0.6s ease-out forwards;
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100vw);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
 
 
 

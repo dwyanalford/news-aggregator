@@ -14,6 +14,7 @@ import {
   Trophy,
   Plane,
 } from 'lucide-react';
+import SectionNavigator from "@/app/components/SectionNavigator";
 
 interface Article {
   category: string;
@@ -70,10 +71,39 @@ const CategoryGrid: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-white px-8">
-      <h2 className="text-4xl font-bold text-center mb-12 mt-4 p-4">Browse by Category</h2>
+    <section
+  id="category-grid-section"
+  className="
+    relative
+    w-full min-h-screen overflow-auto
+    
+    flex flex-col items-center justify-center
+    px-8 py-16
+  "
+  // style={{ backgroundImage: "url('/images/backgrounds/background-blueswirl.webp')" }}
+  // bg-cover bg-center
+>
+
+
+     
+      <h2
+  className="
+    text-2xl sm:text-3xl md:text-4xl 
+    font-bold text-center 
+    mb-8 mt-4 px-4
+  "
+>
+  Browse by Category
+</h2>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 md:px-12">
+      <SectionNavigator
+        watchId="category-grid-section"
+        hideOnSection="hero-section"
+        prevId="pub-sum-section"
+        nextId="footer-section"
+      />
         {Object.entries(categories).map(([category, { imageURL, slug }]) => {
           const Icon = categoryIcons[slug];
           if (!Icon) return null; // ensure only mapped slugs are shown
@@ -89,12 +119,12 @@ const CategoryGrid: React.FC = () => {
                 alt={category}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-60 transition duration-300" />
+              <div className="absolute inset-0 bg-black bg-opacity-60 group-hover:bg-opacity-60 transition duration-300" />
 
               {/* Centered icon + text */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-                <Icon className="w-10 h-10 mb-2 text-white group-hover:text-green-400 transition duration-300" />
-                <span className="text-white text-3xl font-semibold text-shadow capitalize">
+              <div className="absolute inset-0 flex flex-row items-center justify-center z-10 text-center px-4 gap-2">
+                <Icon className="w-10 h-10 text-white/85 group-hover:text-green-400 transition duration-300 hover:text-green-500" />
+                <span className="text-white/70 hover:text-white/90 text-2xl font-semibold text-shadow capitalize hover:text-green-500">
                   {category}
                 </span>
               </div>

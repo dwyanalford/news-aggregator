@@ -66,7 +66,7 @@ const Sidebar: React.FC = () => {
           onClick={toggleSidebar}
           className="fixed top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-md"
         >
-          <Menu size={20} className="transition-colors duration-300 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" />
+          <Menu size={35} className="transition-colors duration-300 text-gray-400 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400" />
         </button>
       )}
 
@@ -86,7 +86,7 @@ const Sidebar: React.FC = () => {
                 onClick={toggleSidebar}
                 className="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400"
               >
-                <Menu size={20} className="transition-colors duration-300" />
+                <Menu size={30} className="transition-colors duration-300" />
               </button>
               <div className="flex items-center space-x-4">
                 <button className="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400">

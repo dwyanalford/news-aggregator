@@ -4,47 +4,15 @@ import Link from 'next/link';
 import CategoryGrid from '@/app/components/CategoryGrid';
 import ValueProposition from '@/app/components/ValueProposition';
 import Hero from '@/app/components/Hero';
+import PublicationsSummary from "@/app/components/PublicationsSummary";
 
 export default function Homepage() {
   return (
     <div className="w-full">
-
-      {/* 1. Hero Section */}
       <Hero/>
-
-
-      {/* 2. Value Proposition Section */}
       <ValueProposition/>
-
-      {/* 3. Featured Categories */}
+      <PublicationsSummary />
       <CategoryGrid/>
-
-      {/* 4. Black Media in Focus */}
-      <section className="py-16 bg-white">
-        <h2 className="text-2xl font-bold text-center mb-4">Black Media in Focus</h2>
-        <p className="text-center mb-8">
-          Highlighting the active Black-owned publications powering this platform.
-        </p>
-        <div className="overflow-x-auto whitespace-nowrap flex space-x-4 items-center pb-4">
-          {["thegriot", "blackenterprise", "atlantavoice", "blavity"].map((logo) => (
-            <Link key={logo} href="/publications">
-              <img
-                src={`/logos/${logo}.png`}
-                alt={logo}
-                className="h-20 w-auto inline-block rounded shadow-md"
-              />
-            </Link>
-          ))}
-        </div>
-        <div className="text-center mt-4">
-          <Link
-            href="/publications"
-            className="text-blue-600 hover:underline font-semibold"
-          >
-            View All Publications
-          </Link>
-        </div>
-      </section>
 
       {/* 5. Call to Action */}
       <section className="py-16 bg-black text-white text-center">
